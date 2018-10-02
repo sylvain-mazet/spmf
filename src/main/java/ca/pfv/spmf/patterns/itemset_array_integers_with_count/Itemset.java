@@ -67,7 +67,7 @@ public class Itemset extends AbstractOrderedItemset{
 	
 	/**
 	 * Constructor 
-	 * @param items a list of Integer representing items in the itemset
+	 * @param itemset a list of Integer representing items in the itemset
 	 * @param support the support of the itemset
 	 */
 	public Itemset(List<Integer> itemset, int support){
