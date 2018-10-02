@@ -50,6 +50,26 @@ public class CFINode {
 		
 	}
 
+	public int getItemID() {
+		return itemID;
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public CFINode getParent() {
+		return parent;
+	}
+
+	public List<CFINode> getChilds() {
+		return childs;
+	}
+
 	/**
 	 * Return the immediate child of this node having a given ID.
 	 * If there is no such child, return null;

@@ -595,4 +595,12 @@ public class AlgoFPClose {
 	public int getDatabaseSize() {
 		return transactionCount;
 	}
+
+	/**
+	 * return the CFI, much more information than in "patterns":
+	 * contains also the CFIs arranged in a tree structure
+	 */
+	public CFITree getCfiTree() {
+		return cfiTree;
+	}
 }

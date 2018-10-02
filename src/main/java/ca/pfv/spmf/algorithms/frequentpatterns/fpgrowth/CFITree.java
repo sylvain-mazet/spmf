@@ -60,6 +60,10 @@ public class CFITree {
 		
 	}
 
+	public CFINode getRoot() {
+		return root;
+	}
+
 	/**
 	 * Method to fix the node link for an item after inserting a new node.
 	 * @param item  the item of the new node
@@ -136,7 +140,7 @@ public class CFITree {
 	 * found CFI with the same support
 	 * @param headWithP the itemset to be tested
 	 * @param headWithPLength the last position to be considered in headWithP
-	 * @param the support of the itemset headwithP
+	 * @param headWithPSupport the support of the itemset headwithP
 	 * @return true if the itemset is not a subset of an already found CFI.
 	 */
 	public boolean passSubsetChecking(int[] headWithP, int headWithPLength, int headWithPSupport) { 
@@ -186,7 +190,6 @@ public class CFITree {
 	 * @param headWithP the itemset headwithP
 	 * @param headWithPLength the last position to be considered in headWithP
 	 * @param node  the node
-	 * @param the support of the itemset headwithP 
 	 * @return true if "headwithP" is contained in the path ending at "node" in the CFI-Tree and has the same support.
 	 * Otherwise, false.
 	 */
