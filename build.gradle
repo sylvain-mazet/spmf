@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
 group = 'ca.pfv'
-version = '1.0.4'
+version = '1.0.5-SNAPSHOT'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
