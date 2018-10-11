@@ -70,7 +70,7 @@ public class DescriptionAlgoIGBAssociationRules extends DescriptionOfAlgorithm {
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
 		TZTableClosed results = zart.runAlgorithm(database, minsup);
-		zart.printStatistics();
+		zart.printStats();
 		// Generate IGB association rules
 		AlgoIGB algoIGB = new AlgoIGB();
 		algoIGB.runAlgorithm(results, database.getTransactions().size(),

@@ -89,7 +89,7 @@ public class DescriptionAlgoClosedClassAssociationRulesFPClose extends Descripti
 		// STEP 1: Applying the Charm algorithm to find frequent closed
 		// itemsets
 		AlgoFPClose algo = new AlgoFPClose();
-					Itemsets patterns = algo.runAlgorithm(inputFile, null, minsup);  
+					Itemsets patterns = (Itemsets)algo.runAlgorithm(inputFile, null, minsup);
 		algo.printStats();
 
 		// STEP 2: Generate all rules from the set of frequent itemsets

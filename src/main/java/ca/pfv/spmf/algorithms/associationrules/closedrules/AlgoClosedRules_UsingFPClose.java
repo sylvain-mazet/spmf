@@ -25,10 +25,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRule;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.CFITree;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
@@ -156,13 +158,14 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(List<Itemset> itemsetsSameSize : patterns.getLevels()){
+		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
 			// Sort by lexicographical order using a Comparator
-			Collections.sort(itemsetsSameSize, new Comparator<Itemset>() {
+			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override
-				public int compare(Itemset o1, Itemset o2) {
+				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
-					return ArraysAlgos.comparatorItemsetSameSize.compare(o1.getItems(), o2.getItems());
+					//  we know we have tids bitset itemset's.... TODO remove this down cast
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
 				}
 			});
 		}
@@ -172,8 +175,9 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 		
 		// For each frequent itemset of size >=2 that we will name "lk"
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
-			for (Itemset lk : patterns.getLevels().get(k)) {
-				
+			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
+				Itemset lk = (Itemset) lkAbs;
+
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();
 				

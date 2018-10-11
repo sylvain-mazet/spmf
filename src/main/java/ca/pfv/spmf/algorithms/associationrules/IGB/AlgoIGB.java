@@ -24,7 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rule;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rules;
@@ -106,9 +108,10 @@ public class AlgoIGB {
 		
 		// line 3 of the pseudo code in the IGB paper:
 		// For each closed frequent itemset t.
-		for(List<Itemset> level : closedPatternsAndGenerators.levels){
+		for(GenericResults.ListOfItemset level : closedPatternsAndGenerators.levels){
 			// for each itemset
-			for(Itemset itemset : level){
+			for(AbstractItemset itemsetAbs : level){
+				Itemset itemset = (Itemset) itemsetAbs;
 				// if it is not the empty set
 				if(itemset.size() != 0){
 					// we will process this itemset
@@ -150,7 +153,8 @@ public class AlgoIGB {
 		
 		// For each closed itemsets, starting from size j=0 to the maximum size
 		for(int j=0; j < i.size(); j++){
-			for(Itemset i1 : closedPatternsAndGenerators.levels.get(j)){
+			for(AbstractItemset i1Abs : closedPatternsAndGenerators.levels.get(j)){
+				Itemset i1 = (Itemset) i1Abs;
 				
 				// if the confidence of I1 ==> I / I1 is higher than minconf
 				// and that   I1 \included_in I then:

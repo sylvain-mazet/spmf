@@ -31,7 +31,7 @@ public class MainTestAllAssociationRules_FPGrowth_saveToMemory extends MainTestB
 		double minsup = 0.5;
 		AlgoFPGrowth fpgrowth = new AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength);
-		Itemsets patterns = fpgrowth.runAlgorithm(input, null, minsup);
+		Itemsets patterns = (Itemsets)fpgrowth.runAlgorithm(input, null, minsup);
 		int databaseSize = fpgrowth.getDatabaseSize();
 		patterns.printItemsets(databaseSize);
 		

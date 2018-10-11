@@ -17,6 +17,9 @@ package ca.pfv.spmf.patterns.itemset_array_integers_with_count;
 */
 
 
+import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.patterns.AbstractItemset;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +30,10 @@ import java.util.List;
 * 
  * @author Philippe Fournier-Viger
  */
-public class Itemsets{
+public class Itemsets implements GenericResults {
 	/** We store the itemsets in a list named "levels".
 	 Position i in "levels" contains the list of itemsets of size i */
-	private final List<List<Itemset>> levels = new ArrayList<List<Itemset>>(); 
+	private final List<ListOfItemset> levels = new ArrayList<>();
 	/** the total number of itemsets **/
 	private int itemsetsCount = 0;
 	/** a name that we give to these itemsets (e.g. "frequent itemsets") */
@@ -42,7 +45,7 @@ public class Itemsets{
 	 */
 	public Itemsets(String name) {
 		this.name = name;
-		levels.add(new ArrayList<Itemset>()); // We create an empty level 0 by
+		levels.add(new ListOfArrayItemset()); // We create an empty level 0 by
 												// default.
 	}
 
@@ -54,11 +57,11 @@ public class Itemsets{
 		int patternCount = 0;
 		int levelCount = 0;
 		// for each level (a level is a set of itemsets having the same number of items)
-		for (List<Itemset> level : levels) {
+		for (ListOfItemset level : levels) {
 			// print how many items are contained in this level
 			System.out.println("  L" + levelCount + " ");
 			// for each itemset
-			for (Itemset itemset : level) {
+			for (AbstractItemset itemset : level) {
 //				Arrays.sort(itemset.getItems());
 				// print the itemset
 				System.out.print("  pattern " + patternCount + ":  ");
@@ -79,7 +82,7 @@ public class Itemsets{
 	 */
 	public void addItemset(Itemset itemset, int k) {
 		while (levels.size() <= k) {
-			levels.add(new ArrayList<Itemset>());
+			levels.add(new ListOfArrayItemset());
 		}
 		levels.get(k).add(itemset);
 		itemsetsCount++;
@@ -88,7 +91,8 @@ public class Itemsets{
 	/* (non-Javadoc)
 	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#getLevels()
 	 */
-	public List<List<Itemset>> getLevels() {
+	@Override
+	public List<ListOfItemset> getLevels() {
 		return levels;
 	}
 

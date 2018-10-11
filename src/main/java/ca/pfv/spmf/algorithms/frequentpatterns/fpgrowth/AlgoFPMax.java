@@ -18,24 +18,16 @@
  */
 
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
-import ca.pfv.spmf.tools.MemoryLogger;
 
 /** 
  * This is an implementation of the FPMax algorithm (Grahne et al., 2004).
@@ -54,145 +46,32 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see Itemsets
  * @author Philippe Fournier-Viger, 2015
  */
-public class AlgoFPMax {
+public class AlgoFPMax extends GenericFPGrowthAlgorithmBase {
 
-	// for statistics
-	private long startTimestamp; // start time of the latest execution
-	private long endTime; // end time of the latest execution
-	private int transactionCount = 0; // transaction count in the database
-	private int itemsetCount; // number of freq. itemsets found
-	
-	// parameter
-	public int minSupportRelative;// the relative minimum support
-	
-	BufferedWriter writer = null; // object to write the output file
-	
-	// The  patterns that are found 
-	// (if the user want to keep them into memory)
-	protected Itemsets patterns = null;
-		
-	// This variable is used to determine the size of buffers to store itemsets.
-	// A value of 2000 should be enough 
-	final int BUFFERS_SIZE = 2000;
-	
 	// buffer for storing the current itemset that is mined when performing mining
 	// the idea is to always reuse the same buffer to reduce memory usage.
 	private int[] itemsetBuffer = null;
 	
 	// This is the MFI tree for storing maximal itemsets
-	public MFITree mfiTree = null;
+	public FITree mfiTree = null;
 	
-	// Map to store the support of single items in the original databse
-	private Map<Integer, Integer> originalMapSupport = null;
-	
-	// If set to true, the algorithm will show  information for debugging in the console
-	private final boolean DEBUG = false;
-	
-	// Comparator to compare the items based on the order of decreasing support in the original DB.
-	Comparator<Integer> comparatorOriginalOrder = new Comparator<Integer>(){
-		public int compare(Integer item1, Integer item2){
-			// compare the frequency
-			int compare = originalMapSupport.get(item2) - originalMapSupport.get(item1);
-			// if the same frequency, we check the lexical ordering!
-			if(compare == 0){ 
-				compare = (item1 - item2);
-				return compare;
-			}
-			return compare;
-		}
-	};
-
 	/**
 	 * Constructor
 	 */
 	public AlgoFPMax() {
-		
+		super(null);
 	}
 
-	/**
-	 * Method to run the FPGRowth algorithm.
-	 * @param input the path to an input file containing a transaction database.
-	 * @param output the output file path for saving the result (if null, the result 
-	 *        will be returned by the method instead of being saved).
-	 * @param minsupp the minimum support threshold.
-	 * @return the result if no output file path is provided.
-	 * @throws IOException exception if error reading or writing files
-	 */
-	public Itemsets runAlgorithm(String input, String output, double minsupp) throws FileNotFoundException, IOException {
-		// record start time
-		startTimestamp = System.currentTimeMillis();
-		// number of itemsets found
-		itemsetCount = 0;
-		
-		//initialize tool to record memory usage
-		MemoryLogger.getInstance().reset();
-		MemoryLogger.getInstance().checkMemory();
-		
-		// if the user want to keep the result into memory
-		if(output == null){
-			writer = null;
-			patterns =  new Itemsets("FREQUENT ITEMSETS");
-	    }else{ // if the user want to save the result to a file
-			patterns = null;
-			writer = new BufferedWriter(new FileWriter(output)); 
-		}
-		
-		// (1) PREPROCESSING: Initial database scan to determine the frequency of each item
-		// The frequency is stored in a map:
-		//    key: item   value: support
-		originalMapSupport = scanDatabaseToDetermineFrequencyOfSingleItems(input); 
-
-		// convert the minimum support as percentage to a
-		// relative minimum support
-		this.minSupportRelative = (int) Math.ceil(minsupp * transactionCount);
-		
+	@Override
+	protected void bottomHalf(FPTree tree) throws IOException {
 
 		// Create the MFI Tree
-		mfiTree = new MFITree();	
-		
-		// (2) Scan the database again to build the initial FP-Tree
-		// Before inserting a transaction in the FPTree, we sort the items
-		// by descending order of support.  We ignore items that
-		// do not have the minimum support.
-		FPTree tree = new FPTree();
-		
-		// read the file
-		BufferedReader reader = new BufferedReader(new FileReader(input));
-		String line;
-		// for each line (transaction) until the end of the file
-		while( ((line = reader.readLine())!= null)){ 
-			// if the line is  a comment, is  empty or is a
-			// kind of metadata
-			if (line.isEmpty() == true ||	line.charAt(0) == '#' || line.charAt(0) == '%'
-				|| line.charAt(0) == '@') {
-				continue;
-			}
-			
-			String[] lineSplited = line.split(" ");
-			List<Integer> transaction = new ArrayList<Integer>();
-			
-			// for each item in the transaction
-			for(String itemString : lineSplited){  
-				Integer item = Integer.parseInt(itemString);
-				// only add items that have the minimum support
-				if(originalMapSupport.get(item) >= minSupportRelative){
-					transaction.add(item);	
-				}
-			}
-			// sort item in the transaction by descending order of support
-			Collections.sort(transaction, comparatorOriginalOrder);
-			// add the sorted transaction to the fptree.
-			tree.addTransaction(transaction);
-		}
-		// close the input file
-		reader.close();
-		
+		mfiTree = new FITree();
+
 		// We create the header table for the tree using the calculated support of single items
-		tree.createHeaderList(originalMapSupport);
+		tree.createHeaderList(getOriginalMapSupport());
 		
 
-//		System.out.println(tree);
-		
 		// (5) We start to mine the FP-Tree by calling the recursive method.
 		// Initially, the prefix alpha is empty.
 		// if at least an item is frequent
@@ -200,21 +79,9 @@ public class AlgoFPMax {
 			// initialize the buffer for storing the current itemset
 			itemsetBuffer = new int[BUFFERS_SIZE];
 			// Next we will recursively generate frequent itemsets using the fp-tree
-			fpMax(tree, itemsetBuffer, 0, transactionCount, originalMapSupport);
+			fpMax(tree, itemsetBuffer, 0, getTransactionCount(), getOriginalMapSupport());
 		}
 		
-		// close the output file if the result was saved to a file
-		if(writer != null){
-			writer.close();
-		}
-		// record the execution end time
-		endTime= System.currentTimeMillis();
-		
-		// check the memory usage
-		MemoryLogger.getInstance().checkMemory();
-		
-		// return the result (if saved to memory)
-		return patterns;
 	}
 
 	
@@ -271,9 +138,9 @@ public class AlgoFPMax {
 		}
 		
 		// Case 1: the FPtree contains a single path
-		if(singlePath && singlePathSupport >= minSupportRelative){	
+		if(singlePath && singlePathSupport >= getMinSupportRelative()){
 			// We save the path, because it is a maximal itemset
-			saveItemset(itemsetBuffer, position, singlePathSupport);
+			saveItemset(mfiTree, itemsetBuffer, position, singlePathSupport);
 		}else {
 			// Case 2: There are multiple paths.
 			
@@ -350,7 +217,7 @@ public class AlgoFPMax {
 				// for each item
 				for(Entry<Integer,Integer> entry: mapSupportBeta.entrySet()) {
 					// if the item is frequent
-					if(entry.getValue() >= minSupportRelative) {
+					if(entry.getValue() >= getMinSupportRelative()) {
 						headWithP.add(entry.getKey());
 					}
 				}
@@ -376,13 +243,13 @@ public class AlgoFPMax {
 					FPTree treeBeta = new FPTree();
 					// Add each prefixpath in the FP-tree.
 					for(List<FPNode> prefixPath : prefixPaths){
-						treeBeta.addPrefixPath(prefixPath, mapSupportBeta, minSupportRelative); 
+						treeBeta.addPrefixPath(prefixPath, mapSupportBeta, getMinSupportRelative());
 					}  
 					// Mine recursively the Beta tree if the root has child(s)
 					if(treeBeta.root.childs.size() > 0){
 
 						// Create the header list.
-						treeBeta.createHeaderList(originalMapSupport); 
+						treeBeta.createHeaderList(getOriginalMapSupport());
 						
 						// recursive call
 						fpMax(treeBeta, prefix, prefixLength+1, betaSupport, mapSupportBeta);
@@ -396,7 +263,7 @@ public class AlgoFPMax {
 					Collections.sort(temp, comparatorOriginalOrder);
 					// if beta pass the test, we save it
 					if(mfiTree.passSubsetChecking(temp)) {
-						saveItemset(prefix, prefixLength+1, betaSupport);
+						saveItemset(mfiTree, prefix, prefixLength+1, betaSupport);
 					}
 					//===========================================================
 				}
@@ -408,147 +275,16 @@ public class AlgoFPMax {
 	}
 
 	/**
-	 * Write a frequent itemset that is found to the output file or
-	 * keep into memory if the user prefer that the result be saved into memory.
-	 */
-	private void saveItemset(int [] itemset, int itemsetLength, int support) throws IOException {
-		
-		// copy the itemset in the output buffer and sort items according to the
-		// order of decreasing support in the original database
-		int[] itemsetCopy = new int[itemsetLength];
-		System.arraycopy(itemset, 0, itemsetCopy, 0, itemsetLength);
-		sortOriginalOrder(itemsetCopy, itemsetLength);
-		
-		if(DEBUG) {
-	//		//======= DEBUG ========
-			System.out.print(" ##### SAVING : ");
-			for(int i=0; i< itemsetLength; i++) {
-				System.out.print(itemsetCopy[i] + "  ");
-			}
-			System.out.println("\n");
-	//		//========== END DEBUG =======
-		}
-		
-		// add the itemset to the MFI-TREE
-		mfiTree.addMFI(itemsetCopy, itemsetCopy.length, support);
-		
-		// increase the number of itemsets found for statistics purpose
-		itemsetCount++;
-		
-		// if the result should be saved to a file
-		if(writer != null){
-			
-			// Create a string buffer
-			StringBuilder buffer = new StringBuilder();
-			// write the items of the itemset
-			for(int i=0; i< itemsetLength; i++){
-				buffer.append(itemsetCopy[i]);
-				if(i != itemsetLength-1){
-					buffer.append(' ');
-				}
-			}
-			// Then, write the support
-			buffer.append(" #SUP: ");
-			buffer.append(support);
-			// write to file and create a new line
-			writer.write(buffer.toString());
-			writer.newLine();
-		}// otherwise the result is kept into memory
-		else{
-			
-			// sort the itemset so that it is sorted according to lexical ordering before we show it to the user
-			Arrays.sort(itemsetCopy);
-			
-			Itemset itemsetObj = new Itemset(itemsetCopy);
-			itemsetObj.setAbsoluteSupport(support);
-			patterns.addItemset(itemsetObj, itemsetLength);
-		}
-	}
-	
-	/**
-	 * Sort an array of items according to the total order of support
-	 * This has an average performance of O(n^2)
-	 * @param a array of integers
-	 */
-	public void sortOriginalOrder(int [] a, int length){
-		// Perform a bubble sort
-		for(int i=0; i < length; i++){
-			for(int j= length -1; j>= i+1; j--){
-				boolean test = comparatorOriginalOrder.compare(a[j], a[j-1]) < 0;
-				if(test){
-					int temp = a[j];
-					a[j] = a[j-1];
-					a[j-1] = temp;
-				}
-			}
-		}
-
-	}
-
-
-	/**
-	 * This method scans the input database to calculate the support of single items
-	 * @param input the path of the input file
-	 * @throws IOException  exception if error while writing the file
-	 * @return a map for storing the support of each item (key: item, value: support)
-	 */
-	private  Map<Integer, Integer> scanDatabaseToDetermineFrequencyOfSingleItems(String input)
-			throws FileNotFoundException, IOException {
-		// a map for storing the support of each item (key: item, value: support)
-		 Map<Integer, Integer> mapSupport = new HashMap<Integer, Integer>();
-		//Create object for reading the input file
-		BufferedReader reader = new BufferedReader(new FileReader(input));
-		String line;
-		// for each line (transaction) until the end of file
-		while( ((line = reader.readLine())!= null)){ 
-			// if the line is  a comment, is  empty or is a
-			// kind of metadata
-			if (line.isEmpty() == true ||  line.charAt(0) == '#' || line.charAt(0) == '%' 	|| line.charAt(0) == '@') {
-				continue;
-			}
-			
-			// split the line into items
-			String[] lineSplited = line.split(" ");
-			// for each item
-			for(String itemString : lineSplited){  
-				// increase the support count of the item
-				Integer item = Integer.parseInt(itemString);
-				// increase the support count of the item
-				Integer count = mapSupport.get(item);
-				if(count == null){
-					mapSupport.put(item, 1);
-				}else{
-					mapSupport.put(item, ++count);
-				}
-			}
-			// increase the transaction count
-			transactionCount++;
-		}
-		// close the input file
-		reader.close();
-		
-		return mapSupport;
-	}
-
-
-	/**
 	 * Print statistics about the algorithm execution to System.out.
 	 */
+	@Override
 	public void printStats() {
-		System.out.println("=============  FP-Max v0.96r14  - STATS =============");
-		long temps = endTime - startTimestamp;
-		System.out.println(" Transactions count from database : " + transactionCount);
-		System.out.print(" Max memory usage: " + MemoryLogger.getInstance().getMaxMemory() + " mb \n");
-		System.out.println(" Maximal frequent itemset count : " + itemsetCount); 
-		System.out.println(" Total time ~ " + temps + " ms");
-		System.out.println("===================================================");
+		printStats("FP-Max","v0.96r14");
 	}
 
-	/**
-	 * Get the number of transactions in the last transaction database read.
-	 * @return the number of transactions.
-	 */
-	public int getDatabaseSize() {
-		return transactionCount;
+	@Override
+	public FITree getFiTree() {
+		return mfiTree;
 	}
+
 }

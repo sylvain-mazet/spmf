@@ -37,7 +37,7 @@ public class MainTestMNRRules_saveToFile extends MainTestBase {
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
 		TZTableClosed results = zart.runAlgorithm(database, minsup);
-		zart.printStatistics();
+		zart.printStats();
 		
 //		// PRINT RESULTS FROM THE ZART ALGORITHM
 //		int countClosed=0;

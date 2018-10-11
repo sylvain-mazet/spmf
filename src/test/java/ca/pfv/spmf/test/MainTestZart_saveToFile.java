@@ -29,7 +29,7 @@ public class MainTestZart_saveToFile extends MainTestBase {
 		AlgoZart zart = new AlgoZart();
 		TZTableClosed results = zart.runAlgorithm(context, minsup);
 		TFTableFrequent frequents = zart.getTableFrequent();
-		zart.printStatistics();
+		zart.printStats();
 		zart.saveResultsToFile(output);
 			
 	}

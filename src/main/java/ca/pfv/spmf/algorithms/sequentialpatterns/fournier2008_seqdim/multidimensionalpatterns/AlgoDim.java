@@ -28,6 +28,7 @@ import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTID.AlgoAprioriTID;
 import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTIDClose.AlgoAprioriTIDClose;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
 
@@ -136,11 +137,11 @@ public class AlgoDim{
 			// Convert patterns found by Charm into MDPatterns
 			
 			// for each level
-			for(List<ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset> itemsets : frequentPatterns.getLevels()){
+			for(List<AbstractItemset> itemsets : frequentPatterns.getLevels()){
 				// for each pattern found by charm
-				for(ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset itemset : itemsets){
+				for(AbstractItemset itemset : itemsets){
 					// convert to a md-pattern
-					MDPattern pattern = convertItemsetCharmToPattern(itemset);
+					MDPattern pattern = convertItemsetCharmToPattern((ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset) itemset);
 					// add to the set of patterns found
 					patterns.addPattern(pattern, pattern.size());
 					

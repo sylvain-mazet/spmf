@@ -16,12 +16,14 @@ package ca.pfv.spmf.algorithms.frequentpatterns.zart;
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 
 /**
  * This class represents the TZ table containing the closed itemsets
@@ -30,12 +32,12 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
  * @see AlgoZart
  * @author Philippe Fournier-Viger
  */
-public class TZTableClosed {
+public class TZTableClosed implements GenericResults {
 	
 	/** This store the closed itemsets by size
 	 At position i, there are the list of closed itemsets 
 	 of size i */
-	public final List<List<Itemset>> levels = new ArrayList<List<Itemset>>();  // itemset classé par taille
+	public final List<ListOfItemset> levels = new ArrayList<>();  // itemset classï¿½ par taille
 	
 	/** each entry of the following map is :  <br/>
 	 key : a closed itemset       <br/>
@@ -50,10 +52,15 @@ public class TZTableClosed {
 		// if there is no array list until the size of this itemset
 		// then create them.
 		while(levels.size() <= itemset.size()){
-			levels.add(new ArrayList<Itemset>());
+			levels.add(new ListOfArrayItemset());
 		}
 		// add the itemset in the proper arraylist according to the size of the itemset
 		levels.get(itemset.size()).add(itemset);
+	}
+
+	@Override
+	public List<ListOfItemset> getLevels() {
+		return levels;
 	}
 	
 	/**
@@ -61,11 +68,11 @@ public class TZTableClosed {
 	 * @param i  the size i.
 	 * @return  a list of itemsets
 	 */
-	public List<Itemset> getLevelForZart(int i){
+	public ListOfItemset getLevelForZart(int i){
 		// if this level does not exist
 		if(i+1 == levels.size()){
 			// create it
-			List<Itemset> newList = new ArrayList<Itemset>();
+			ListOfItemset newList = new ListOfArrayItemset();
 			levels.add(newList);
 			return newList;
 		}

@@ -25,6 +25,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
+import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.AbstractOrderedItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
@@ -166,13 +169,14 @@ public class AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(List<Itemset> itemsetsSameSize : patterns.getLevels()){
+		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
 			// Sort by lexicographical order using a Comparator
-			Collections.sort(itemsetsSameSize, new Comparator<Itemset>() {
+			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override
-				public int compare(Itemset o1, Itemset o2) {
+				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
-					return ArraysAlgos.comparatorItemsetSameSize.compare(o1.getItems(), o2.getItems());
+					//  we know we have tids bitset itemset's.... TODO remove this down cast
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
 				}
 			});
 		}
@@ -183,7 +187,8 @@ public class AlgoAgrawalFaster94{
 		// For each frequent itemset of size >=2 that we will name "lk"
 		int maxSize = maxAntecedentLength;
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
-			for (Itemset lk : patterns.getLevels().get(k)) {
+			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
+				Itemset lk = (Itemset) lkAbs;
 				
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();
@@ -346,7 +351,7 @@ public class AlgoAgrawalFaster94{
 	 */
 	private int calculateSupport(int[] itemset) {
 		// We first get the list of patterns having the same size as "itemset"
-		List<Itemset> patternsSameSize = patterns.getLevels().get(itemset.length);
+		GenericResults.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
 //		
 		// We perform a binary search to find the position of itemset in this list
         int first = 0;
@@ -355,7 +360,7 @@ public class AlgoAgrawalFaster94{
         while( first <= last )
         {
         	int middle = ( first + last ) >>1 ; // >>1 means to divide by 2
-        	int[] itemsetMiddle = patternsSameSize.get(middle).getItems();
+        	int[] itemsetMiddle = ((Itemset) patternsSameSize.get(middle)).getItems();
 
         	int comparison = ArraysAlgos.comparatorItemsetSameSize.compare(itemset, itemsetMiddle);
             if(comparison  > 0 ){
@@ -515,7 +520,7 @@ public class AlgoAgrawalFaster94{
 	
 	/** 
 	 * Set the maximum antecedent length
-	 * @param length the maximum length
+	 * @param maxAntecedentLength the maximum length
 	 */
 	public void setMaxAntecedentLength(int maxAntecedentLength) {
 		this.maxAntecedentLength = maxAntecedentLength;
@@ -523,7 +528,7 @@ public class AlgoAgrawalFaster94{
 	
 	/** 
 	 * Set the maximum consequent length
-	 * @param length the maximum length
+	 * @param maxConsequentLength the maximum length
 	 */
 	public void setMaxConsequentLength(int maxConsequentLength) {
 		this.maxConsequentLength = maxConsequentLength;

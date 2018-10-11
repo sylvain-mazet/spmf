@@ -26,7 +26,7 @@ public class MainTestFPClose_saveToMemory extends MainTestBase {
 		AlgoFPClose algo = new AlgoFPClose();
 		// Run the algorithm
 		// Note that here we use "null" as output file path because we want to keep the results into memory instead of saving to a file
-		Itemsets patterns = algo.runAlgorithm(input, null, minsup);  
+		Itemsets patterns = (Itemsets)algo.runAlgorithm(input, null, minsup);
 		
 		// Show the CFI-Tree for debugging!
 //		System.out.println(algo.cfiTree);

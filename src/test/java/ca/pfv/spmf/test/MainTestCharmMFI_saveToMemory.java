@@ -5,9 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharmMFI;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
@@ -49,8 +51,9 @@ public class MainTestCharmMFI_saveToMemory extends MainTestBase {
 		// Code to browse the itemsets in memory
 		System.out.println(" ===== MAXIMAL ITEMSETS FOUND ====");
 		Itemsets itemsets = algo2.getItemsets();
-		for(List<Itemset> level : itemsets.getLevels()) {
-			 for(Itemset itemset : level) {
+		for(GenericResults.ListOfItemset level : itemsets.getLevels()) {
+			 for(AbstractItemset itemsetAbs : level) {
+			 	Itemset itemset = (Itemset) itemsetAbs;
 				 for(Integer item : itemset.itemset) {
 					 System.out.print(item );
 				 }

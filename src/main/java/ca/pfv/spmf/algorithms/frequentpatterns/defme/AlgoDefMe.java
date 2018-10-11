@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ca.pfv.spmf.algorithms.DbScanner;
+import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
@@ -55,37 +58,18 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
-public class AlgoDefMe {
+public class AlgoDefMe extends GenericAlgorithmBase {
 
-	/** relative minimum support **/
-	private int minsupRelative;  
-	
 	/** the transaction database **/
 	private TransactionDatabase database; 
 
-	/**  start time of the last execution */
-	private long startTimestamp;
-	
-	/** end  time of the last execution */
-	private long endTime; 
-	
-	/** 
+	/**
 	 The  patterns that are found 
 	 (if the user want to keep them into memory) */
 	protected Itemsets generators;
 	
-	/** object to write the output file */
-	BufferedWriter writer = null; 
-	
-	/** the number of patterns found */
-	private int itemsetCount;
-	
 	/** A map containing the tidset (i.e. cover) of each item represented as a bitset */
 	private Map<Integer, BitSetSupport> mapItemTIDS; 
-	
-	/**  buffer for storing the current itemset that is mined when performing mining
-	  the idea is to always reuse the same buffer to reduce memory usage. */
-	final int BUFFERS_SIZE = 2000;
 	
 	/** size of the buffer*/
 	private int[] itemsetBuffer = null;
@@ -97,12 +81,121 @@ public class AlgoDefMe {
 	 * Default constructor
 	 */
 	public AlgoDefMe() {
-		
+		super(null);
 	}
 
 
+	@Override
+	public GenericResults runAlgorithm(DbScanner dbScanner, double minsup) throws IOException {
+		// Reset the tool to assess the maximum memory usage (for statistics)
+		MemoryLogger.getInstance().reset();
+
+		// initialize the buffer for storing the current itemset
+		itemsetBuffer = new int[BUFFERS_SIZE];
+
+		// if the user want to keep the result into memory
+		if(getOutput() == null){
+			writer = null;
+			generators =  new Itemsets("FREQUENT ITEMSETS");
+		}else{ // if the user want to save the result to a file
+			generators = null;
+			writer = new BufferedWriter(new FileWriter(getOutput()));
+		}
+
+		// reset the number of itemset found to 0
+		itemsetCount = 0;
+
+		this.database = database;
+
+		// record the start time
+		startTimestamp = System.currentTimeMillis();
+
+		// convert from an absolute minsup to a relative minsup by multiplying
+		// by the database size
+		this.minSupportRelative = (int) Math.ceil(minsup * database.size());
+
+		// Calculate the tidset of each single item (what is called COV() in the paper)
+		mapItemTIDS = new HashMap<Integer, BitSetSupport>();
+		// also compute number of transactions
+		Integer transactionCount = 0;
+		// for each transaction
+		DbScanner.DbIterator dbIterator = dbScanner.dbIterator();
+		while (dbIterator.hasNext()) {
+			// Add the transaction id to the set of all transaction ids
+			// for each item in that transaction
+			// For each item
+			DbScanner.TransactionIterator transactionIterator = dbIterator.next();
+			while (transactionIterator.hasNext()) {
+				Integer item = transactionIterator.next();
+				// Get the current tidset of that item
+				BitSetSupport tids = mapItemTIDS.get(item);
+				// If none, then we create one
+				if(tids == null){
+					tids = new BitSetSupport();
+					mapItemTIDS.put(item, tids);
+				}
+				// we add the current transaction id to the tidset of the item
+				// transactrions need an int id!!! I need a thing like ES global map!! tids.bitset.set(i);
+				// I do this for now, but I am not sure the order of db scan is deterministic grrr...
+				tids.bitset.set(transactionCount);
+				// we increase the support of that item
+				tids.support++;
+			}
+			transactionCount++;
+		}
+		setTransactionCount(transactionCount);
+
+		// (2) create the list of single frequent items
+		List<Integer> frequentItems = new ArrayList<Integer>();
+
+		// for each item
+		for(Entry<Integer, BitSetSupport> entry : mapItemTIDS.entrySet()) {
+			// get the support and tidset of that item
+			BitSetSupport tidset = entry.getValue();
+			int support = tidset.support;
+			int item = entry.getKey();
+			// if the item is frequent
+			if(support >= minSupportRelative && maxItemsetSize >=1) {
+				// add the item to the list of frequent items
+				frequentItems.add(item);
+			}
+		}
+
+
+		// Sort the list of items by the total order of increasing support.
+		// This total order is suggested in the article by Zaki.
+		Collections.sort(frequentItems, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer arg0, Integer arg1) {
+				return mapItemTIDS.get(arg0).support - mapItemTIDS.get(arg1).support;
+			}});
+
+
+		// Create the tidset of the empty set
+		BitSet tidsetEmptySet = new BitSet(database.size());
+		tidsetEmptySet.set(0, database.size());
+
+		// Initial call of the defme procedure
+		defme(itemsetBuffer, 0, tidsetEmptySet, database.size(), frequentItems, 0, new BitSet[0]);
+
+
+		// we check the memory usage
+		MemoryLogger.getInstance().checkMemory();
+
+		// close the output file if the result was saved to a file
+		if(writer != null){
+			writer.close();
+		}
+
+		// record the end time for statistics
+		endTime = System.currentTimeMillis();
+
+		// Return all frequent itemsets found!
+		return generators;
+	}
+
 	/**
-	 * Run the algorithm.
+	 * Run the algorithm with original interface.
 	 * @param database a transaction database
 	 * @param output an output file path for writing the result or if null the result is saved into memory and returned
 	 * @param minsup the minimum support
@@ -136,7 +229,7 @@ public class AlgoDefMe {
 		
 		// convert from an absolute minsup to a relative minsup by multiplying
 		// by the database size
-		this.minsupRelative = (int) Math.ceil(minsup * database.size());
+		this.minSupportRelative = (int) Math.ceil(minsup * database.size());
 
 		// Calculate the tidset of each single item (what is called COV() in the paper)
 		mapItemTIDS = new HashMap<Integer, BitSetSupport>();
@@ -171,7 +264,7 @@ public class AlgoDefMe {
 			int support = tidset.support;
 			int item = entry.getKey();
 			// if the item is frequent
-			if(support >= minsupRelative && maxItemsetSize >=1) {
+			if(support >= minSupportRelative && maxItemsetSize >=1) {
 				// add the item to the list of frequent items
 				frequentItems.add(item);
 			}
@@ -260,7 +353,7 @@ public class AlgoDefMe {
 				int supportXe = tidsetXe.cardinality();
 				
 				// If XU{e} is infrequent, we don't need to consider it anymore
-				if(supportXe < minsupRelative) {
+				if(supportXe < minSupportRelative) {
 					continue;
 				}
 				
@@ -287,7 +380,7 @@ public class AlgoDefMe {
 
 	/**
 	 * Save an itemset to disk or memory (depending on what the user chose).
-	 * @param itemsetN the itemset to be saved
+	 * @param prefix the itemset to be saved
 	 * @param prefixLength the prefix length
 	 * @param tidset the tidset and support of this itemset 
 	 * @param support the support of that itemset
@@ -346,7 +439,7 @@ public class AlgoDefMe {
 	}
 	
 	/**
-	 * Anonymous inner class to store a bitset and its cardinality
+	 * Inner class to store a bitset and its cardinality
 	 * (an itemset's tidset and its support).
 	 * Storing the cardinality is useful because the cardinality() method
 	 * of a bitset in Java is very expensive, so it should not be called

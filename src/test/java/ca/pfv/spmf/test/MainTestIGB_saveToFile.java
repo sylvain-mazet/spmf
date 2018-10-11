@@ -33,7 +33,7 @@ public class MainTestIGB_saveToFile extends MainTestBase {
 		AlgoZart zart = new AlgoZart();
 		double minsup = 0.5;
 		TZTableClosed results = zart.runAlgorithm(database, minsup);
-		zart.printStatistics();
+		zart.printStats();
 		
 		System.out.println("STEP 2 : RUNNING THE IGB ALGORITHM");
 		// Apply the IGB algorithm

@@ -27,7 +27,7 @@ import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
  * This class describes the AprioriClose algorithm parameters. 
  * It is designed to be used by the graphical and command line interface.
  * 
- * @see AprioriClose
+ * @see ca.pfv.spmf.algorithms.frequentpatterns.apriori_close.AlgoAprioriClose
  * @author Philippe Fournier-Viger
  */
 public class DescriptionAlgoZart extends DescriptionOfAlgorithm {
@@ -64,7 +64,7 @@ public class DescriptionAlgoZart extends DescriptionOfAlgorithm {
 		// Apply the Zart algorithm
 		AlgoZart zart = new AlgoZart();
 		zart.runAlgorithm(context, minsup);
-		zart.printStatistics();
+		zart.printStats();
 		zart.saveResultsToFile(outputFile);
 	}
 

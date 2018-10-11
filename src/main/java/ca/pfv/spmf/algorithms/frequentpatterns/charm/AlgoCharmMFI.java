@@ -23,8 +23,10 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
@@ -112,11 +114,11 @@ public class AlgoCharmMFI {
 		// For closed itemsets of size i=1 to the largest size
 		for (int i = 1; i < maxItemsetLength - 1; i++) {
 			// Get the itemsets of size i
-			List<Itemset> ti = frequentClosed.getLevels().get(i);
+			GenericResults.ListOfItemset ti = frequentClosed.getLevels().get(i);
 			// For closed itemsets of size j = i+1 to the largest size
 			for (int j = i+1; j < maxItemsetLength; j++) {
 				// get itemsets of size j
-				List<Itemset> tip1 = frequentClosed.getLevels().get(j);
+				GenericResults.ListOfItemset tip1 = frequentClosed.getLevels().get(j);
 				
 				// Check which itemsets are maximals by comparing itemsets
 				// of size i and i+1
@@ -127,14 +129,14 @@ public class AlgoCharmMFI {
 		// If the user chose to save the output to a file
 		if(writer != null){
 			// For itemsets of size i = 1 to the maximum itemset length
-			for(List<Itemset> level : maximalItemsets.getLevels()){
+			for(GenericResults.ListOfItemset level : maximalItemsets.getLevels()){
 				// For each itemset of length i
 				for(int i=0; i < level.size(); i++){
-					Itemset itemset = level.get(i);
+					AbstractItemset itemset = level.get(i);
 					// save the itemset an its support
 					writer.write(itemset.toString() + " #SUP: "	+ itemset.getAbsoluteSupport());
 					if(showTransactionIdentifiers) {
-						BitSet bitset = itemset.getTransactionsIds();
+						BitSet bitset = ((Itemset)itemset).getTransactionsIds();
 			        	writer.append(" #TID:");
 			        	for (int tid = bitset.nextSetBit(0); tid != -1; tid = bitset.nextSetBit(tid + 1)) {
 			        		writer.append(" " + tid); 
@@ -158,16 +160,16 @@ public class AlgoCharmMFI {
 	 * @param tip1 itemsets of size j
 	 * @param maximalItemsets the current set of maximal itemsets
 	 */
-	private void findMaximal(List<Itemset> ti, List<Itemset> tip1, Itemsets maximalItemsets) {
+	private void findMaximal(GenericResults.ListOfItemset ti, GenericResults.ListOfItemset tip1, Itemsets maximalItemsets) {
 		// for each itemset of j
-		for (Itemset itemsetJ : tip1) {
+		for (AbstractItemset itemsetJ : tip1) {
 			// iterates over the itemsets of size i
-			Iterator<Itemset> iter = ti.iterator();
+			Iterator<AbstractItemset> iter = ti.iterator();
 			while (iter.hasNext()) {
 				Itemset itemsetI = (Itemset) iter.next();
 				// if the current itemset of size i is contained
 				// in the current itemset of size J
-				if (itemsetJ.containsAll(itemsetI) ) {
+				if (((Itemset)itemsetJ).containsAll(itemsetI) ) {
 					// Then, it means that the itemset of size I is not maximal so we remove it
 					iter.remove();
 					// We decrease the current number of maximal itemsets.

@@ -25,9 +25,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRule;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.mHUIMiner.Item;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
@@ -146,13 +149,14 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(List<Itemset> itemsetsSameSize : patterns.getLevels()){
+		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
 			// Sort by lexicographical order using a Comparator
-			Collections.sort(itemsetsSameSize, new Comparator<Itemset>() {
+			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override
-				public int compare(Itemset o1, Itemset o2) {
+				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
-					return ArraysAlgos.comparatorItemsetSameSize.compare(o1.getItems(), o2.getItems());
+					//  we know we have tids bitset itemset's.... TODO remove this down cast
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
 				}
 			});
 		}
@@ -162,8 +166,9 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 		
 		// For each frequent itemset of size >=2 that we will name "lk"
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
-			for (Itemset lk : patterns.getLevels().get(k)) {
-				
+			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
+				Itemset lk = (Itemset) lkAbs;
+
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();
 				
@@ -319,7 +324,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 */
 	private int calculateSupport(int[] itemset) {
 		// We first get the list of patterns having the same size as "itemset"
-		List<Itemset> patternsSameSize = patterns.getLevels().get(itemset.length);
+		GenericResults.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
 //		
 		// We perform a binary search to find the position of itemset in this list
         int first = 0;
@@ -328,7 +333,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
         while( first <= last )
         {
         	int middle = ( first + last ) >>1 ; // >>1 means to divide by 2
-        	int[] itemsetMiddle = patternsSameSize.get(middle).getItems();
+        	int[] itemsetMiddle = ((Itemset)patternsSameSize.get(middle)).getItems();
 
         	int comparison = ArraysAlgos.comparatorItemsetSameSize.compare(itemset, itemsetMiddle);
             if(comparison  > 0 ){
@@ -351,9 +356,10 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
         int size = itemset.length;
  loop:  while(true) {
  			size++;
-        	List<Itemset> patternsList = patterns.getLevels().get(size);
+        	GenericResults.ListOfItemset patternsList = patterns.getLevels().get(size);
         	// For each pattern of a given size
-        	for(Itemset pattern : patternsList) {
+        	for(AbstractItemset patternAbs : patternsList) {
+        		Itemset pattern = (Itemset)patternAbs;
         		int[] patternArray = pattern.getItems();
         		
         		// If the first item of the pattern is larger than the first item of the itemset,

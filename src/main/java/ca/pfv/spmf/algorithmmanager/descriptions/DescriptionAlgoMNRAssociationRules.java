@@ -71,7 +71,7 @@ public class DescriptionAlgoMNRAssociationRules extends DescriptionOfAlgorithm {
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
 		TZTableClosed results = zart.runAlgorithm(database, minsup);
-		zart.printStatistics();
+		zart.printStats();
 		
 		System.out.println("STEP 2 : CALCULATING MNR ASSOCIATION RULES");
 		// Run the algorithm to generate MNR rules

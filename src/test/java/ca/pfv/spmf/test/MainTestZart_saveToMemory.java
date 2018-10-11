@@ -9,6 +9,7 @@ import ca.pfv.spmf.algorithms.frequentpatterns.zart.AlgoZart;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TFTableFrequent;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 /**
  * Example of how to use the Zart Algorithm in source code.
@@ -28,7 +29,7 @@ public class MainTestZart_saveToMemory extends MainTestBase {
 		AlgoZart zart = new AlgoZart();
 		TZTableClosed results = zart.runAlgorithm(context, minsup);
 		TFTableFrequent frequents = zart.getTableFrequent();
-		zart.printStatistics();
+		zart.printStats();
 		
 		// PRINTING RESULTS
 		int countClosed=0;
@@ -36,7 +37,8 @@ public class MainTestZart_saveToMemory extends MainTestBase {
 		System.out.println("======= List of closed itemsets and their generators ============");
 		for(int i=0; i< results.levels.size(); i++){
 			System.out.println("LEVEL (SIZE) : " + i);
-			for(Itemset closed : results.levels.get(i)){
+			for(AbstractItemset closedAbs : results.levels.get(i)){
+				Itemset closed = (Itemset) closedAbs;
 				System.out.println(" CLOSED : \n   " + closed.toString() + "  supp : " + closed.getAbsoluteSupport());
 				countClosed++;
 				System.out.println("   GENERATORS : ");

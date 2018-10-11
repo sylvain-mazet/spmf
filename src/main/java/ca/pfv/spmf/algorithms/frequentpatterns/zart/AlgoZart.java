@@ -25,8 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import ca.pfv.spmf.algorithms.GenericAlgorithm;
+import ca.pfv.spmf.algorithms.DbScanner;
+import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -47,18 +53,10 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @author Philippe Fournier-Viger
  */
 
-public class AlgoZart {
+public class AlgoZart extends GenericAlgorithmBase {
 	
-	// start time of the latest execution
-	long startTimestamp;
-	// end time of the latest execution
-	long endTimestamp;
-
 	// relative minimum support threshold
 	private int minsupRelative =0;
-	
-	// the input database
-	private TransactionDatabase context = null;
 	
 	// the TZ, TF and TC structures as described in the paper
 	private TZTableClosed tableClosed = null;  // table of closed itemsets and their generators
@@ -72,55 +70,64 @@ public class AlgoZart {
 	 * Default constructor
 	 */
 	public AlgoZart() {
+		super(null);
 	}
-	
+
 	/***
-	 * Run the algorithm
+	 * Run the algorithm as in the original code
 	 * @param database  a transaction database
 	 * @param minsupp   the minimum support threshold
 	 * @return  a set of closed itemsets and their associated generator(s)
 	 */
-	public TZTableClosed runAlgorithm(TransactionDatabase database, double minsupp){
+	public TZTableClosed runAlgorithm(TransactionDatabase database, double minsupp) {
+
+		TransactionDatabaseDbScanner dbScanner = new TransactionDatabaseDbScanner(database);
+		return runAlgorithm(dbScanner, minsupp);
+
+	}
+
+
+
+	/**
+	 * Run the algorithm on a dbScanner
+	 * @param dbScanner  a database scanner
+	 * @param minsupp   the minimum support threshold
+	 * @return  a set of closed itemsets and their associated generator(s)
+	 */
+	@Override
+	public TZTableClosed runAlgorithm(DbScanner dbScanner, double minsupp) {
 		// record the start time
 		startTimestamp = System.currentTimeMillis();
 		// reset the utility for recording the memory usage
 		MemoryLogger.getInstance().reset();
-		
-		// save database received as parameter
-		this.context = database;
-		
+
 		// Initialize the FG, TZ,TF and TC structure
 		// used by the algorithm (as described in the paper)
-		frequentGeneratorsFG = new ArrayList<Itemset>(); // 2
+		frequentGeneratorsFG = new ArrayList<>(); // 2
 		tableClosed = new TZTableClosed();   // tabled of closed itemsets
 		tableFrequent = new TFTableFrequent();  // table of frequent itemsets
 		tableCandidate = new TCTableCandidate();  // table of candidates
-		
-		// convert the minimum support from absolute to relative by
-		// multiplying by the database size
-		minsupRelative =  (int) Math.ceil(minsupp * database.size());
-		
+
 		// (1) Scan the database and count the support of each item (in a map)
 		// for this map : key = item value = support
-		Map<Integer, Integer> mapItemSupport = new HashMap<Integer, Integer>();
-		
-		// for each transaction
-		for(List<Integer> transaction : database.getTransactions()){  
-			// for each item in the transaction
-			for(Integer item : transaction){
-				// increase the support count of the item
-				Integer count = mapItemSupport.get(item);
-				if (count == null) {
-					// if first time, then put 1
-					mapItemSupport.put(item, 1);
-				} else {
-					// otherwise increase by 1
-					mapItemSupport.put(item, ++count);
-				}
+		Map<Integer, Integer> mapItemSupport = scanDatabaseToDetermineFrequencyOfSingleItems(dbScanner);
+
+		// convert the minimum support from absolute to relative by
+		// multiplying by the database size
+		minsupRelative =  (int) Math.ceil(minsupp * getTransactionCount());
+
+		// (0) Remove infrequent items  from each transaction.
+		DbScanner.DbIterator dbIterator = dbScanner.dbIterator();
+		while (dbIterator.hasNext()) {
+
+			DbScanner.TransactionIterator transactionIterator = dbIterator.next();
+
+			while (transactionIterator.hasNext()) {
+				Integer item = transactionIterator.next();
 			}
 		}
-		
-		// (0) Remove infrequent items  from each transaction.
+		/* affreux: ne pas appeler remove() sur un Iterator
+		// et je ne veux pas modifier la base de donnees
 		// For each transaction
 		for(List<Integer> transaction : database.getTransactions()){
 			// for each item
@@ -133,11 +140,18 @@ public class AlgoZart {
 					it.remove();
 				}
 			}
-		}	
-		
+		}
+		*/
+
 		// (1) fill candidates with 1-itemsets (single items)
-		tableCandidate.levels.add(new ArrayList<Itemset>());
+		tableCandidate.levels.add(new ArrayList<>());
 		for(Integer item : mapItemSupport.keySet()){
+
+			if (isItemInfrequent(item, mapItemSupport)) {
+				// skip infrequent items
+				continue;
+			}
+
 			// create an itemset for the item and set its support
 			Itemset itemset = new Itemset(item);
 			itemset.setAbsoluteSupport(mapItemSupport.get(item));
@@ -148,30 +162,30 @@ public class AlgoZart {
 				tableCandidate.levels.get(0).add(itemset);
 			}
 		}
-		
+
 //		// sort candidates
 //		Collections.sort(tableCandidate.levels.get(0), new Comparator<Itemset>() {
 //			public int compare(Itemset i1, Itemset i2) {
 //				return i1.getItems().get(0) - i2.getItems().get(0);
 //			}
 //		});
-//		
+//
 		// if there are frequent items
 		if(tableFrequent.levels.size() != 0) {
-		
-			//This variable will be used to indicate if a full column is set to 
+
+			//This variable will be used to indicate if a full column is set to
 			// 1 in the binary context, which means that a non-empty itemset is shared
 			// by all transactions
 			boolean fullCollumn = false; // 1
-			
+
 			// 6 : Loops over frequent itemsets of size 1
 			for(Itemset l : tableFrequent.getLevelForZart(0)){
-				// assign the value true to l in the map for closed itemsets 
+				// assign the value true to l in the map for closed itemsets
 				tableFrequent.mapClosed.put(l, true); // 8
 				// If L has the support equal to the number of transactions in the database
-				if(l.getAbsoluteSupport() == database.getTransactions().size()){ // 9
+				if(l.getAbsoluteSupport() == getTransactionCount()){ // 9
 					// 10  The empty set is its generator (IMPORTANT)
-					tableFrequent.mapKey.put(l, false); 
+					tableFrequent.mapKey.put(l, false);
 					// there is an itemset shared by all transactions
 					fullCollumn = true; // 11
 				}else{
@@ -179,44 +193,44 @@ public class AlgoZart {
 					tableFrequent.mapKey.put(l, true); // 13
 				}
 			}
-			
+
 			// create the empty set
 			Itemset emptyset = new Itemset(new int[]{});
-			
+
 			// 15 if there is an itemset shared by all transactions
 			if(fullCollumn){
 				// add the empty set as a generator
-				frequentGeneratorsFG.add(emptyset);  
-			}else{   
+				frequentGeneratorsFG.add(emptyset);
+			}else{
 				// Otherwise, the empty set is closed and it is its own generator
 				// So we add it to the tables accordingly
 				tableFrequent.addFrequentItemset(emptyset);  // add to table of frequent itemsets
 				tableFrequent.mapClosed.put(emptyset, true);  // add to table of closed itemsets
-				tableFrequent.mapPredSupp.put(emptyset, database.size());
+				tableFrequent.mapPredSupp.put(emptyset, getTransactionCount());
 				tableClosed.addClosedItemset(emptyset);
-				tableClosed.mapGenerators.put(emptyset, new ArrayList<Itemset>()); 
+				tableClosed.mapGenerators.put(emptyset, new ArrayList<Itemset>());
 				// we set its support as the database size
-				emptyset.setAbsoluteSupport(database.size());
+				emptyset.setAbsoluteSupport(getTransactionCount());
 			}
-			
+
 			// Now, Zart will recursively  generate candidates of larger size i+1
 			// by using itemsets of size i to discover all frequent itemsets, closed itemsets
 			// and their generator.
-			// This process is baserd on the Apriori algorithm but modified.
+			// This process is based on the Apriori algorithm but modified.
 			int i=1;
-	
+
 			for(; true; i++){  // 16
 				zartGen(i); // 18   Ci+1 = ZartGen(Fi);
-				
+
 				// if there is no candidate, then
 				// the algorithm stops
 				if(tableCandidate.levels.get(i).size() == 0){ // 19
 					break;
 				}
-				
+
 				// if there is an itemset of size i with its key value to true
 				if(tableCandidate.thereisARowKeyValueIsTrue(i)){ // 20
-					// 22 for each transaction
+					/* // 22 for each transaction
 					for(List<Integer> o : database.getTransactions()){ //22
 						// for each subset of the candidate
 						for(Itemset s : subset(tableCandidate.levels.get(i), o)){ // 23, 24
@@ -225,15 +239,38 @@ public class AlgoZart {
 								s.increaseTransactionCount(); //25
 							}
 						}
-					}	
+					}
+					*/
+
+					dbIterator = dbScanner.dbIterator();
+					List<Integer> dbItemset = new ArrayList<>();
+					// 22 for each transaction
+					while (dbIterator.hasNext()) {
+						dbItemset.clear();
+						// build the sub set
+						DbScanner.TransactionIterator transactionIterator = dbIterator.next();
+						while (transactionIterator.hasNext()) {
+							Integer item = transactionIterator.next();
+							dbItemset.add(item);
+						}
+						// for each subset of the candidate
+						for(Itemset s : subset(tableCandidate.levels.get(i), dbItemset)){ // 23, 24
+							if(tableCandidate.mapKey.get(s)){
+								// increase its support count
+								s.increaseTransactionCount(); //25
+							}
+						}
+
+					}
+
 				}
-				
+
 				// for each candidate itemset of size i
 				for(Itemset c : tableCandidate.levels.get(i)){ //28
 					// if it is a frequent itemset
 					if(c.getAbsoluteSupport() >= minsupRelative){
-						//31 
-						// if c is set to true in mapKey and its support is 
+						//31
+						// if c is set to true in mapKey and its support is
 						// equal to the one of predSup
 						if(tableCandidate.mapKey.get(c) == true && c.getAbsoluteSupport() == tableCandidate.mapPredSupp.get(c)){
 							// set its key to false!
@@ -243,15 +280,15 @@ public class AlgoZart {
 						tableFrequent.addFrequentItemset(c); // 33
 						// put c in the maps of TF
 						// Note that this step was not explicit in the original algorithm.
-						tableFrequent.mapKey.put(c, tableCandidate.mapKey.get(c));  
-						tableFrequent.mapPredSupp.put(c, tableCandidate.mapPredSupp.get(c)); 
+						tableFrequent.mapKey.put(c, tableCandidate.mapKey.get(c));
+						tableFrequent.mapPredSupp.put(c, tableCandidate.mapPredSupp.get(c));
 					}
 				}
-				
+
 				// for each frequent itemset of size i
 				for(Itemset l : tableFrequent.getLevelForZart(i)){ // 36
 					// add it as closed to the map of closed itemsets by assuming
-					// that it is closed until now 
+					// that it is closed until now
 					tableFrequent.mapClosed.put(l, true); //37
 					// for all suset of l of size i-1
 					for(Itemset s : subset(tableFrequent.getLevelForZart(i-1), l)){ // 38, 39
@@ -262,54 +299,59 @@ public class AlgoZart {
 						}
 					}
 				}
-				
+
 				// 42
-				tableClosed.levels.add(new ArrayList<Itemset>());
+				tableClosed.levels.add(new ListOfArrayItemset());
 				// for each frequent itemsets of size i-1
 				for(Itemset l : tableFrequent.getLevelForZart(i-1)){
 					//  if it is marked as closed, then we add it to
-					// the tale of closed itemsets.
+					// the table of closed itemsets.
 					if(tableFrequent.mapClosed.get(l) == true){
 						tableClosed.getLevelForZart(i-1).add(l);
 					}
 				}
-				
+
 				// find the generators for closed itemsets of size i-1
 				findGenerators(tableClosed.getLevelForZart(i-1), i); // 43
-				
+
 				// check the memory usage
 				MemoryLogger.getInstance().checkMemory();
 			}
-			
+
 			//  ....  45
-			tableClosed.levels.add(new ArrayList<Itemset>());
+			tableClosed.levels.add(new ListOfArrayItemset());
 			for(Itemset l : tableFrequent.getLevelForZart(i-1)){
 				tableClosed.getLevelForZart(i-1).add(l);
 			}
-			
+
 			// Call the find generator method to find the generators.
 			// This is line 46 in the pseudo code of Zart.
 			findGenerators(tableClosed.getLevelForZart(i-1),  i);
-			
+
 		}
-		
+
 		// check the memory usage
 		MemoryLogger.getInstance().checkMemory();
 		// record the end time
-		endTimestamp = System.currentTimeMillis();
-		
+		endTime = System.currentTimeMillis();
+
 		// return a table containing the closed itemsets and their associatied generator(s)
 		return tableClosed;
 	}
-	
+
+	private boolean isItemInfrequent(Integer item, Map<Integer,Integer> mapItemSupport) {
+		return mapItemSupport.get(item) < minsupRelative;
+	}
+
 	/**
 	 * Find generators for each itemset of a list of closed itemsets
 	 * @param zi a list of itemset zi of size i
 	 * @param i  the size i
 	 */
-	private void findGenerators(List<Itemset> zi, int i) {
+	private void findGenerators(GenericResults.ListOfItemset zi, int i) {
 		// for each itemset in the list
-		for(Itemset z : zi){ // 1
+		for(AbstractItemset zAbs : zi){ // 1
+			Itemset z = (Itemset) zAbs;
 			// get the list of all frequent generators contained in z 
 			List<Itemset> s = subset(frequentGeneratorsFG, z);  // 3
 			// register them in the map associating closed itemsets to their generators
@@ -409,7 +451,7 @@ public class AlgoZart {
 			// set the key to true
 			tableCandidate.mapKey.put(c, true); // 4
 			//  set the support to database size +1.
-			tableCandidate.mapPredSupp.put(c, context.getTransactions().size() + 1);
+			tableCandidate.mapPredSupp.put(c, getTransactionCount() + 1);
 			// 7
 			// To generate all sets of size k-1: S, we will proceed
 			// by removing each element one by one.
@@ -524,12 +566,9 @@ public class AlgoZart {
 	/**
 	 * Print statistics about the latest execution of the algorithm.
 	 */
-	public void printStatistics() {
-		System.out.println("========== ZART - STATS ============");
-		System.out.println(" Total time ~: " + (endTimestamp - startTimestamp)
-				+ " ms");
-		System.out.println(" Max memory:" + MemoryLogger.getInstance().getMaxMemory());
-		System.out.println("=====================================");
+	@Override
+	public void printStats() {
+		super.printStats("Zart","v??");
 	}
 
 	/**
@@ -547,7 +586,8 @@ public class AlgoZart {
 		// (the level i is the closed itemsets of size i)
 		for(int i=0; i< tableClosed.levels.size(); i++){
 			// for each closed itemsets of size i
-			for(Itemset closed : tableClosed.levels.get(i)){
+			for(AbstractItemset closedAbs : tableClosed.levels.get(i)){
+				Itemset closed = (Itemset) closedAbs;
 				// write the itemset
 				writer.write(" CLOSED : \n   " + closed.toString() + " #SUP: " + closed.getAbsoluteSupport());
 				writer.newLine();

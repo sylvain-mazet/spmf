@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -26,7 +27,7 @@ import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
  * with the FPGrowth algorithm. 
  * It is designed to be used by the graphical and command line interface.
  * 
- * @see AlgoFPGrowth, AlgoAgrawalFaster94
+ * @see ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth, AlgoAgrawalFaster94
  * @author Philippe Fournier-Viger
  */
 public class DescriptionAlgoFPGrowthAssociationRules extends DescriptionOfAlgorithm {
@@ -69,7 +70,7 @@ public class DescriptionAlgoFPGrowthAssociationRules extends DescriptionOfAlgori
 
 		ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth fpgrowth = new ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength); 
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = fpgrowth
+		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = (Itemsets)fpgrowth
 				.runAlgorithm(inputFile, null, minsup);
 		fpgrowth.printStats();
 		int databaseSize = fpgrowth.getDatabaseSize();
