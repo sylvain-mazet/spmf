@@ -21,7 +21,7 @@ import java.util.Set;
 
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -45,7 +45,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -123,7 +123,7 @@ public class AlgoDEclat extends AlgoEclat{
 	 * to calculate the support
 	 * @param lengthOfX  the length of the itemset X - 1 (used by dEclat)
 	 * @param supportPrefix the support of the prefix (not used by Eclat, but used by dEclat).
-	 * @param tidsetI the tidset of X
+	 * @param tidsetX the tidset of X
 	 * @return the support
 	 */
 	int calculateSupport(int lengthOfX, int supportPrefix,  Set<Integer> tidsetX) {

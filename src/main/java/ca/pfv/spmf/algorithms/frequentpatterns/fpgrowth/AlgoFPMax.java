@@ -18,7 +18,7 @@
  */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 import java.io.IOException;
@@ -28,8 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
-/** 
+ /**
  * This is an implementation of the FPMax algorithm (Grahne et al., 2004).
  * FPGrowth is described here:
  * <br/><br/>
@@ -42,7 +43,7 @@ import java.util.Map.Entry;
  * by the user to the runAlgorithm method().
  *
  * @see FPTree
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger, 2015
  */
@@ -67,6 +68,7 @@ public class AlgoFPMax extends GenericFPGrowthAlgorithmBase {
 
 		// Create the MFI Tree
 		mfiTree = new FITree();
+		mfiTree.setRoot(new FINode());
 
 		// We create the header table for the tree using the calculated support of single items
 		tree.createHeaderList(getOriginalMapSupport());
@@ -256,7 +258,7 @@ public class AlgoFPMax extends GenericFPGrowthAlgorithmBase {
 					}
 					
 					// ======= After that, we still need to check if beta is a maximal itemset ====
-					List<Integer> temp = new ArrayList<Integer>(mapSupportBeta.size() + prefixLength+1);
+					List<Integer> temp = new ArrayList<>(mapSupportBeta.size() + prefixLength+1);
 					for(int z=0; z < prefixLength+1; z++) {
 						temp.add(prefix[z]);
 					}

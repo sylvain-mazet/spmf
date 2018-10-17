@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -188,7 +189,6 @@ public class AlgoLCMFreq {
      * @param pLength the prefix length
      * @param transactionsOfP the transations containing P
 	 * @param frequentItems the list of frequent items in the p-projected database
-     * @param tailPosInP the tail item position in itemset P
      * @throws IOException if error writing to output file
      */
     private void backtrackingLCMFreq(int[] p, int pLength, List<Transaction> transactionsOfP,
@@ -260,7 +260,7 @@ public class AlgoLCMFreq {
 
     /**
      * Perform the anytime database reduction for an itemset P U {e}
-     * @param transactions the transactions
+     * @param transactionsPe the transactions
      * @param j the position of j in the list of frequent items
      * @param frequentItems 
      * @param itemset 
@@ -418,7 +418,7 @@ public class AlgoLCMFreq {
 			// sort the itemset so that it is sorted according to lexical ordering before we show it to the user
 			Arrays.sort(itemsetArray);
 			
-			Itemset itemsetObj = new Itemset(itemsetArray);
+			ItemsetArrayImplWithCount itemsetObj = new ItemsetArrayImplWithCount(itemsetArray);
 			itemsetObj.setAbsoluteSupport(support);
 			frequentItemsets.addItemset(itemsetObj, itemsetLength);
 		}

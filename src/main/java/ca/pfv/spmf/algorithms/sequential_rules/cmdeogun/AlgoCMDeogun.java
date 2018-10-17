@@ -28,7 +28,7 @@ import java.util.Set;
 
 import ca.pfv.spmf.input.sequence_database_list_integers.Sequence;
 import ca.pfv.spmf.input.sequence_database_list_integers.SequenceDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -55,7 +55,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * This implementation was modified by Ryan Panos to include the lift measure.
  * 
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @see Rule
  * @see Rules
  * @author Philippe Fournier-Viger, Ryan Panos
@@ -331,9 +331,9 @@ public class AlgoCMDeogun {
 		// if  i1 -> i2 has minimum support
 		if(countLeftBeforeRight >= minsuppRelative){
 			// We  create the Rule
-			Itemset itemset1 = new Itemset(item1);
+			ItemsetWithTIDS itemset1 = new ItemsetWithTIDS(item1);
 			itemset1.setTIDs(tids1);
-			Itemset itemset2 = new Itemset(item2);
+			ItemsetWithTIDS itemset2 = new ItemsetWithTIDS(item2);
 			itemset2.setTIDs(tids2); 
 			Rule ruleLR = new Rule(itemset1, itemset2);
 			ruleLR.setTransactioncount(countLeftBeforeRight);  // set its support
@@ -359,9 +359,9 @@ public class AlgoCMDeogun {
 		// if  i2 -> i1 has minimum support
 		if(countRightBeforeLeft >= minsuppRelative){
 			// We  create the Rule
-			Itemset itemset1 = new Itemset(item1);
+			ItemsetWithTIDS itemset1 = new ItemsetWithTIDS(item1);
 			itemset1.setTIDs(tids1);
-			Itemset itemset2 = new Itemset(item2);
+			ItemsetWithTIDS itemset2 = new ItemsetWithTIDS(item2);
 			itemset2.setTIDs(tids2);
 			Rule ruleRL = new Rule(itemset2, itemset1);
 			ruleRL.setTransactioncount(countRightBeforeLeft);  // set its support
@@ -419,7 +419,7 @@ public class AlgoCMDeogun {
 						int newItemset[] = new int[ruleI.getItemset1().size()+1];
 						System.arraycopy(ruleI.getItemset1().itemset, 0, newItemset, 0, ruleI.getItemset1().size());
 						newItemset[ruleI.getItemset1().size()] = ruleJ.getItemset1().getItems()[ruleJ.getItemset1().size() -1];
-						Itemset newLeftItemset = new Itemset(newItemset);
+						ItemsetWithTIDS newLeftItemset = new ItemsetWithTIDS(newItemset);
 						
 						// ONLY FOR LEFT EXPANSION : WE NEED TO CALCULATE THE NEW SUPPORT FOR 
 						// THE LEFT ITEMSET (for the confidence calculation, later):
@@ -513,7 +513,7 @@ public class AlgoCMDeogun {
 						int newItemset[] = new int[ruleI.getItemset2().size()+1];
 						System.arraycopy(ruleI.getItemset2().itemset, 0, newItemset, 0, ruleI.getItemset2().size());
 						newItemset[ruleI.getItemset2().size()] = ruleJ.getItemset2().getItems()[ruleJ.getItemset2().size() -1];
-						Itemset newRightItemset = new Itemset(newItemset);
+						ItemsetWithTIDS newRightItemset = new ItemsetWithTIDS(newItemset);
 		
 						// SPECIAL TRICK FOR RIGHT EXPANSION : WE CALCULATE THE NEW SUPPORT FOR 
 						// THE RIGHT ITEMSET ):
@@ -743,7 +743,7 @@ public class AlgoCMDeogun {
 	 * @param itemsetJ  the right itemset
 	 * @throws IOException exception if error writing the file
 	 */
-	private void saveRule(int support, double confIJ, String liftIJ, Itemset itemsetI, Itemset itemsetJ) throws IOException {
+	private void saveRule(int support, double confIJ, String liftIJ, ItemsetWithTIDS itemsetI, ItemsetWithTIDS itemsetJ) throws IOException {
 		// increase the number of valid rules found
 		ruleCount++;
 

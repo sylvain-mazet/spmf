@@ -30,7 +30,7 @@ import java.util.Set;
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rule;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rules;
 /**
@@ -125,19 +125,19 @@ public class AlgoMNRRules {
 
 		
 		// 1 - for each equivalence class
-		for(Map.Entry<Itemset,List<Itemset>> entryEquivalenceClass : closedPatternsAndGenerators.mapGenerators.entrySet()){
+		for(Map.Entry<ItemsetArrayImplWithCount,List<ItemsetArrayImplWithCount>> entryEquivalenceClass : closedPatternsAndGenerators.mapGenerators.entrySet()){
 			// get the list of generators
-			List<Itemset> listGenerators = entryEquivalenceClass.getValue();
+			List<ItemsetArrayImplWithCount> listGenerators = entryEquivalenceClass.getValue();
 			// if the equivalence class has no generator, then its closed itemset is a generator...
 			if(listGenerators.size() == 0  && entryEquivalenceClass.getKey().size() !=0){
 				listGenerators.add(entryEquivalenceClass.getKey());
 			}
 			
 			// loop over the generators g of the equivalence class
-			for(Itemset generatorG : listGenerators){
+			for(ItemsetArrayImplWithCount generatorG : listGenerators){
 				// 3 - find proper supersets of G among the frequent closed itemsets
-				Set<Itemset> supersets = new HashSet<Itemset>();
-				for(Itemset closedItemset : closedPatternsAndGenerators.mapGenerators.keySet()){
+				Set<ItemsetArrayImplWithCount> supersets = new HashSet<ItemsetArrayImplWithCount>();
+				for(ItemsetArrayImplWithCount closedItemset : closedPatternsAndGenerators.mapGenerators.keySet()){
 					if(generatorG.size() < closedItemset.size() 
 							&& closedItemset.containsAll(generatorG)){
 						supersets.add(closedItemset);
@@ -145,9 +145,9 @@ public class AlgoMNRRules {
 				}
 				
 				// 6 - loop over the supersets found
-				for(Itemset closedItemset : supersets){
-					Itemset leftSide = generatorG;
-					Itemset rightSide = closedItemset.cloneItemSetMinusAnItemset(generatorG);
+				for(ItemsetArrayImplWithCount closedItemset : supersets){
+					ItemsetArrayImplWithCount leftSide = generatorG;
+					ItemsetArrayImplWithCount rightSide = closedItemset.cloneItemSetMinusAnItemset(generatorG);
 					calculateSupport(rightSide);
 					// left.support = g.support;
 					double conf = ((double)closedItemset.getAbsoluteSupport()) / ((double)generatorG.getAbsoluteSupport());
@@ -176,8 +176,8 @@ public class AlgoMNRRules {
 	 * @param confidence the confidence of the rule
 	 * @throws IOException exception if there is an error writing the output file.
 	 */
-	private void saveRule(Itemset itemset1, Itemset itemset2,
-			int absoluteSupport, double confidence) throws IOException {
+	private void saveRule(ItemsetArrayImplWithCount itemset1, ItemsetArrayImplWithCount itemset2,
+                          int absoluteSupport, double confidence) throws IOException {
 		// increase the number of rules found
 		ruleCount++;
 		
@@ -233,7 +233,7 @@ public class AlgoMNRRules {
 	 * Calculate the support of a given itemset.
 	 * @param itemsetToTest a given itemset (Itemset).
 	 */
-	private void calculateSupport(Itemset itemsetToTest) {  // THIS WAS CHANGED
+	private void calculateSupport(ItemsetArrayImplWithCount itemsetToTest) {  // THIS WAS CHANGED
 		// check if closed
 		for(GenericResults.ListOfItemset list : closedPatternsAndGenerators.levels){
 			if(list.size() == 0  || list.get(0).size() < itemsetToTest.size()){
@@ -241,7 +241,7 @@ public class AlgoMNRRules {
 				          // than itemsetToTest.size
 			}
 			for(AbstractItemset itemsetAbs : list){
-				Itemset itemset = (Itemset) itemsetAbs;
+				ItemsetArrayImplWithCount itemset = (ItemsetArrayImplWithCount) itemsetAbs;
 				if(itemset.containsAll(itemsetToTest)){
 					itemsetToTest.setAbsoluteSupport(itemset.getAbsoluteSupport());
 					return;

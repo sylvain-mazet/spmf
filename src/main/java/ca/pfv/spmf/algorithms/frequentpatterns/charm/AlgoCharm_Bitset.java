@@ -28,11 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -55,7 +57,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -640,7 +642,7 @@ loopJ:		for(int j=i+1; j < frequentItems.size(); j++) {
 		Arrays.sort(prefixSuffix);
 		
 		// Create an instance of "Itemset" for that itemset to put in hash table
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset itemset = new ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset(prefixSuffix);
+		ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(prefixSuffix);
 		itemset.setAbsoluteSupport(tidset.support);
 
 		// Calculate the hash code of that itemset 
@@ -656,7 +658,7 @@ loopJ:		for(int j=i+1; j < frequentItems.size(); j++) {
 			// if the result should be saved to memory
 			if (writer == null) {
 				// save it to memory with its tidset
-				Itemset itemsetWithTidset = new Itemset(prefixSuffix, tidset.bitset, tidset.support);
+				ItemsetWithTIDSBitset itemsetWithTidset = new ItemsetWithTIDSBitset(prefixSuffix, tidset.bitset, tidset.support);
 				closedItemsets.addItemset(itemsetWithTidset, itemset.size());
 			} else {
 				// otherwise if the result should be saved to a file,

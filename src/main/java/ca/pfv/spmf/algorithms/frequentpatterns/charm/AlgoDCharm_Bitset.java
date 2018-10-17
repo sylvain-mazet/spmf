@@ -19,12 +19,15 @@ package ca.pfv.spmf.algorithms.frequentpatterns.charm;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -57,7 +60,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -177,7 +180,7 @@ public class AlgoDCharm_Bitset extends AlgoCharm_Bitset{
 		Arrays.sort(prefixSuffix);
 		
 		// Create an instance of "Itemset" for that itemset to put in hash table
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset itemset = new ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset(prefixSuffix);
+		ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(prefixSuffix);
 		itemset.setAbsoluteSupport(tidset.support);
 
 		// Calculate the hash code of that itemset 
@@ -193,7 +196,7 @@ public class AlgoDCharm_Bitset extends AlgoCharm_Bitset{
 			// if the result should be saved to memory
 			if (writer == null) { 
 				// save it to memory with its tidset
-				Itemset itemsetWithTidset = new Itemset(prefixSuffix, null, tidset.support);
+				ItemsetWithTIDSBitset itemsetWithTidset = new ItemsetWithTIDSBitset(prefixSuffix, null, tidset.support);
 				//  ^^  NOTE: IN THE LINE ABOVE WE SET THE "TIDSET" TO NULL FOR DCHARM BECAUSE
 				// IT IS NOT MEANINGFUL TO KEEP THE DIFFSET.
 				closedItemsets.addItemset(itemsetWithTidset, itemset.size()); 

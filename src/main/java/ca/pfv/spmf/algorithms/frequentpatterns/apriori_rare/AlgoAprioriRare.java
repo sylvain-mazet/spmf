@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -51,7 +51,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * or keep it into memory if no output path is provided
  * by the user to the runAlgorithm() method.
  * 
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -211,14 +211,14 @@ public class AlgoAprioriRare {
 		// Now we will perform a loop to find all frequent itemsets of size > 1
 		// starting from size k = 2.
 		// The loop will stop when no candidates can be generated.
-		List<Itemset> level = null;
+		List<ItemsetArrayImplWithCount> level = null;
 		k = 2;
 		do{
 			// we check the memory usage
 			MemoryLogger.getInstance().checkMemory();
 			
 			// Generate candidates of size K
-			List<Itemset> candidatesK;
+			List<ItemsetArrayImplWithCount> candidatesK;
 			
 			// if we are at level k=2, we use an optimization to generate candidates
 			if(k ==2){
@@ -236,7 +236,7 @@ public class AlgoAprioriRare {
 			// For each transaction:
 			for(int[] transaction: database){
 				// for each candidate:
-	 loopCand:	for(Itemset candidate : candidatesK){
+	 loopCand:	for(ItemsetArrayImplWithCount candidate : candidatesK){
 		 			// a variable that will be use to check if 
 		 			// all items of candidate are in this transaction
 					int pos = 0;
@@ -265,8 +265,8 @@ public class AlgoAprioriRare {
 
 			// We build the level k+1 with all the candidates that have
 			// a support higher than the minsup threshold.
-			level = new ArrayList<Itemset>();
-			for (Itemset candidate : candidatesK) {
+			level = new ArrayList<>();
+			for (ItemsetArrayImplWithCount candidate : candidatesK) {
 				// if the support is > minsup
 				if (candidate.getAbsoluteSupport() >= minsupRelative) {
 					// add the candidate
@@ -279,7 +279,7 @@ public class AlgoAprioriRare {
 			}
 			// we will generate larger itemsets next.
 			k++;
-		}while(level.isEmpty() == false);
+		}while(!level.isEmpty());
 
 		// record end time
 		endTimestamp = System.currentTimeMillis();
@@ -308,8 +308,8 @@ public class AlgoAprioriRare {
 	 * @param frequent1  the list of frequent itemsets of size 1.
 	 * @return a List of Itemset that are the candidates of size 2.
 	 */
-	private List<Itemset> generateCandidate2(List<Integer> frequent1) {
-		List<Itemset> candidates = new ArrayList<Itemset>();
+	private List<ItemsetArrayImplWithCount> generateCandidate2(List<Integer> frequent1) {
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<ItemsetArrayImplWithCount>();
 		
 		// For each itemset I1 and I2 of level k-1
 		for (int i = 0; i < frequent1.size(); i++) {
@@ -318,7 +318,7 @@ public class AlgoAprioriRare {
 				Integer item2 = frequent1.get(j);
 
 				// Create a new candidate by combining itemset1 and itemset2
-				candidates.add(new Itemset(new int []{item1, item2}));
+				candidates.add(new ItemsetArrayImplWithCount(new int []{item1, item2}));
 			}
 		}
 		return candidates;
@@ -329,9 +329,9 @@ public class AlgoAprioriRare {
 	 * @param levelK_1  frequent itemsets of size k-1
 	 * @return itemsets of size k
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1) {
+	protected List<ItemsetArrayImplWithCount> generateCandidateSizeK(List<ItemsetArrayImplWithCount> levelK_1) {
 		// create a variable to store candidates
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<>();
 
 		// For each itemset I1 and I2 of level k-1
 		loop1: for (int i = 0; i < levelK_1.size(); i++) {
@@ -372,7 +372,7 @@ public class AlgoAprioriRare {
 				// included in
 				// level k-1 (they are frequent).
 				if (allSubsetsOfSizeK_1AreFrequent(newItemset, levelK_1)) {
-					candidates.add(new Itemset(newItemset));
+					candidates.add(new ItemsetArrayImplWithCount(newItemset));
 				}
 			}
 		}
@@ -385,7 +385,7 @@ public class AlgoAprioriRare {
 	 * @param levelK_1  the frequent itemsets of size k-1
 	 * @return true if all the subsets are frequet
 	 */
-	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] candidate, List<Itemset> levelK_1) {
+	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] candidate, List<ItemsetArrayImplWithCount> levelK_1) {
 		// generate all subsets by always each item from the candidate, one by one
 		for(int posRemoved=0; posRemoved< candidate.length; posRemoved++){
 
@@ -427,7 +427,7 @@ public class AlgoAprioriRare {
 	 * @param itemset the itemset to be saved.
 	 * @throws IOException exception if error while writing the file
 	 */
-	void saveItemset(Itemset itemset) throws IOException {
+	void saveItemset(ItemsetArrayImplWithCount itemset) throws IOException {
 		// increase frequent itemset count
 		itemsetCount++; 
 		
@@ -457,7 +457,7 @@ public class AlgoAprioriRare {
 			writer.newLine();
 		}// otherwise the result is kept into memory
 		else{
-			Itemset itemset = new Itemset(item);
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(item);
 			itemset.setAbsoluteSupport(support);
 			patterns.addItemset(itemset, 1);
 		}

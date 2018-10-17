@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This is an implementation of the CloStream algorithm for mining
@@ -35,13 +35,13 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
  * It is a very simple algorithm that do not use a minimum support threshold.
  * It thus finds all closed itemsets.
  *
- *@see Itemset
+ *@see ItemsetArrayImplWithCount
  *@author Philippe Fournier-Viger
  */
 public class AlgoCloSteam {
 	
 	// a table to store the closed itemsets
-	List<Itemset> tableClosed = new ArrayList<Itemset>();
+	List<ItemsetArrayImplWithCount> tableClosed = new ArrayList<ItemsetArrayImplWithCount>();
 	
 	//
 	Map<Integer, List<Integer>> cidListMap = new HashMap<Integer, List<Integer>>();
@@ -51,7 +51,7 @@ public class AlgoCloSteam {
 	 */
 	public AlgoCloSteam() { 
 		// create the empty set with a support of 0
-		Itemset emptySet = new Itemset(new int[] {});
+		ItemsetArrayImplWithCount emptySet = new ItemsetArrayImplWithCount(new int[] {});
 		emptySet.setAbsoluteSupport(0);
 		// add the empty set in the list of closed sets
 		tableClosed.add(emptySet); 
@@ -62,10 +62,10 @@ public class AlgoCloSteam {
 	 * the set of closed itemsets.
 	 * @param transaction a transaction (Itemset)
 	 */
-	public void processNewTransaction(Itemset transaction){
+	public void processNewTransaction(ItemsetArrayImplWithCount transaction){
 		// a temporary table (as described in the paper) to 
 		// associate itemsets with cids.
-		Map<Itemset, Integer> tableTemp = new HashMap<Itemset, Integer>();
+		Map<ItemsetArrayImplWithCount, Integer> tableTemp = new HashMap<ItemsetArrayImplWithCount, Integer>();
 		
 		// Line 02 of the pseudocode in the article
 		// We add the transaction in a temporary table
@@ -89,21 +89,21 @@ public class AlgoCloSteam {
 		for(Integer cid : cidset){
 			
 			// Get the closed itemset corresponding to this cid
-			Itemset cti = tableClosed.get(cid);
+			ItemsetArrayImplWithCount cti = tableClosed.get(cid);
 			// create the intersection of this closed itemset
 			// and the transaction.
-			Itemset intersectionS = (Itemset) transaction.intersection(cti);
+			ItemsetArrayImplWithCount intersectionS = (ItemsetArrayImplWithCount) transaction.intersection(cti);
 
 			// Check if the intersection calculated in the previous step is in Temp
 			boolean found = false;
 			// for each entry in temp
-			for(Map.Entry<Itemset, Integer> entry : tableTemp.entrySet()){
+			for(Map.Entry<ItemsetArrayImplWithCount, Integer> entry : tableTemp.entrySet()){
 				// if it is equal to the intersection
 				if(entry.getKey().isEqualTo(intersectionS)){
 					// we found it 
 					found = true;
 					// Get the corresponding closed itemsetitemset  
-					Itemset ctt = tableClosed.get(entry.getValue());
+					ItemsetArrayImplWithCount ctt = tableClosed.get(entry.getValue());
 					// if the support of cti is higher than ctt
 					if(cti.getAbsoluteSupport() > ctt.getAbsoluteSupport()){  
 						// set the value as "cid".
@@ -120,13 +120,13 @@ public class AlgoCloSteam {
 		}
 		
 		// For each entry in the temporary table
-		for(Map.Entry<Itemset, Integer> xc : tableTemp.entrySet()){
+		for(Map.Entry<ItemsetArrayImplWithCount, Integer> xc : tableTemp.entrySet()){
 			// get the itemset
-			Itemset x = xc.getKey();
+			ItemsetArrayImplWithCount x = xc.getKey();
 			// get the cid
 			Integer c = xc.getValue();
 			// get the closed itemset for that cid
-			Itemset ctc = tableClosed.get(c);
+			ItemsetArrayImplWithCount ctc = tableClosed.get(c);
 			
 			// if the itemset is the same as the closed itemset
 			if(x.isEqualTo(ctc)){
@@ -159,7 +159,7 @@ public class AlgoCloSteam {
 	 * Get the current list of closed itemsets without the empty set.
 	 * @return a List of closed itemsets
 	 */
-	public List<Itemset> getClosedItemsets() {
+	public List<ItemsetArrayImplWithCount> getClosedItemsets() {
 		// if the empty set is here
 		if(tableClosed.get(0).size() ==0){
 			// remove it

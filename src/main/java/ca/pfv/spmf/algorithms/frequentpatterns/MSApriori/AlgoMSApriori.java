@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -41,7 +41,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * This implementation was made by AZADEH SOLTANI based on the Apriori implementation by Philippe Fournier-Viger
  * 
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @author Azadeh Soltani, Philippe Fournier-Viger
  */
 public class AlgoMSApriori {
@@ -242,7 +242,7 @@ public class AlgoMSApriori {
 		
 		if(maxItemsetSize >1){
 			// Now, the algorithm will discover itemset of size k > 1 starting from k=2
-			List<Itemset> level = null;
+			List<ItemsetArrayImplWithCount> level = null;
 			k = 2;
 			// Generate candidates and test them for k>1 by inscreasing k at each iteration
 			// until no candidates can be generated
@@ -251,7 +251,7 @@ public class AlgoMSApriori {
 				MemoryLogger.getInstance().checkMemory();
 				
 				// Generate candidates of size K
-				List<Itemset> candidatesK;
+				List<ItemsetArrayImplWithCount> candidatesK;
 	
 				// Generate candidates
 				if (k == 2) {
@@ -268,7 +268,7 @@ public class AlgoMSApriori {
 				// for each transaction
 				for (Integer[] transaction : database) {
 					// for each candidate
-					loopCand: for (Itemset candidate : candidatesK) {
+					loopCand: for (ItemsetArrayImplWithCount candidate : candidatesK) {
 						// We will check if the candidate is contained in the transaction by
 						// looking for each item one by one starting from pos =0.
 						int pos = 0;
@@ -296,9 +296,9 @@ public class AlgoMSApriori {
 	
 				// We build the level k+1 with all the candidates that have
 				// a support higher than MIS[0]
-				level = new ArrayList<Itemset>();
+				level = new ArrayList<ItemsetArrayImplWithCount>();
 				// for each candidate
-				for (Itemset candidate : candidatesK) {
+				for (ItemsetArrayImplWithCount candidate : candidatesK) {
 					// if its support is higher than the MIS of the first item 
 					// (because they are sorted by MIS order)
 					if (candidate.getAbsoluteSupport() >= MIS[candidate.get(0)]) {
@@ -327,9 +327,9 @@ public class AlgoMSApriori {
 	 * @param mapItemCount a map indicating the support of each item (key: item, value: support)
 	 * @return  the set of candidates of size 2
 	 */
-	private List<Itemset> generateCandidate2(List<Integer> frequent1, Map<Integer, Integer> mapItemCount) {
+	private List<ItemsetArrayImplWithCount> generateCandidate2(List<Integer> frequent1, Map<Integer, Integer> mapItemCount) {
 		// list to store the candidates
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<ItemsetArrayImplWithCount>();
 
 		// For each itemset I1 and I2 of level k-1
 		for (int i = 0; i < frequent1.size(); i++) {
@@ -338,7 +338,7 @@ public class AlgoMSApriori {
 				Integer item2 = frequent1.get(j);
 
 				// Create a new candidate by combining itemset1 and itemset2
-				candidates.add(new Itemset(new int[] { item1, item2 }));
+				candidates.add(new ItemsetArrayImplWithCount(new int[] { item1, item2 }));
 			}
 		}
 		// return the set of candidates
@@ -349,9 +349,9 @@ public class AlgoMSApriori {
 	 * Generate candidates of size K by using frequent itemsets of size K-1.
 	 * @return  the set of candidates of size K
 	 */	
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1) {
+	protected List<ItemsetArrayImplWithCount> generateCandidateSizeK(List<ItemsetArrayImplWithCount> levelK_1) {
 		// list to store the candidates generated
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<ItemsetArrayImplWithCount>();
 
 		// For each itemset I1 and I2 of level k-1
 		loop1: for (int i = 0; i < levelK_1.size(); i++) {
@@ -396,7 +396,7 @@ public class AlgoMSApriori {
 				// included in level k-1 (to check if they are frequent).
 				if (allSubsetsOfSizeK_1AreFrequent(newItemset, levelK_1)) {
 					// if yes, then add to candidates
-					candidates.add(new Itemset(newItemset));
+					candidates.add(new ItemsetArrayImplWithCount(newItemset));
 				}
 			}
 		}
@@ -405,7 +405,7 @@ public class AlgoMSApriori {
 	}
 
 	// --------------------------------------------------------------------------------------------
-	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] c, List<Itemset> levelK_1) {
+	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] c, List<ItemsetArrayImplWithCount> levelK_1) {
 		// generate all subsets by always each item from the candidate, one by
 		// one
 		for (int posRemoved = 0; posRemoved < c.length; posRemoved++) {
@@ -457,10 +457,10 @@ public class AlgoMSApriori {
 	 * Method to check if two itemsets are equals
 	 * @param itemset the first itemset
 	 * @param candidate the second itemset
-	 * @param postRemoved a position that should be ignored from itemset "candidate" for the comparison
+	 * @param posRemoved a position that should be ignored from itemset "candidate" for the comparison
 	 * @return 0 if they are the same, <0 if "itemset" is smaller than candidate according to the MIS order, otherwise >0
 	 */
-	private int sameAs(Itemset itemset, int[] candidate, int posRemoved) {
+	private int sameAs(ItemsetArrayImplWithCount itemset, int[] candidate, int posRemoved) {
 		// j will be position of the item that we are searching from "candidate"
 		// in "itemset"
 		int j = 0;
@@ -487,7 +487,7 @@ public class AlgoMSApriori {
 	/**
 	 * 	Save an itemset to the output file
 	 */
-	private void saveItemsetToFile(Itemset itemset) throws IOException {
+	private void saveItemsetToFile(ItemsetArrayImplWithCount itemset) throws IOException {
 		// write the itemset with its support count
 		writer.write(itemset.toString() + " #SUP: "	+ itemset.getAbsoluteSupport());
 		writer.newLine();

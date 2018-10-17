@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This is an implementation of the VME algorithm (Deng and Xu, 2011) for
@@ -54,7 +54,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
  * in PID List. This is not memory efficient. For implementation it is better to 
  * store the profit of each transaction only once in a hashtable.
  * 
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class AlgoVME {
@@ -179,7 +179,7 @@ public class AlgoVME {
 		
 		// Find erasable itemsets of size 1 and delete items that are
 		// not erasable from memory
-		List<Itemset> level = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> level = new ArrayList<ItemsetWithTIDS>();
 
 		// for each item
 		Iterator<Entry<Integer, Set<Integer>>> iterator = mapItemTIDs.entrySet().iterator();
@@ -196,7 +196,7 @@ public class AlgoVME {
 			// if the looss is less than the max profit loss
 			if(loss <= maxProfitLoss && maxItemsetSize >=1){
 				// it is an erasable itemset
-				Itemset itemset = new Itemset(entry.getKey());
+				ItemsetWithTIDS itemset = new ItemsetWithTIDS(entry.getKey());
 				itemset.setTIDs(mapItemTIDs.get(entry.getKey()));
 				level.add(itemset);
 				// save it to the output file
@@ -209,8 +209,8 @@ public class AlgoVME {
 		
 		// sort items because apriori based algorithm need
 		// a total order for candidate generation
-		Collections.sort(level, new Comparator<Itemset>(){
-			public int compare(Itemset o1, Itemset o2) {
+		Collections.sort(level, new Comparator<ItemsetWithTIDS>(){
+			public int compare(ItemsetWithTIDS o1, ItemsetWithTIDS o2) {
 				return o1.get(0) - o2.get(0);
 			}
 		});
@@ -236,15 +236,15 @@ public class AlgoVME {
 	 * @param levelK_1   itemsets of size k-1
 	 * @return  candidates of size K
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1) throws IOException {
+	protected List<ItemsetWithTIDS> generateCandidateSizeK(List<ItemsetWithTIDS> levelK_1) throws IOException {
 		// create list to store candidates of size k
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> candidates = new ArrayList<ItemsetWithTIDS>();
 
 // For each itemset I1 and I2 of level k-1
 loop1:	for(int i=0; i< levelK_1.size(); i++){
-			Itemset itemset1 = levelK_1.get(i);
+			ItemsetWithTIDS itemset1 = levelK_1.get(i);
 loop2:		for(int j=i+1; j< levelK_1.size(); j++){
-				Itemset itemset2 = levelK_1.get(j);
+				ItemsetWithTIDS itemset2 = levelK_1.get(j);
 				
 				// we compare items of itemset1  and itemset2.
 				// If they have all the same k-1 items and the last item of itemset1 is smaller than
@@ -287,7 +287,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 					int newItemset[] = new int[itemset1.size()+1];
 					System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 					newItemset[itemset1.size()] = itemset2.getItems()[itemset2.size() -1];
-					Itemset candidate = new Itemset(newItemset);
+					ItemsetWithTIDS candidate = new ItemsetWithTIDS(newItemset);
 					candidate.setTIDs(unionTIDS);
 					
 					// add the itemset to the set of candidates
@@ -307,7 +307,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 	 * @param loss the loss
 	 * @throws IOException exception if error while writing to output file
 	 */
-	private void saveItemsetToFile(Itemset itemset, int loss) throws IOException{
+	private void saveItemsetToFile(ItemsetWithTIDS itemset, int loss) throws IOException{
 		// write the itemset
 		writer.write(itemset.toString() + " #LOSS: " + loss);
 		writer.newLine();

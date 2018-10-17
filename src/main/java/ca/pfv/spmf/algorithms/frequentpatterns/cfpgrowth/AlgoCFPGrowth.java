@@ -30,8 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -362,7 +363,7 @@ public class AlgoCFPGrowth {
 	 * This method mines pattern from a Prefix-Tree recursively
 	 * 
 	 * @param tree    The Prefix Tree
-	 * @param prefix  The current prefix "alpha"
+	 * @param prefixAlpha  The current prefix "alpha"
 	 * @param mapSupport    The frequency of each item in the prefix tree.
 	 * @throws IOException exception if error writing the output file.
 	 */
@@ -403,7 +404,7 @@ public class AlgoCFPGrowth {
 	 * Mine an FP-Tree having more than one path.
 	 * 
 	 * @param tree        the FP-tree
-	 * @param prefix      the current prefix, named "alpha"
+	 * @param prefixAlpha the current prefix, named "alpha"
 	 * @param mapSupport  the frequency of items in the FP-Tree
 	 * @throws IOException  exception if error writing the file
 	 */
@@ -550,7 +551,7 @@ public class AlgoCFPGrowth {
 			
 			// create an object Itemset and add it to the set of patterns 
 			// found.
-			Itemset itemsetObj = new Itemset(itemsetWithLastItem);
+			ItemsetArrayImplWithCount itemsetObj = new ItemsetArrayImplWithCount(itemsetWithLastItem);
 			itemsetObj.setAbsoluteSupport(support);
 			patterns.addItemset(itemsetObj, itemsetObj.size());
 		}

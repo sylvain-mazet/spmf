@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 
 /**
@@ -180,7 +180,7 @@ public class AlgoINDIRECT {
 		// To build level 1, we keep only the frequent items.
 		int k=1;
 		// create the variable to store itemset from level 1
-		List<Itemset> level = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> level = new ArrayList<ItemsetWithTIDS>();
 		// For each item
 		Iterator<Entry<Integer, Set<Integer>>> iterator = mapItemTIDS.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -189,7 +189,7 @@ public class AlgoINDIRECT {
 			if(entry.getValue().size() >= minSuppRelative){ 
 				// add the item to this level
 				Integer item = entry.getKey();
-				Itemset itemset = new Itemset(item);
+				ItemsetWithTIDS itemset = new ItemsetWithTIDS(item);
 				itemset.setTIDs(mapItemTIDS.get(item));
 				level.add(itemset);
 			}else{
@@ -200,8 +200,8 @@ public class AlgoINDIRECT {
 		}
 		
 		// Sort itemsets of size 1 according to lexicographical order.
-		Collections.sort(level, new Comparator<Itemset>(){
-			public int compare(Itemset o1, Itemset o2) {
+		Collections.sort(level, new Comparator<ItemsetWithTIDS>(){
+			public int compare(ItemsetWithTIDS o1, ItemsetWithTIDS o2) {
 				return o1.get(0) - o2.get(0);
 			}
 		});
@@ -230,15 +230,15 @@ public class AlgoINDIRECT {
 	 * @return the list of candidates of size k
 	 * @throws IOException exception if there is an error writing the file
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1, int level) throws IOException {
+	protected List<ItemsetWithTIDS> generateCandidateSizeK(List<ItemsetWithTIDS> levelK_1, int level) throws IOException {
 		// create an empty list to store the candidate
-		List<Itemset> nextLevel = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> nextLevel = new ArrayList<ItemsetWithTIDS>();
 
 // For each itemset I1 and I2 of level k-1
 loop1:	for(int i=0; i< levelK_1.size(); i++){
-			Itemset itemset1 = levelK_1.get(i);
+			ItemsetWithTIDS itemset1 = levelK_1.get(i);
 loop2:		for(int j=i+1; j< levelK_1.size(); j++){
-				Itemset itemset2 = levelK_1.get(j);
+				ItemsetWithTIDS itemset2 = levelK_1.get(j);
 				
 				// we compare items of itemset1  and itemset2.
 				// If they have all the same k-1 items and the last item of itemset1 is smaller than
@@ -275,7 +275,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 					int newItemset[] = new int[itemset1.size()+1];
 					System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 					newItemset[itemset1.size()] = itemset2.getItems()[itemset2.size() -1];
-					Itemset candidate = new Itemset(newItemset);
+					ItemsetWithTIDS candidate = new ItemsetWithTIDS(newItemset);
 					candidate.setTIDs(list);
 					
 					// add the candidate to the set of candidate
@@ -291,8 +291,8 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 			// SO WE COMPARE EACH ITEMSET OF SIZE K WITH EACH OTHER ITEMSET OF SIZE K.
 			for(int i=0; i< levelK_1.size(); i++){
 				for(int j=i+1; j< levelK_1.size(); j++){
-					Itemset candidate1 = levelK_1.get(i);
-					Itemset candidate2 = levelK_1.get(j);
+					ItemsetWithTIDS candidate1 = levelK_1.get(i);
+					ItemsetWithTIDS candidate2 = levelK_1.get(j);
 					
 					// We check if the pair of itemset have only one item that is different.
 	  loopX:		for(Integer a : candidate1.getItems()){
@@ -329,7 +329,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 	 * @param b the item b
 	 * @throws IOException exception if error while writing to the output file
 	 */
-	private void testIndirectRule(Itemset itemset, Integer a, Integer b)
+	private void testIndirectRule(ItemsetWithTIDS itemset, Integer a, Integer b)
 			throws IOException {
 		// These sets are respectively the sets of ids 
 		// of transactions containing "a" and "b"
@@ -415,7 +415,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 	 * @param supBY support of Y U {b}
 	 * @throws IOException exception if error writing the file
 	 */
-	private void saveRule(Integer a, Integer b, Itemset itemset, double confAY, double confBY, int supAY, int supBY) throws IOException{
+	private void saveRule(Integer a, Integer b, ItemsetWithTIDS itemset, double confAY, double confBY, int supAY, int supBY) throws IOException{
 		ruleCount++; // we increase the number of rule found
 		
 		// we create a string buffer because it is more efficient

@@ -32,7 +32,7 @@ import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.Assoc
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.CFITree;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 /**
@@ -173,7 +173,7 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
 					//  we know we have tids bitset itemset's.... TODO remove this down cast
-					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((ItemsetArrayImplWithCount)o1).getItems(), ((ItemsetArrayImplWithCount)o2).getItems());
 				}
 			});
 		}
@@ -184,7 +184,7 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 		// For each frequent itemset of size >=2 that we will name "lk"
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
 			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
-				Itemset lk = (Itemset) lkAbs;
+				ItemsetArrayImplWithCount lk = (ItemsetArrayImplWithCount) lkAbs;
 
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();

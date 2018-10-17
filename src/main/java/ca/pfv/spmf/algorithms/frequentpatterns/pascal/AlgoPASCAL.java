@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_HT.ItemsetHashTree;
@@ -53,7 +54,6 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * 
  * @see ItemsetPascal
- * @see AbstractOrderedItemsetsAdapter
  * @see ItemsetHashTree
  * @author Philippe Fournier-Viger
  */
@@ -189,8 +189,7 @@ public class AlgoPASCAL {
 				// ------ CODE SPECIFIC TO PASCAL --------
 				// an itemset of size 1 is a generator if it has not the support
 				// equal to the transaction count.
-				ItemsetPascal itemset = new ItemsetPascal(
-						new int[] { entry.getKey() });
+				ItemsetPascal itemset = new ItemsetPascal(entry.getKey());
 				itemset.isGenerator = (itemsetSupport != transactionCount);
 				itemset.pred_sup = transactionCount;
 				itemset.setAbsoluteSupport(itemsetSupport);
@@ -362,7 +361,7 @@ public class AlgoPASCAL {
 				itemset.isGenerator 
 				   = itemset1.isGenerator && itemset2.isGenerator;
 				itemset.pred_sup = Math.min(itemset1.getAbsoluteSupport(), itemset2.getAbsoluteSupport());
-				if(itemset.isGenerator == false) {
+				if(!itemset.isGenerator) {
 					itemset.support = itemset.pred_sup;
 				}
 				// END OF CODE SPECIFIC TO PASCAL
@@ -443,7 +442,7 @@ public class AlgoPASCAL {
 	 * Method to check if all the subsets of size k-1 of a candidate of size k
 	 * are freuqnet
 	 * 
-	 * @param candidate
+	 * @param candidateItemset
 	 *            a candidate itemset of size k
 	 * @param levelK_1
 	 *            the frequent itemsets of size k-1

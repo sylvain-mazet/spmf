@@ -21,7 +21,7 @@ import java.util.Map;
 
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -58,7 +58,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */

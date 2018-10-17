@@ -25,7 +25,7 @@ import java.util.Set;
 
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
 
 /**
@@ -88,7 +88,7 @@ public class AlgoAprioriTID_forCMRules {
 		// To build level 1, we keep only the frequent candidates.
 		// We scan the database one time to calculate the support of each candidate.
 		k=1;
-		List<Itemset> level = createLevelWithFrequentItemsetsSize1(listFrequentsSize1, mapItemCount);
+		List<ItemsetWithTIDS> level = createLevelWithFrequentItemsetsSize1(listFrequentsSize1, mapItemCount);
 
 		// Generate candidates with size k = 1 (all itemsets of size 1)
 		k = 2;
@@ -110,14 +110,14 @@ public class AlgoAprioriTID_forCMRules {
 	 * @param mapItemCount a map indicating the tidset (value) of each item (key)
 	 * @return the itemsets of size1
 	 */
-	protected List<Itemset> createLevelWithFrequentItemsetsSize1(List<Integer> listFrequentsSize1, Map<Integer, Set<Integer>> mapItemCount) {
+	protected List<ItemsetWithTIDS> createLevelWithFrequentItemsetsSize1(List<Integer> listFrequentsSize1, Map<Integer, Set<Integer>> mapItemCount) {
 		// create the structure to store itemsets of size 1
-		List<Itemset> levelK = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> levelK = new ArrayList<ItemsetWithTIDS>();
 
 		// for each item in the list of frequent items
 		for(Integer item : listFrequentsSize1){
 			// create an itemset
-			Itemset itemset = new Itemset(item);
+			ItemsetWithTIDS itemset = new ItemsetWithTIDS(item);
 			itemset.setTIDs(mapItemCount.get(item));
 			// add it to the level k that will be used for generating k+1 later on...
 			levelK.add(itemset);
@@ -134,15 +134,15 @@ public class AlgoAprioriTID_forCMRules {
 	 * @param levelK_1   itemsets of size k-1
 	 * @return  candidates of size K
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1) {
+	protected List<ItemsetWithTIDS> generateCandidateSizeK(List<ItemsetWithTIDS> levelK_1) {
 		// a set to store candidates of size K
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> candidates = new ArrayList<ItemsetWithTIDS>();
 
 		// For each itemset I1 and I2 of level k-1
 loop1:	for(int i=0; i< levelK_1.size(); i++){
-			Itemset itemset1 = levelK_1.get(i);
+			ItemsetWithTIDS itemset1 = levelK_1.get(i);
 loop2:		for(int j=i+1; j< levelK_1.size(); j++){
-				Itemset itemset2 = levelK_1.get(j);
+				ItemsetWithTIDS itemset2 = levelK_1.get(j);
 				
 				// we compare items of itemset1 and itemset2.
 				// If they have all the same k-1 items and the last item of
@@ -184,7 +184,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 					int newItemset[] = new int[itemset1.size()+1];
 					System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 					newItemset[itemset1.size()] = itemset2.getItems()[itemset2.size() -1];
-					Itemset candidate = new Itemset(newItemset);
+					ItemsetWithTIDS candidate = new ItemsetWithTIDS(newItemset);
 					candidate.setTIDs(list);
 					
 					// add it to the list of candidates

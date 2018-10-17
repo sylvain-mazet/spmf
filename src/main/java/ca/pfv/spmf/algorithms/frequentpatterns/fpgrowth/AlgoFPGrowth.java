@@ -18,7 +18,7 @@
  */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 import java.io.IOException;
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
  /**
  * This is an implementation of the FPGROWTH algorithm (Han et al., 2004).
@@ -41,7 +42,7 @@ import java.util.Map;
  * by the user to the runAlgorithm method().
  *
  * @see FPTree
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -327,7 +328,7 @@ loop1:	for (long i = 1, max = 1 << position; i < max; i++) {
 			// sort the itemset so that it is sorted according to lexical ordering before we show it to the user
 			Arrays.sort(itemsetArray);
 			
-			Itemset itemsetObj = new Itemset(itemsetArray);
+			ItemsetArrayImplWithCount itemsetObj = new ItemsetArrayImplWithCount(itemsetArray);
 			itemsetObj.setAbsoluteSupport(support);
 			patterns.addItemset(itemsetObj, itemsetLength);
 		}

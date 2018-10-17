@@ -29,6 +29,8 @@ import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTIDClose.AlgoAprioriTIDClo
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
 
@@ -141,7 +143,7 @@ public class AlgoDim{
 				// for each pattern found by charm
 				for(AbstractItemset itemset : itemsets){
 					// convert to a md-pattern
-					MDPattern pattern = convertItemsetCharmToPattern((ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset) itemset);
+					MDPattern pattern = convertItemsetCharmToPattern((ItemsetWithTIDSBitset) itemset);
 					// add to the set of patterns found
 					patterns.addPattern(pattern, pattern.size());
 					
@@ -158,7 +160,7 @@ public class AlgoDim{
 			// of transactions in the transaction database for charm 
 			// (it means that the empty set is a closed itemset)
 			if(maxSupport < contextCharm.size()){
-				patterns.addPattern(convertItemsetCharmToPattern(new ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset()), 0);
+				patterns.addPattern(convertItemsetCharmToPattern(new ItemsetWithTIDSBitset()), 0);
 			}
 			
 
@@ -178,9 +180,9 @@ public class AlgoDim{
 			// Convert patterns found by AprioriClose into MDPatterns
 			
 			// for each level
-			for(List<ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset> itemsets : closedItemsets.getLevels()){
+			for(List<ItemsetWithTIDS> itemsets : closedItemsets.getLevels()){
 				// for each pattern of that level
-				for(ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset itemset : itemsets){
+				for(ItemsetWithTIDS itemset : itemsets){
 					// convert to a md-pattern
 					MDPattern pattern = convertItemsetToPattern(itemset);
 					// add to the set of patterns found
@@ -204,9 +206,9 @@ public class AlgoDim{
 			// Convert patterns found by AprioriClose into MDPatterns
 			
 			// for each level
-			for(List<ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset> itemsets : closedItemsets.getLevels()){
+			for(List<ItemsetWithTIDS> itemsets : closedItemsets.getLevels()){
 				// for each pattern of that level
-				for(ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset itemset : itemsets){
+				for(ItemsetWithTIDS itemset : itemsets){
 					// convert to a md-pattern
 					MDPattern pattern = convertItemsetToPattern(itemset);
 					// add to the set of patterns found
@@ -214,7 +216,7 @@ public class AlgoDim{
 				}
 			}
 			// add the empty set
-			patterns.addPattern(convertItemsetCharmToPattern(new ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset()), 0);
+			patterns.addPattern(convertItemsetCharmToPattern(new ItemsetWithTIDSBitset()), 0);
 		}
 		// return the set of patterns found
 		return patterns;
@@ -296,7 +298,7 @@ public class AlgoDim{
 	 * @param itemset an itemset
 	 * @return an MD-pattern
 	 */
-	private MDPattern convertItemsetToPattern(ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset itemset) {
+	private MDPattern convertItemsetToPattern(ItemsetWithTIDS itemset) {
 		// create the md-pattern
 		MDPattern mdpattern = new MDPattern(0);
 		// for each dimension i
@@ -332,7 +334,7 @@ public class AlgoDim{
 	 * @param itemset
 	 * @return
 	 */
-	private MDPattern convertItemsetCharmToPattern(ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset itemset) {
+	private MDPattern convertItemsetCharmToPattern(ItemsetWithTIDSBitset itemset) {
 		// create the mdpattern
 		MDPattern mdpattern = new MDPattern(0);
 		// for each dimension i

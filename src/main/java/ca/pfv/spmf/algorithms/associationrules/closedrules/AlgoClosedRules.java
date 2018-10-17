@@ -29,9 +29,8 @@ import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRule;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
-import ca.pfv.spmf.algorithms.frequentpatterns.mHUIMiner.Item;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
 /**
@@ -156,7 +155,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
 					//  we know we have tids bitset itemset's.... TODO remove this down cast
-					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((ItemsetWithTIDSBitset)o1).getItems(), ((ItemsetWithTIDSBitset)o2).getItems());
 				}
 			});
 		}
@@ -167,7 +166,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 		// For each frequent itemset of size >=2 that we will name "lk"
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
 			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
-				Itemset lk = (Itemset) lkAbs;
+				ItemsetWithTIDSBitset lk = (ItemsetWithTIDSBitset) lkAbs;
 
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();
@@ -247,7 +246,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 * @param Hm a set of itemsets that can be used with lk to generate rules
 	 * @throws IOException exception if error while writing output file
 	 */
-	private void apGenrules(int k, int m, Itemset lk, List<int[]> Hm)
+	private void apGenrules(int k, int m, ItemsetWithTIDSBitset lk, List<int[]> Hm)
 			throws IOException {
 		
 		// if the itemset "lk" that is used to generate rules is larger than the size of itemsets in "Hm"
@@ -333,7 +332,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
         while( first <= last )
         {
         	int middle = ( first + last ) >>1 ; // >>1 means to divide by 2
-        	int[] itemsetMiddle = ((Itemset)patternsSameSize.get(middle)).getItems();
+        	int[] itemsetMiddle = ((ItemsetWithTIDSBitset)patternsSameSize.get(middle)).getItems();
 
         	int comparison = ArraysAlgos.comparatorItemsetSameSize.compare(itemset, itemsetMiddle);
             if(comparison  > 0 ){
@@ -359,7 +358,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
         	GenericResults.ListOfItemset patternsList = patterns.getLevels().get(size);
         	// For each pattern of a given size
         	for(AbstractItemset patternAbs : patternsList) {
-        		Itemset pattern = (Itemset)patternAbs;
+        		ItemsetWithTIDSBitset pattern = (ItemsetWithTIDSBitset)patternAbs;
         		int[] patternArray = pattern.getItems();
         		
         		// If the first item of the pattern is larger than the first item of the itemset,

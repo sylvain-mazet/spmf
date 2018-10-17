@@ -27,7 +27,7 @@ import java.util.Set;
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rule;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rules;
 
@@ -111,7 +111,7 @@ public class AlgoIGB {
 		for(GenericResults.ListOfItemset level : closedPatternsAndGenerators.levels){
 			// for each itemset
 			for(AbstractItemset itemsetAbs : level){
-				Itemset itemset = (Itemset) itemsetAbs;
+				ItemsetArrayImplWithCount itemset = (ItemsetArrayImplWithCount) itemsetAbs;
 				// if it is not the empty set
 				if(itemset.size() != 0){
 					// we will process this itemset
@@ -136,25 +136,25 @@ public class AlgoIGB {
 	 * @param i an itemset.
 	 * @throws IOException  exception if error while writing output file
 	 */
-	private void processItemset(Itemset i) throws IOException {
+	private void processItemset(ItemsetArrayImplWithCount i) throws IOException {
 		// If the itemset has enough confidence
 		if(i.getRelativeSupport(databaseSize) >= minconf){  // line 3
 			// we generate a rule with an empty antecedent
 //			Rule rule = new Rule(, i, i.getAbsoluteSupport(), i.getRelativeSupport(databaseSize)); // 4,5,6
-			save(new Itemset(), i, i.getAbsoluteSupport(), i.getRelativeSupport(databaseSize));
+			save(new ItemsetArrayImplWithCount(), i, i.getAbsoluteSupport(), i.getRelativeSupport(databaseSize));
 			return;
 		}
 	
 		// Line 9 of the paper
 		// Create an empty set to store the smallest premises
-		Set<Itemset> lSmallestPremise = new HashSet<Itemset>(); 
+		Set<ItemsetArrayImplWithCount> lSmallestPremise = new HashSet<ItemsetArrayImplWithCount>();
 		
 		// line 10  of the pseudo code in the IGB paper
 		
 		// For each closed itemsets, starting from size j=0 to the maximum size
 		for(int j=0; j < i.size(); j++){
 			for(AbstractItemset i1Abs : closedPatternsAndGenerators.levels.get(j)){
-				Itemset i1 = (Itemset) i1Abs;
+				ItemsetArrayImplWithCount i1 = (ItemsetArrayImplWithCount) i1Abs;
 				
 				// if the confidence of I1 ==> I / I1 is higher than minconf
 				// and that   I1 \included_in I then:
@@ -164,14 +164,14 @@ public class AlgoIGB {
 					// line 11  of the pseudo code in the IGB paper
 					
 					// For each generator genI1  of  I1:
-					for(Itemset genI1 : closedPatternsAndGenerators.mapGenerators.get(i1)){
+					for(ItemsetArrayImplWithCount genI1 : closedPatternsAndGenerators.mapGenerators.get(i1)){
 						
 						// line 12  of the pseudo code in the IGB paper
 						
 						// check if there is a premise smaller than gen1 already found
 						boolean thereIsSmaller = false;
 						// for each premise:
-						for(Itemset l : lSmallestPremise){
+						for(ItemsetArrayImplWithCount l : lSmallestPremise){
 							// If strictly genI1 contains L.
 							if(genI1.containsAll(l) && genI1.size() != l.size()){ 
 								// remember that genI1 is not the smallest
@@ -191,7 +191,7 @@ public class AlgoIGB {
 		}
 		// line 14 of the pseudo code
 		// For each smallest premise found in the previous step
-		for(Itemset gs : lSmallestPremise){
+		for(ItemsetArrayImplWithCount gs : lSmallestPremise){
 			// lines 15, 16, 17  of the pseudo code in the IGB paper
 			
 			// Finds all items from I that are not in GS
@@ -209,7 +209,7 @@ public class AlgoIGB {
 			}
 			
 			// We create the corresponding rule   gs ==> I / gs
-			Itemset i_gs = new Itemset(temp);
+			ItemsetArrayImplWithCount i_gs = new ItemsetArrayImplWithCount(temp);
 			// We save the rule
 			save(gs, i_gs, i.getAbsoluteSupport(), (double)i.getAbsoluteSupport() / (double)gs.getAbsoluteSupport()); 
 		}
@@ -223,7 +223,7 @@ public class AlgoIGB {
 	 * @param confidence  the confidence of the rule
 	 * @throws IOException if error occurs while writing output to file.
 	 */
-	private void save(Itemset itemset1, Itemset itemset2, int absoluteSupport, double confidence) throws IOException {
+	private void save(ItemsetArrayImplWithCount itemset1, ItemsetArrayImplWithCount itemset2, int absoluteSupport, double confidence) throws IOException {
 		// increase the number of rule found
 		ruleCount++;
 		

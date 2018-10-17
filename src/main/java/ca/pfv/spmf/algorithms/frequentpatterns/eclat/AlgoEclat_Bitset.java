@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -53,7 +53,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -541,7 +541,7 @@ public class AlgoEclat_Bitset {
 			System.arraycopy(prefix, 0, itemsetArray, 0, prefixLength);
 			itemsetArray[prefixLength] = suffixItem;
 			// Create an object "Itemset" and add it to the set of frequent itemsets
-			Itemset itemset = new Itemset(itemsetArray);
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(itemsetArray);
 			itemset.setAbsoluteSupport(tidset.support);
 			frequentItemsets.addItemset(itemset, itemset.size());
 		}else{
@@ -582,7 +582,7 @@ public class AlgoEclat_Bitset {
 		// if the result should be saved to memory
 		if(writer == null){
 			// add it to the set of frequent itemsets
-			Itemset itemset = new Itemset(new int[] {item});
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(new int[] {item});
 			itemset.setAbsoluteSupport(support);
 			frequentItemsets.addItemset(itemset, itemset.size());
 		}else{

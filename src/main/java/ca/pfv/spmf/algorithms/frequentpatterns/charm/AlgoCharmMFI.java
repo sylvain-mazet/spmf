@@ -21,13 +21,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Iterator;
-import java.util.List;
 
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
 /**
@@ -48,7 +47,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
  * 
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @see Itemsets
  * @see HashTable
  * @see AlgoCharm_Bitset
@@ -136,7 +135,7 @@ public class AlgoCharmMFI {
 					// save the itemset an its support
 					writer.write(itemset.toString() + " #SUP: "	+ itemset.getAbsoluteSupport());
 					if(showTransactionIdentifiers) {
-						BitSet bitset = ((Itemset)itemset).getTransactionsIds();
+						BitSet bitset = ((ItemsetWithTIDSBitset)itemset).getTransactionsIds();
 			        	writer.append(" #TID:");
 			        	for (int tid = bitset.nextSetBit(0); tid != -1; tid = bitset.nextSetBit(tid + 1)) {
 			        		writer.append(" " + tid); 
@@ -166,10 +165,10 @@ public class AlgoCharmMFI {
 			// iterates over the itemsets of size i
 			Iterator<AbstractItemset> iter = ti.iterator();
 			while (iter.hasNext()) {
-				Itemset itemsetI = (Itemset) iter.next();
+				ItemsetWithTIDSBitset itemsetI = (ItemsetWithTIDSBitset) iter.next();
 				// if the current itemset of size i is contained
 				// in the current itemset of size J
-				if (((Itemset)itemsetJ).containsAll(itemsetI) ) {
+				if (((ItemsetWithTIDSBitset)itemsetJ).containsAll(itemsetI) ) {
 					// Then, it means that the itemset of size I is not maximal so we remove it
 					iter.remove();
 					// We decrease the current number of maximal itemsets.

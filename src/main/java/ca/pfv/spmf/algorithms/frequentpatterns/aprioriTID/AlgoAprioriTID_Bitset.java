@@ -29,8 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -46,7 +47,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * Sep 12-15 1994, Chile, 487-99,<br/><br/>
  * 
  * 
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @author Philippe Fournier-Viger
  */
 public class AlgoAprioriTID_Bitset {
@@ -147,7 +148,7 @@ public class AlgoAprioriTID_Bitset {
 		// We scan the database one time to calculate the support of each
 		// candidate.
 		k = 1;
-		List<Itemset> level = new ArrayList<Itemset>();
+		List<ItemsetWithTIDSBitset> level = new ArrayList<ItemsetWithTIDSBitset>();
 		// For each item
 		Iterator<Entry<Integer, BitSet>> iterator = mapItemTIDS.entrySet()
 				.iterator();
@@ -161,7 +162,7 @@ public class AlgoAprioriTID_Bitset {
 			if (cardinality >= minSuppRelative && maxItemsetSize >= 1) { 
 				// add the item to the set of frequent itemsets of size 1
 				Integer item = entry.getKey();
-				Itemset itemset = new Itemset(item);
+				ItemsetWithTIDSBitset itemset = new ItemsetWithTIDSBitset(item);
 				itemset.setTIDs(mapItemTIDS.get(item), cardinality);
 				level.add(itemset);
 				// save the itemset
@@ -173,8 +174,8 @@ public class AlgoAprioriTID_Bitset {
 		}
 
 		// sort itemsets of size 1 according to lexicographical order.
-		Collections.sort(level, new Comparator<Itemset>() {
-			public int compare(Itemset o1, Itemset o2) {
+		Collections.sort(level, new Comparator<ItemsetWithTIDSBitset>() {
+			public int compare(ItemsetWithTIDSBitset o1, ItemsetWithTIDSBitset o2) {
 				return o1.get(0) - o2.get(0);
 			}
 		});
@@ -202,16 +203,16 @@ public class AlgoAprioriTID_Bitset {
 	 * @param levelK_1  frequent itemsets of size k-1
 	 * @return itemsets of size k
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1)
+	protected List<ItemsetWithTIDSBitset> generateCandidateSizeK(List<ItemsetWithTIDSBitset> levelK_1)
 			throws IOException {
 		// create a variable to store candidates
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetWithTIDSBitset> candidates = new ArrayList<ItemsetWithTIDSBitset>();
 
 		// For each itemset I1 and I2 of level k-1
 		loop1: for (int i = 0; i < levelK_1.size(); i++) {
-			Itemset itemset1 = levelK_1.get(i);
+			ItemsetWithTIDSBitset itemset1 = levelK_1.get(i);
 			loop2: for (int j = i + 1; j < levelK_1.size(); j++) {
-				Itemset itemset2 = levelK_1.get(j);
+				ItemsetWithTIDSBitset itemset2 = levelK_1.get(j);
 
 				// we compare items of itemset1 and itemset2.
 				// If they have all the same k-1 items and the last item of
@@ -224,14 +225,14 @@ public class AlgoAprioriTID_Bitset {
 						// the one from itemset1 should be smaller (lexical
 						// order)
 						// and different from the one of itemset2
-						if (itemset1.getItems()[k] >= itemset2.get(k)) {
+						if (itemset1.get(k) >= itemset2.get(k)) {
 							continue loop1;
 						}
 					}
 					// if they are not the last items, and
-					else if (itemset1.getItems()[k] < itemset2.get(k)) {
+					else if (itemset1.get(k) < itemset2.get(k)) {
 						continue loop2; // we continue searching
-					} else if (itemset1.getItems()[k] > itemset2.get(k)) {
+					} else if (itemset1.get(k) > itemset2.get(k)) {
 						continue loop1; // we stop searching: because of lexical
 										// order
 					}
@@ -250,7 +251,7 @@ public class AlgoAprioriTID_Bitset {
 					int newItemset[] = new int[itemset1.size()+1];
 					System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 					newItemset[itemset1.size()] = itemset2.getItems()[itemset2.size() -1];
-					Itemset candidate = new Itemset(newItemset);
+					ItemsetWithTIDSBitset candidate = new ItemsetWithTIDSBitset(newItemset);
 					candidate.setTIDs(list, cardinality);
 					
 					candidates.add(candidate);
@@ -274,7 +275,7 @@ public class AlgoAprioriTID_Bitset {
 	 * @param itemset the itemset to be saved
 	 * @throws IOException an exception if error while writing the file.
 	 */
-	void saveItemsetToFile(Itemset itemset) throws IOException {
+	void saveItemsetToFile(ItemsetWithTIDSBitset itemset) throws IOException {
 		writer.write(itemset.toString() + " #SUP: " + itemset.cardinality);
 		if(showTransactionIdentifiers) {
         	writer.append(" #TID:");

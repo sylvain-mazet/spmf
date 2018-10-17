@@ -27,12 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
  
@@ -54,7 +55,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * by the user to the runAlgorithm method().
  * 
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetWithTIDSBitset
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -396,7 +397,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 			System.arraycopy(prefix, 0, itemsetArray, 0, prefixLength);
 			
 			// Create an object "Itemset" and add it to the set of frequent itemsets
-			Itemset itemset = new Itemset(itemsetArray);
+			ItemsetWithTIDSBitset itemset = new ItemsetWithTIDSBitset(itemsetArray);
 			itemset.setTIDs(tidset, support);
 			generators.addItemset(itemset, itemset.size());
 		}else{

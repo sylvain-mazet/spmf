@@ -30,9 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Vector;
 
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -53,7 +54,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * it into memory if no output path is provided to the runAlgorithm() method.
  * <br/><br/>
  * 
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
@@ -215,7 +216,7 @@ public class AlgoAprioriTIDrare {
 		// if the user want the empty set
 		if(emptySetIsRequired ){
 			// add the empty set to the set of patterns
-			patterns.addItemset(new Itemset(new int[]{}), 0);
+			patterns.addItemset(new ItemsetWithTIDS(new int[]{}), 0);
 		}
 		
 
@@ -227,7 +228,7 @@ public class AlgoAprioriTIDrare {
 		// We scan the database one time to calculate the support of each
 		// candidate.
 		k = 1;
-		List<Itemset> level = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> level = new ArrayList<ItemsetWithTIDS>();
 		// For each item
 		Iterator<Entry<Integer, Set<Integer>>> iterator = mapItemTIDS.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -239,7 +240,7 @@ public class AlgoAprioriTIDrare {
 			
 			// MODIFIED FOR RARE PATTERNS -----
 			Integer item = entry.getKey();
-			Itemset itemset = new Itemset(item);
+			ItemsetWithTIDS itemset = new ItemsetWithTIDS(item);
 			itemset.setTIDs(mapItemTIDS.get(item));
 			
 			// if the item is frequent
@@ -256,8 +257,8 @@ public class AlgoAprioriTIDrare {
 		}
 
 		// sort itemsets of size 1 according to lexicographical order.
-		Collections.sort(level, new Comparator<Itemset>() {
-			public int compare(Itemset o1, Itemset o2) {
+		Collections.sort(level, new Comparator<ItemsetWithTIDS>() {
+			public int compare(ItemsetWithTIDS o1, ItemsetWithTIDS o2) {
 				return o1.get(0) - o2.get(0);
 			}
 		});
@@ -288,16 +289,16 @@ public class AlgoAprioriTIDrare {
 	 * @param levelK_1  frequent itemsets of size k-1
 	 * @return itemsets of size k
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1)
+	protected List<ItemsetWithTIDS> generateCandidateSizeK(List<ItemsetWithTIDS> levelK_1)
 			throws IOException {
 		// create a variable to store candidates
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetWithTIDS> candidates = new ArrayList<ItemsetWithTIDS>();
 
 		// For each itemset I1 and I2 of level k-1
 		loop1: for (int i = 0; i < levelK_1.size(); i++) {
-			Itemset itemset1 = levelK_1.get(i);
+			ItemsetWithTIDS itemset1 = levelK_1.get(i);
 			loop2: for (int j = i + 1; j < levelK_1.size(); j++) {
-				Itemset itemset2 = levelK_1.get(j);
+				ItemsetWithTIDS itemset2 = levelK_1.get(j);
 
 				// we compare items of itemset1 and itemset2.
 				// If they have all the same k-1 items and the last item of
@@ -310,14 +311,14 @@ public class AlgoAprioriTIDrare {
 						// the one from itemset1 should be smaller (lexical
 						// order)
 						// and different from the one of itemset2
-						if (itemset1.getItems()[k] >= itemset2.get(k)) {
+						if (itemset1.get(k) >= itemset2.get(k)) {
 							continue loop1;
 						}
 					}
 					// if the k-th items is smalle rinn itemset1
-					else if (itemset1.getItems()[k] < itemset2.getItems()[k]) {
+					else if (itemset1.get(k) < itemset2.get(k)) {
 						continue loop2; // we continue searching
-					} else if (itemset1.getItems()[k] > itemset2.getItems()[k]) {
+					} else if (itemset1.get(k) > itemset2.get(k)) {
 						continue loop1; // we stop searching: because of lexical
 										// order
 					}
@@ -339,7 +340,7 @@ public class AlgoAprioriTIDrare {
 				int newItemset[] = new int[itemset1.size()+1];
 				System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 				newItemset[itemset1.size()] = itemset2.getItems()[itemset2.size() -1];
-				Itemset candidate = new Itemset(newItemset);
+				ItemsetWithTIDS candidate = new ItemsetWithTIDS(newItemset);
 				candidate.setTIDs(list);
 
 				// if the combination of itemset1 and itemset2 is frequent
@@ -370,7 +371,7 @@ public class AlgoAprioriTIDrare {
 	 * @param itemset the itemset
 	 * @throws IOException exception if error writing the output file.
 	 */
-	void saveItemset(Itemset itemset) throws IOException {
+	void saveItemset(ItemsetWithTIDS itemset) throws IOException {
 		itemsetCount++;
 		
 		// if the result should be saved to a file

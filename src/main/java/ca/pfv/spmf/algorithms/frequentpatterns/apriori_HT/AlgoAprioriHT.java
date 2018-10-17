@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_HT.ItemsetHashTree.LeafNode;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -56,8 +56,8 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * To change the branch_count variable, see the ItemsetHashTree class (default is 30).
  * 
  * 
- * @see Itemset
- * @see AbstractOrderedItemsetsAdapter
+ * @see ItemsetArrayImplWithCount
+ * @see ca.pfv.spmf.patterns.AbstractOrderedItemset
  * @see ItemsetHashTree
  * @author Philippe Fournier-Viger
  */
@@ -272,12 +272,12 @@ public class AlgoAprioriHT {
 			// for each leaf node in the hash-tree
 			for(LeafNode node  = candidatesK.lastInsertedNode;node != null; node = node.nextLeafNode){
 				// for each list of candidate itemsets stored in that node
-				for(List<Itemset> listCandidate: node.candidates){
+				for(List<ItemsetArrayImplWithCount> listCandidate: node.candidates){
 					// if the list is not null
 					if(listCandidate != null){
 						// for each candidate itemset
 						for(int i=0; i<listCandidate.size(); i++){
-							Itemset candidate = listCandidate.get(i);
+							ItemsetArrayImplWithCount candidate = listCandidate.get(i);
 							// if enough support, save the itemset
 							if (candidate.getAbsoluteSupport() >= minsupRelative) {
 								saveItemsetToFile(candidate);
@@ -321,7 +321,7 @@ public class AlgoAprioriHT {
 		
 		// For each leaf node
 		for(LeafNode node  = candidatesK_1.lastInsertedNode; node != null; node = node.nextLeafNode){
-			List<Itemset> subgroups [] = node.candidates;
+			List<ItemsetArrayImplWithCount> subgroups [] = node.candidates;
 			// For each sets of itemsets in this node
 			for(int i=0; i< subgroups.length; i++){
 				if(subgroups[i] == null){
@@ -344,11 +344,11 @@ public class AlgoAprioriHT {
 	 * Method to generate candidates of size k from two list of itemsets of size k-1
 	 * @param list1 the first list
 	 * @param list2 the second list (may be equal to the first list)
-	 * @param candidatesK the hash-tree containing the candidates of size k-1
+	 * @param candidatesK_1 the hash-tree containing the candidates of size k-1
 	 * @param newCandidates the hash-tree to store the candidates of size k
 	 */
-	private void generate(List<Itemset> list1, List<Itemset> list2,
-			ItemsetHashTree candidatesK_1, ItemsetHashTree newCandidates) {
+	private void generate(List<ItemsetArrayImplWithCount> list1, List<ItemsetArrayImplWithCount> list2,
+                          ItemsetHashTree candidatesK_1, ItemsetHashTree newCandidates) {
 	// For each itemset I1 and I2 of lists
 		loop1: for (int i = 0; i < list1.size(); i++) {
 			int[] itemset1 = list1.get(i).itemset;
@@ -368,10 +368,10 @@ public class AlgoAprioriHT {
 				for (int k = 0; k < itemset1.length; k++) {
 					// if k is not the last item
 					if (k != itemset1.length - 1) {
-						if (itemset2[k] > itemset1[k]) {  
+						if (itemset2[k] > itemset1[k]) {
 							continue loop1; // we continue searching
 						} 
-						if (itemset1[k] > itemset2[k]) {  
+						if (itemset1[k] > itemset2[k]) {
 							continue loop2; // we continue searching
 						} 
 					}
@@ -398,7 +398,7 @@ public class AlgoAprioriHT {
 				// included in level k-1 (they are frequent).
 				if (allSubsetsOfSizeK_1AreFrequent(newItemset, candidatesK_1)) {
 					// If yes, we add the candidate to the hash-tree
-					newCandidates.insertCandidateItemset(new Itemset(newItemset));
+					newCandidates.insertCandidateItemset(new ItemsetArrayImplWithCount(newItemset));
 				}
 			}
 		}
@@ -420,7 +420,7 @@ public class AlgoAprioriHT {
 				Integer item2 = frequent1.get(j);
 				// Create a new candidate by combining the two items and insert
 				// it in the hash-tree
-				candidates.insertCandidateItemset(new Itemset(new int []{item1, item2}));
+				candidates.insertCandidateItemset(new ItemsetArrayImplWithCount(new int []{item1, item2}));
 			}
 		}
 		return candidates; // return the hash-tree
@@ -450,7 +450,7 @@ public class AlgoAprioriHT {
 	 * @param itemset
 	 * @throws IOException
 	 */
-	void saveItemsetToFile(Itemset itemset) throws IOException {
+	void saveItemsetToFile(ItemsetArrayImplWithCount itemset) throws IOException {
 		writer.write(itemset.toString() + " #SUP: "
 				+ itemset.getAbsoluteSupport());
 		writer.newLine();

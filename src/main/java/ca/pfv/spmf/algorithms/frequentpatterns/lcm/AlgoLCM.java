@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -76,9 +76,7 @@ public class AlgoLCM {
      * @param minimumSupport  the minimum support threshold as percentage value between 0 and 1
      * @param dataset  the dataset
      * @param outputPath  the output file path to save the result or null if to be kept in memory
-     * @param mineAllFrequentItemsets mine all frequent itemsets
-     * @param mineAllMaximalItemsets mine only maximal itemsets
-         * @return the itemsets or null if the user choose to save to file
+     * @return the itemsets or null if the user choose to save to file
      * @throws IOException if exception while reading/writing to file
      */
     public Itemsets runAlgorithm(double minimumSupport, Dataset dataset, String outputPath) throws IOException {
@@ -245,7 +243,7 @@ public class AlgoLCM {
     
     /**
      * Perform the anytime database reduction for an itemset P U {e}
-     * @param transactions the transactions
+     * @param transactionsPe the transactions
      * @param j the position of j in the list of frequent items
      * @param frequentItems 
      * @param itemset 
@@ -351,7 +349,7 @@ public class AlgoLCM {
      * @param p the itemset p
      * @param e the item e
      * @param transactionsPe  the transactions containing P U e
-     * @param previouslyAddedItem 
+     * @param e
      * @return true if it is a PPC extension
      */
     private boolean isPPCExtension(List<Integer> p, List<Transaction> transactionsPe, Integer e) {
@@ -419,7 +417,7 @@ public class AlgoLCM {
         		// The following line is not too optimized since
         		// we convert an itemset as List<Integer> to int[]
         		// but this cost is still quite small, so we leave it like 
-        		closedFrequentItemsets.addItemset(new Itemset(itemset, support), itemset.size());
+        		closedFrequentItemsets.addItemset(new ItemsetArrayImplWithCount(itemset, support), itemset.size());
         	}else {
         	// if save to file
     		// create a stringuffer

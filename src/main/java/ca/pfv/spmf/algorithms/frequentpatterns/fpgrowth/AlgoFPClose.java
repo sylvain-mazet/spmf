@@ -1,5 +1,5 @@
  package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
- 
+
  /* This file is copyright (c) 2008-2015 Philippe Fournier-Viger
  * 
  * This file is part of the SPMF DATA MINING SOFTWARE
@@ -18,7 +18,7 @@
  */
 
 
- import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 import java.io.IOException;
@@ -27,8 +27,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+ import java.util.Vector;
 
-/** 
+ /**
  * This is an implementation of the FPClose algorithm (Grahne et al., 2004).
  * FPGrowth is described here:
  * <br/><br/>
@@ -45,7 +46,7 @@ import java.util.Map;
  * use the FPArray optimization
  *
  * @see FPTree
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger, 2015
  */
@@ -73,6 +74,7 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 
 		// Create the CFI Tree
 		cfiTree = new CFITree();
+		cfiTree.setRoot(new FICNode());
 
 		cfiTree.setComparator(comparatorOriginalOrder);
 
@@ -264,7 +266,7 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 
 				//======= DEBUG ========
 				if (DEBUG) {
-					System.out.println(" CHECK2 : " + Arrays.toString(headWithP) + " sup=" + betaSupport);
+					System.out.println(" CHECK2 : " + headWithP.toString() + " sup=" + betaSupport);
 				}
 				//========== END DEBUG =======
 
@@ -319,4 +321,9 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 	public FITree getFiTree() {
 		return cfiTree;
 	}
-}
+
+	 /**
+	  * special for closed rules, grrrr...
+	  */
+	 public CFITree getCfiTree() { return cfiTree; }
+ }

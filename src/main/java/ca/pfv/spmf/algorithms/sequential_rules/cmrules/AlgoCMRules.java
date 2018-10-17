@@ -31,7 +31,7 @@ import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.sequence_database_list_integers.Sequence;
 import ca.pfv.spmf.input.sequence_database_list_integers.SequenceDatabase;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -53,7 +53,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see Rule
  * @see Rules
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @see Itemsets
  * @see TransactionDatabase
  * @see SequenceDatabase
@@ -456,10 +456,10 @@ public class AlgoCMRules {
 		
 		//For each frequent itemset of size >=2
 		for(int k=2; k< patterns.getLevels().size(); k++){
-			for(Itemset lk : patterns.getLevels().get(k)){ 
+			for(ItemsetWithTIDS lk : patterns.getLevels().get(k)){
 				// create H1
-				Set<Itemset> H1 = new HashSet<Itemset>();
-				for(Itemset itemsetSize1 : patterns.getLevels().get(1)){
+				Set<ItemsetWithTIDS> H1 = new HashSet<ItemsetWithTIDS>();
+				for(ItemsetWithTIDS itemsetSize1 : patterns.getLevels().get(1)){
 					if(lk.contains(itemsetSize1.getItems()[0])){
 						H1.add(itemsetSize1);
 					}
@@ -469,13 +469,13 @@ public class AlgoCMRules {
 				
 				/// ================ I ADDED THIS BECAUSE THE ALGORITHM AS DESCRIBED BY AGRAWAL94
 				/// ================ DID NOT GENERATE ALL  THE ASSOCIATION RULES
-				Set<Itemset> H1_for_recursion  = new HashSet<Itemset>();
+				Set<ItemsetWithTIDS> H1_for_recursion  = new HashSet<ItemsetWithTIDS>();
 				// for each itemset in H1
-				for(Itemset hm_P_1 : H1){
+				for(ItemsetWithTIDS hm_P_1 : H1){
 					
 					// make a copy of  itemset_Lk_minus_hm_P_1 but remove 
 					// items from  hm_P_1
-					Itemset itemset_Lk_minus_hm_P_1 = (Itemset)lk.cloneItemSetMinusAnItemset(hm_P_1);
+					ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = (ItemsetWithTIDS)lk.cloneItemSetMinusAnItemset(hm_P_1);
 
 					// This is the definition of confidence:
 					// double conf = supp(lk) / supp (lk - hm+1)
@@ -516,10 +516,7 @@ public class AlgoCMRules {
 	
 	/**
 	 * Save a rule to the output file
-	 * @param support  the support of the rule
-	 * @param confIJ  the confidence of the rule
-	 * @param itemsetI  the left itemset
-	 * @param itemsetJ  the right itemset
+	 * @param rule the rule to save
 	 * @throws IOException exception if error writing the file
 	 */
 	private void saveRule(Rule rule) throws IOException {
@@ -567,17 +564,17 @@ public class AlgoCMRules {
 	 * @param lk  a itemset that is used to generate rules
 	 * @throws IOException exception if error while writing output file
 	 */
-	private void apGenrules(int k, int m, Itemset lk, Set<Itemset> Hm) throws IOException {
+	private void apGenrules(int k, int m, ItemsetWithTIDS lk, Set<ItemsetWithTIDS> Hm) throws IOException {
 //		System.out.println(" " + lk.toString() + "  " + Hm.toString());
 		if(k > m+1){
 			int leftsize = lk.size() - (1 + m);
 			
-			Set<Itemset> Hm_plus_1 = generateCandidateSizeK(Hm);
-			Set<Itemset> Hm_plus_1_for_recursion = new HashSet<Itemset>();
+			Set<ItemsetWithTIDS> Hm_plus_1 = generateCandidateSizeK(Hm);
+			Set<ItemsetWithTIDS> Hm_plus_1_for_recursion = new HashSet<ItemsetWithTIDS>();
 			// for each itemset Hm+1
-			for(Itemset hm_P_1 : Hm_plus_1){
+			for(ItemsetWithTIDS hm_P_1 : Hm_plus_1){
 				// Generate the itemset Lk / Hm+1
-				Itemset itemset_Lk_minus_hm_P_1 = (Itemset)lk.cloneItemSetMinusAnItemset(hm_P_1);
+				ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = (ItemsetWithTIDS)lk.cloneItemSetMinusAnItemset(hm_P_1);
 
 				// Calculate the support of Lk / Hm+1
 				calculateSupport(itemset_Lk_minus_hm_P_1);   
@@ -618,9 +615,9 @@ public class AlgoCMRules {
 	 * @param itemset_Lk_minus_hm_P_1
 	 *            The itemset.
 	 */
-	private void calculateSupport(Itemset itemset_Lk_minus_hm_P_1) {
+	private void calculateSupport(ItemsetWithTIDS itemset_Lk_minus_hm_P_1) {
 		// loop over all the patterns of the same size.
-		for(Itemset itemset : patterns.getLevels().get(itemset_Lk_minus_hm_P_1.size())){
+		for(ItemsetWithTIDS itemset : patterns.getLevels().get(itemset_Lk_minus_hm_P_1.size())){
 			// If the pattern is found
 			if(itemset.isEqualTo(itemset_Lk_minus_hm_P_1)){
 				// set its support to the same value.
@@ -638,13 +635,13 @@ public class AlgoCMRules {
 	 * @param levelK_1  a set of itemsets of size k-1
 	 * @return a set of candidates
 	 */
-	protected Set<Itemset> generateCandidateSizeK(Set<Itemset> levelK_1) {
+	protected Set<ItemsetWithTIDS> generateCandidateSizeK(Set<ItemsetWithTIDS> levelK_1) {
 		// Initialize the set of candidates
-		Set<Itemset> candidates = new HashSet<Itemset>();
+		Set<ItemsetWithTIDS> candidates = new HashSet<ItemsetWithTIDS>();
 
 		// For each itemset I1 and I2 of level k-1
-		for(Itemset itemset1 : levelK_1){
-			for(Itemset itemset2 : levelK_1){
+		for(ItemsetWithTIDS itemset1 : levelK_1){
+			for(ItemsetWithTIDS itemset2 : levelK_1){
 				// If I1 is smaller than I2 according to lexical order and
 				// they share all the same items except the last one.
 				Integer missing = itemset1.allTheSameExceptLastItem(itemset2);
@@ -653,7 +650,7 @@ public class AlgoCMRules {
 					int newItemset[] = new int[itemset1.size()+1];
 					System.arraycopy(itemset1.itemset, 0, newItemset, 0, itemset1.size());
 					newItemset[itemset1.size()] = missing;
-					Itemset candidate = new Itemset(newItemset);
+					ItemsetWithTIDS candidate = new ItemsetWithTIDS(newItemset);
 
 					// The candidate is tested to see if its subsets of size k-1
 					// are included in
@@ -678,7 +675,7 @@ public class AlgoCMRules {
 	 *            The frequent itemsets of size "k-1".
 	 * @return true is all susets are frequent
 	 */
-	protected boolean allSubsetsOfSizeK_1AreFrequent(Itemset candidate, Set<Itemset> levelK_1) {
+	protected boolean allSubsetsOfSizeK_1AreFrequent(ItemsetWithTIDS candidate, Set<ItemsetWithTIDS> levelK_1) {
 		// To generate all the set of size K-1, we will proceed
 		// by removing each item, one by one.
 		if(candidate.size() == 1){
@@ -687,11 +684,11 @@ public class AlgoCMRules {
 		// for each item of candidate, we will consider that this item is removed
 		for(Integer item : candidate.getItems()){
 			// create the subset without this item
-			Itemset subset = (Itemset) candidate.cloneItemSetMinusOneItem(item);
+			ItemsetWithTIDS subset = (ItemsetWithTIDS) candidate.cloneItemSetMinusOneItem(item);
 			// we will search itemsets of size k-1 to see if this itemset appears
 			boolean found = false;
 			// for each  itemset of size k-1
-			for(Itemset itemset : levelK_1){
+			for(ItemsetWithTIDS itemset : levelK_1){
 				// if the itemset is equals to "subset", we found it and stop the loop
 				if(itemset.isEqualTo(subset)){
 					found = true;

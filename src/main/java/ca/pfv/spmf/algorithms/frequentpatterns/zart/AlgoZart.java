@@ -20,18 +20,16 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
-import ca.pfv.spmf.algorithms.GenericAlgorithm;
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -49,7 +47,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * for example, by using the Trie data structure and by removing unfrequent items, but this was not done here.
  * 
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @author Philippe Fournier-Viger
  */
 
@@ -64,7 +62,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 	private TCTableCandidate tableCandidate = null; // table of candidates
 	
 	// The list of frequent generators FG
-	private List<Itemset> frequentGeneratorsFG = null; // 2
+	private List<ItemsetArrayImplWithCount> frequentGeneratorsFG = null; // 2
 
 	/**
 	 * Default constructor
@@ -153,7 +151,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 			}
 
 			// create an itemset for the item and set its support
-			Itemset itemset = new Itemset(item);
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(item);
 			itemset.setAbsoluteSupport(mapItemSupport.get(item));
 			// if the support is higher than minsup
 			if(mapItemSupport.get(item) >= minsupRelative){
@@ -179,7 +177,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 			boolean fullCollumn = false; // 1
 
 			// 6 : Loops over frequent itemsets of size 1
-			for(Itemset l : tableFrequent.getLevelForZart(0)){
+			for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(0)){
 				// assign the value true to l in the map for closed itemsets
 				tableFrequent.mapClosed.put(l, true); // 8
 				// If L has the support equal to the number of transactions in the database
@@ -195,7 +193,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 			}
 
 			// create the empty set
-			Itemset emptyset = new Itemset(new int[]{});
+			ItemsetArrayImplWithCount emptyset = new ItemsetArrayImplWithCount(new int[]{});
 
 			// 15 if there is an itemset shared by all transactions
 			if(fullCollumn){
@@ -208,7 +206,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 				tableFrequent.mapClosed.put(emptyset, true);  // add to table of closed itemsets
 				tableFrequent.mapPredSupp.put(emptyset, getTransactionCount());
 				tableClosed.addClosedItemset(emptyset);
-				tableClosed.mapGenerators.put(emptyset, new ArrayList<Itemset>());
+				tableClosed.mapGenerators.put(emptyset, new ArrayList<>());
 				// we set its support as the database size
 				emptyset.setAbsoluteSupport(getTransactionCount());
 			}
@@ -254,7 +252,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 							dbItemset.add(item);
 						}
 						// for each subset of the candidate
-						for(Itemset s : subset(tableCandidate.levels.get(i), dbItemset)){ // 23, 24
+						for(ItemsetArrayImplWithCount s : subset(tableCandidate.levels.get(i), dbItemset)){ // 23, 24
 							if(tableCandidate.mapKey.get(s)){
 								// increase its support count
 								s.increaseTransactionCount(); //25
@@ -266,7 +264,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 				}
 
 				// for each candidate itemset of size i
-				for(Itemset c : tableCandidate.levels.get(i)){ //28
+				for(ItemsetArrayImplWithCount c : tableCandidate.levels.get(i)){ //28
 					// if it is a frequent itemset
 					if(c.getAbsoluteSupport() >= minsupRelative){
 						//31
@@ -286,12 +284,12 @@ public class AlgoZart extends GenericAlgorithmBase {
 				}
 
 				// for each frequent itemset of size i
-				for(Itemset l : tableFrequent.getLevelForZart(i)){ // 36
+				for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i)){ // 36
 					// add it as closed to the map of closed itemsets by assuming
 					// that it is closed until now
 					tableFrequent.mapClosed.put(l, true); //37
 					// for all suset of l of size i-1
-					for(Itemset s : subset(tableFrequent.getLevelForZart(i-1), l)){ // 38, 39
+					for(ItemsetArrayImplWithCount s : subset(tableFrequent.getLevelForZart(i-1), l)){ // 38, 39
 						// if it has the same support as l, that means
 						// that l is not closed so we mark it as such.
 						if(s.getAbsoluteSupport() == l.getAbsoluteSupport()){ // 40
@@ -303,7 +301,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 				// 42
 				tableClosed.levels.add(new ListOfArrayItemset());
 				// for each frequent itemsets of size i-1
-				for(Itemset l : tableFrequent.getLevelForZart(i-1)){
+				for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i-1)){
 					//  if it is marked as closed, then we add it to
 					// the table of closed itemsets.
 					if(tableFrequent.mapClosed.get(l) == true){
@@ -320,7 +318,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 
 			//  ....  45
 			tableClosed.levels.add(new ListOfArrayItemset());
-			for(Itemset l : tableFrequent.getLevelForZart(i-1)){
+			for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i-1)){
 				tableClosed.getLevelForZart(i-1).add(l);
 			}
 
@@ -351,9 +349,9 @@ public class AlgoZart extends GenericAlgorithmBase {
 	private void findGenerators(GenericResults.ListOfItemset zi, int i) {
 		// for each itemset in the list
 		for(AbstractItemset zAbs : zi){ // 1
-			Itemset z = (Itemset) zAbs;
+			ItemsetArrayImplWithCount z = (ItemsetArrayImplWithCount) zAbs;
 			// get the list of all frequent generators contained in z 
-			List<Itemset> s = subset(frequentGeneratorsFG, z);  // 3
+			List<ItemsetArrayImplWithCount> s = subset(frequentGeneratorsFG, z);  // 3
 			// register them in the map associating closed itemsets to their generators
 			tableClosed.mapGenerators.put(z, s);  // 4
 			// remove the generators from the list of generators 
@@ -361,7 +359,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 			frequentGeneratorsFG.removeAll(s); // 5
 		}  
 		// for each frequent itemsets of size i-1
-		for(Itemset l : tableFrequent.getLevelForZart(i-1)){
+		for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i-1)){
 			// if the key value is set to true and it is not closed
 			if(tableFrequent.mapKey.get(l) == true && tableFrequent.mapClosed.get(l) == false){
 				// then add it to the list of generators
@@ -377,11 +375,11 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @param l  an itemset L.
 	 * @return the list of itemsets from S that are contained in L
 	 */
-	private List<Itemset> subset(List<Itemset> s, Itemset l) {
+	private List<ItemsetArrayImplWithCount> subset(List<ItemsetArrayImplWithCount> s, ItemsetArrayImplWithCount l) {
 		// Initialize the list of subsets
-		List<Itemset> retour = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> retour = new ArrayList<>();
 		// for each itemset in S
-		for(Itemset itemsetS : s){
+		for(ItemsetArrayImplWithCount itemsetS : s){
 			boolean allIncluded = true;
 			// for each item of this itemset,
 			for(int i=0; i<itemsetS.size(); i++){
@@ -408,11 +406,11 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @param l  an itemset L.
 	 * @return the list of itemsets from S that are contained in L
 	 */
-	private List<Itemset> subset(List<Itemset> s, List<Integer> l) {
+	private List<ItemsetArrayImplWithCount> subset(List<ItemsetArrayImplWithCount> s, List<Integer> l) {
 		// Initialize the list of subsets
-		List<Itemset> subset = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> subset = new ArrayList<>();
 		// for each itemset in S
-		for(Itemset itemsetS : s){
+		for(ItemsetArrayImplWithCount itemsetS : s){
 			boolean allIncluded = true;
 			// for each item of this itemset,
 			for(int i=0; i<itemsetS.size(); i++){
@@ -447,7 +445,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 		// and we don't need to consider it anymore.
 		
 		// for each candidate
-		for(Itemset c : new ArrayList<Itemset>(tableCandidate.levels.get(i))){ // 2   
+		for(ItemsetArrayImplWithCount c : new ArrayList<>(tableCandidate.levels.get(i))){ // 2
 			// set the key to true
 			tableCandidate.mapKey.put(c, true); // 4
 			//  set the support to database size +1.
@@ -459,10 +457,10 @@ public class AlgoZart extends GenericAlgorithmBase {
 			// for each element
 			for(int j=0; j<c.size(); j++){
 				// we copy the itemset without the current item
-				Itemset s = (Itemset) c.cloneItemSetMinusOneItem(c.get(j));
+				ItemsetArrayImplWithCount s = c.cloneItemSetMinusOneItem(c.get(j));
 				boolean found = false;
 				// now for each frequent itemsets of size i-1
-				for(Itemset itemset2 : tableFrequent.getLevelForZart(i-1)){
+				for(ItemsetArrayImplWithCount itemset2 : tableFrequent.getLevelForZart(i-1)){
 					// if we have found the subset, then we stop this loop 
 					// and set the variale to true to remember that we found it
 					if(itemset2.isEqualTo(s)){
@@ -477,7 +475,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 				}else{
 					// if the current subset is frequent,
 					// then get the previous occurence in the table of candidates
-					Itemset occurenceS = getPreviousOccurenceOfItemset(s, tableCandidate.levels.get(i-1));  // AJOUT N�CESSAIRE
+					ItemsetArrayImplWithCount occurenceS = getPreviousOccurenceOfItemset(s, tableCandidate.levels.get(i-1));  // AJOUT N�CESSAIRE
 					// if the support of that occurence is lower
 					if(occurenceS.getAbsoluteSupport() < tableCandidate.mapPredSupp.get(c)){ // 11
 						// then we will use that support for this subset
@@ -510,9 +508,9 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @param list  the list of itemsets
 	 * @return  the previous occurence or null if there is not such previous occurence
 	 */
-	private Itemset getPreviousOccurenceOfItemset(Itemset itemset, List<Itemset> list){
+	private ItemsetArrayImplWithCount getPreviousOccurenceOfItemset(ItemsetArrayImplWithCount itemset, List<ItemsetArrayImplWithCount> list){
 		// for each itemset in the list
-		for(Itemset itemset2 : list){
+		for(ItemsetArrayImplWithCount itemset2 : list){
 			// if it is equal to the itemset that is searched, then 
 			// return it
 			if(itemset2.isEqualTo(itemset)){
@@ -530,11 +528,11 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 */
 	protected void prepareCandidateSizeI(int size) {
 		// add a new list in candidates to store the candidates of size i
-		tableCandidate.levels.add(new ArrayList<Itemset>());
+		tableCandidate.levels.add(new ArrayList<ItemsetArrayImplWithCount>());
 		
 		// For each frequent itemset I1 and  I2 of size i-1
-		for(Itemset itemset1 : tableFrequent.getLevelForZart(size-1)){
-			for(Itemset itemset2 : tableFrequent.getLevelForZart(size-1)){
+		for(ItemsetArrayImplWithCount itemset1 : tableFrequent.getLevelForZart(size-1)){
+			for(ItemsetArrayImplWithCount itemset2 : tableFrequent.getLevelForZart(size-1)){
 				// If I1 is smaller than I2 according to lectical order
 				// and that they have only one element that is different
 //				Integer missing = itemset2.haveOneItemDifferent(itemset1);
@@ -548,7 +546,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 
 					// add the resulting itemset
 					// to the table of candidates of size i
-					tableCandidate.levels.get(size).add(new Itemset(union));
+					tableCandidate.levels.get(size).add(new ItemsetArrayImplWithCount(union));
 				}
 			}
 		}
@@ -587,7 +585,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 		for(int i=0; i< tableClosed.levels.size(); i++){
 			// for each closed itemsets of size i
 			for(AbstractItemset closedAbs : tableClosed.levels.get(i)){
-				Itemset closed = (Itemset) closedAbs;
+				ItemsetArrayImplWithCount closed = (ItemsetArrayImplWithCount) closedAbs;
 				// write the itemset
 				writer.write(" CLOSED : \n   " + closed.toString() + " #SUP: " + closed.getAbsoluteSupport());
 				writer.newLine();
@@ -595,14 +593,14 @@ public class AlgoZart extends GenericAlgorithmBase {
 				writer.write("   GENERATOR(S) :");
 				writer.newLine();
 				/// for each generator of that closed itemset
-				List<Itemset> generators = tableClosed.mapGenerators.get(closed);
+				List<ItemsetArrayImplWithCount> generators = tableClosed.mapGenerators.get(closed);
 				// if there is no generators, it means that the closed itemset is a generator
 				if(generators.size() == 0) {
 					writer.write("    " + closed.toString() );
 					writer.newLine();
 				}else {
 					// otherwise we write the generators
-					for(Itemset generator : generators){
+					for(ItemsetArrayImplWithCount generator : generators){
 						// write the generator
 						writer.write("     " + generator.toString());
 						writer.newLine();
@@ -617,7 +615,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 		// for itemsets of size i from 0 to the largest itemsets
 		for(int i=0; i< tableFrequent.levels.size(); i++){
 			// for each frequent itemset of size i
-			for(Itemset itemset : tableFrequent.levels.get(i)){
+			for(ItemsetArrayImplWithCount itemset : tableFrequent.levels.get(i)){
 				// write the itemset
 				writer.write(" ITEMSET : " + itemset.toString() + " #SUP: " + itemset.getAbsoluteSupport());
 				writer.newLine();
