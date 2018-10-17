@@ -19,13 +19,13 @@ package ca.pfv.spmf.algorithms.sequential_rules.cmdeogun;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represents a group of sequential rules found by the CMDeo algorithm.
  * 
  * @see AlgoCMDeogun
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @see Rule
  * @author Philippe Fournier-Viger
  */

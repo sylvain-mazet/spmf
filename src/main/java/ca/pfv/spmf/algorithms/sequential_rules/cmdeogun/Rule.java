@@ -16,20 +16,20 @@ package ca.pfv.spmf.algorithms.sequential_rules.cmdeogun;
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represents a sequential rule found by the CMDeo algorithm.
  * 
  * @see AlgoCMDeogun
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class Rule {
 	/** antecedent */
-	private Itemset itemset1; 
+	private ItemsetWithTIDS itemset1;
 	 /** consequent */
-	private Itemset itemset2;
+	private ItemsetWithTIDS itemset2;
 	/** absolute support */
 	private int transactioncount; 
 	
@@ -38,7 +38,7 @@ public class Rule {
 	 * @param itemset1  the left itemset
 	 * @param itemset2  the right itemset
 	 */
-	public Rule(Itemset itemset1, Itemset itemset2){
+	public Rule(ItemsetWithTIDS itemset1, ItemsetWithTIDS itemset2){
 		this.itemset1 = itemset1;
 		this.itemset2 = itemset2;
 	}
@@ -47,7 +47,7 @@ public class Rule {
 	 * Get the antecedent of the rule (left itemset)
 	 * @return an Itemset
 	 */
-	public Itemset getItemset1() {
+	public ItemsetWithTIDS getItemset1() {
 		return itemset1;
 	}
 
@@ -55,7 +55,7 @@ public class Rule {
 	 * Get the consequent of the rule (right itemset)
 	 * @return an Itemset
 	 */
-	public Itemset getItemset2() {
+	public ItemsetWithTIDS getItemset2() {
 		return itemset2;
 	}
 	

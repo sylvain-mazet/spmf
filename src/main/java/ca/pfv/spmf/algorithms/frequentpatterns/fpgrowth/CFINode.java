@@ -18,17 +18,16 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This is an implementation of a CFI-Node as used by the FPClose algorithm.
  *
  * @see CFITree
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see AlgoFPClose
  * @author Philippe Fournier-Viger, 2015
  */
-@Deprecated
 public class CFINode extends FINode {
 
 }

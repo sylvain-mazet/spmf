@@ -18,14 +18,14 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 
 /**
  * This is an implementation of a MFITree as used by the FPMax algorithm.
  *
  * @see MFINode
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see AlgoFPMax
  * @author Philippe Fournier-Viger
  */

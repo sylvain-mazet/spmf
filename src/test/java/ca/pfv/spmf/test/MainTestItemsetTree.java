@@ -8,7 +8,7 @@ import java.util.List;
 import ca.pfv.spmf.algorithms.frequentpatterns.itemsettree.AssociationRuleIT;
 import ca.pfv.spmf.algorithms.frequentpatterns.itemsettree.HashTableIT;
 import ca.pfv.spmf.algorithms.frequentpatterns.itemsettree.ItemsetTree;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * Example of how to use the itemset tree data structure.
@@ -51,9 +51,9 @@ public class MainTestItemsetTree extends MainTestBase {
 		// Example query 2: get all itemsets that subsume an itemset (e.g. {1 2}) and their support
 		System.out.println("EXAMPLE QUERY: FIND ALL ITEMSETS THAT SUBSUME {1 2}");
 		HashTableIT result = itemsetTree.getFrequentItemsetSubsuming(new int[]{1, 2});
-		for(List<Itemset> list : result.table){
+		for(List<ItemsetArrayImplWithCount> list : result.table){
 			if(list != null){
-				for(Itemset itemset : list){
+				for(ItemsetArrayImplWithCount itemset : list){
 					System.out.println("[" + itemset.toString() + "]    supp:" + itemset.support);
 				}
 			}
@@ -63,9 +63,9 @@ public class MainTestItemsetTree extends MainTestBase {
 		System.out.println("EXAMPLE QUERY: FIND ALL ITEMSETS THAT SUBSUME {1} and minsup >= 2");
 		int minsup = 2;
 		HashTableIT result2 = itemsetTree.getFrequentItemsetSubsuming(new int[]{1}, minsup);
-		for(List<Itemset> list : result2.table){
+		for(List<ItemsetArrayImplWithCount> list : result2.table){
 			if(list != null){
-				for(Itemset itemset : list){
+				for(ItemsetArrayImplWithCount itemset : list){
 					System.out.println("[" + itemset.toString() + "]    supp:" + itemset.support);
 					
 //					checkResult(itemset);   // THIS IS FOR DEBUGING  ONLY, IGNORE THIS LINE

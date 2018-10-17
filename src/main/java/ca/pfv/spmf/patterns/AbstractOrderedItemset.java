@@ -32,18 +32,6 @@ public abstract class AbstractOrderedItemset extends AbstractItemset{
 	}
 	
 	/**
-	 * Get the support of this itemset
-	 * @return the support of this itemset
-	 */
-	public abstract int getAbsoluteSupport();
-	
-	/**
-	 * Get the size of this itemset
-	 * @return the size of this itemset
-	 */
-	public abstract int size();
-	
-	/**
 	 * Get the item at a given position of this itemset
 	 * @param position the position of the item to be returned
 	 * @return the item
@@ -82,6 +70,7 @@ public abstract class AbstractOrderedItemset extends AbstractItemset{
 	 * @param nbObject  the number of transactions in the database where this itemset was found
 	 * @return the relative support of the itemset as a double
 	 */
+	@Override
 	public double getRelativeSupport(int nbObject) {
 		// Divide the absolute support by the number of transactions to get the relative support
 		return ((double)getAbsoluteSupport()) / ((double) nbObject);
@@ -93,6 +82,7 @@ public abstract class AbstractOrderedItemset extends AbstractItemset{
 	 * @param item  the item
 	 * @return true if the item is contained in this itemset
 	 */
+	@Override
 	public boolean contains(Integer item) {
 		for (int i=0; i< size(); i++) {
 			if (get(i).equals(item)) {
@@ -176,7 +166,7 @@ public abstract class AbstractOrderedItemset extends AbstractItemset{
 	/**
 	 * This method compare this itemset with another itemset to see if they are
 	 * equal. The method assume that the two itemsets are lexically ordered.
-	 * @param an itemset
+	 * @param itemset an itemset
 	 * @return true or false
 	 */
 	public boolean isEqualTo(int[] itemset) {

@@ -18,16 +18,17 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 import java.util.Comparator;
+import java.util.Vector;
 
 
 /**
  * This is an implementation of a CFITree as used by the FPClose algorithm.
  *
  * @see CFINode
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see AlgoFPClose
  * @author Philippe Fournier-Viger
  */

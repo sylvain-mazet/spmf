@@ -1,6 +1,10 @@
 package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +20,14 @@ public class FITree {
     Map<Integer, FINode> mapItemLastNode = new HashMap<>();
 
     // root of the tree
-    FINode root = new FINode(); // null node
+    FINode root = null; // null node
 
     // last added itemset
     FINode lastAddedItemsetNode = null;
+
+    public void setRoot(FINode root) {
+        this.root = root;
+    }
 
     public FINode getRoot() {
         return root;
@@ -277,5 +285,103 @@ public class FITree {
         return "M"+root.toString("");
     }
 
+    /**
+     * Build another FITree from this one: collapse branches when support does not change.
+     */
+    public FITree reduce() {
+
+        FITree reducedTree = new FITree();
+        reducedTree.setRoot(new FICNode(0, new ItemsetArrayImplWithCount(new int[]{})));
+
+        int id = 1;
+        recurseReduce(id,  (FICNode)reducedTree.getRoot(), this.getRoot());
+
+        return reducedTree;
+    }
+
+    private int recurseReduce(int id, FICNode reducedRoot, FINode root) {
+        if (root.getChildren().isEmpty()) {
+            ItemsetArrayImplWithCount itemSet = buildItemset(root);
+            FICNode newNode = new FICNode( id++, itemSet);
+            newNode.setParent(reducedRoot);
+            return id;
+        }
+
+        if (root.getChildren().size()==1) {
+            FINode child = root.getChildren().get(0);
+            if (child.getCounter() == root.getCounter()) {
+                id = recurseReduce(id, reducedRoot, child);
+            }
+            else {
+                ItemsetArrayImplWithCount itemSet = buildItemset(root);
+                FICNode newNode = new FICNode(id++, itemSet);
+                newNode.setParent(reducedRoot);
+                id = recurseReduce(id, newNode, child);
+            }
+        }
+        else {
+
+            ItemsetArrayImplWithCount itemSet = buildItemset(root);
+            FICNode newNode = new FICNode(id++, itemSet);
+            newNode.setParent(reducedRoot);
+
+            for (FINode child : root.getChildren()) {
+                id = recurseReduce(id, newNode, child);
+            }
+        }
+
+        return id;
+    }
+
+    private ItemsetArrayImplWithCount buildItemset(FINode node) {
+        List<Integer> items = new ArrayList<>(node.getLevel());
+        items.add(node.getItemID());
+        FINode iterator = node;
+        while (iterator.getParent()!=null) {
+            iterator = iterator.getParent();
+            items.add(iterator.getItemID());
+        }
+        return new ItemsetArrayImplWithCount(items,node.getCounter());
+    }
+
+    /**
+     * Build another FITree from this one: the nodes of the new tree
+     * are the edges of ourselves.
+     * The nodes are not the same since they contain statistics of the edge.
+     */
+    public FIBTree differentiate() {
+        FIBTree deltaTree = new FIBTree();
+        deltaTree.setRoot(new FIBNode(0, new ItemsetArrayImplWithCount(new int []{})));
+
+        int idStart = 1;
+        recurseDifferentiate(idStart,(FIBNode)deltaTree.getRoot(), root);
+
+        return deltaTree;
+    }
+
+    private int recurseDifferentiate(int id, FIBNode deltaRoot, FINode root) {
+        Iterator<FINode> childrenIterator = root.getChildren().iterator();
+
+        while (childrenIterator.hasNext()) {
+            FICNode child = (FICNode)childrenIterator.next();
+
+            FIBNode newDeltaNode = new FIBNode(id++, child.getItemset() );
+
+            deltaRoot.getChildren().add(newDeltaNode);
+
+            newDeltaNode.setDeltaSupportIn((double) (root.counter - child.counter) / root.counter);
+            newDeltaNode.setDeltaSupportOut((double) (root.counter - child.counter) / child.counter);
+            newDeltaNode.setDeltaLengthIn((double) (child.level - root.level) / root.level);
+            newDeltaNode.setDeltaLengthOut((double) (child.level - root.level) / child.level);
+            newDeltaNode.setLift(child.level - root.level);
+            newDeltaNode.setCoverage(root.counter - child.counter);
+
+            id = recurseDifferentiate(id, newDeltaNode,child);
+
+        }
+
+        return id;
+
+    }
 
 }

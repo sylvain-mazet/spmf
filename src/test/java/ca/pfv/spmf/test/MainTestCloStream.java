@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.clostream.AlgoCloSteam;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * Example of how to use the CloStream algorith, from the source code.
@@ -20,25 +20,25 @@ public class MainTestCloStream extends MainTestBase {
 		
 		// Now we add 5 transactions
 		long startTime = System.currentTimeMillis();
-		Itemset transaction0 = new Itemset(new int[] {1,3,4});
+		ItemsetArrayImplWithCount transaction0 = new ItemsetArrayImplWithCount(new int[] {1,3,4});
 		cloStream.processNewTransaction(transaction0);
 		
-		Itemset transaction1 = new Itemset(new int[] {2,3,5});
+		ItemsetArrayImplWithCount transaction1 = new ItemsetArrayImplWithCount(new int[] {2,3,5});
 		cloStream.processNewTransaction(transaction1);
 		
-		Itemset transaction2 = new Itemset(new int[] {1,2,3,5});
+		ItemsetArrayImplWithCount transaction2 = new ItemsetArrayImplWithCount(new int[] {1,2,3,5});
 		cloStream.processNewTransaction(transaction2);
 		
-		Itemset transaction3 = new Itemset(new int[] {2,5});
+		ItemsetArrayImplWithCount transaction3 = new ItemsetArrayImplWithCount(new int[] {2,5});
 		cloStream.processNewTransaction(transaction3);
 
-		Itemset transaction4 = new Itemset(new int[] {1,2,3,5});
+		ItemsetArrayImplWithCount transaction4 = new ItemsetArrayImplWithCount(new int[] {1,2,3,5});
 		cloStream.processNewTransaction(transaction4);
 		
 		// We print the patterns found
-		List<Itemset> list = cloStream.getClosedItemsets();
+		List<ItemsetArrayImplWithCount> list = cloStream.getClosedItemsets();
 		System.out.println("Closed itemsets count : " + list.size());
-		for(Itemset itemset : list){
+		for(ItemsetArrayImplWithCount itemset : list){
 			System.out.println("  " + itemset.toString() + " absolute support : " + itemset.getAbsoluteSupport());
 		}
 

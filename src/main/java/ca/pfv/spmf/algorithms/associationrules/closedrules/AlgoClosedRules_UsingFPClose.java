@@ -31,7 +31,7 @@ import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.Assoc
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.CFITree;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 /**
@@ -84,7 +84,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf, CFITree cfiTree) throws IOException {
+	public AssocRules runAlgorithm(GenericResults patterns, String output, int databaseSize, double minconf, CFITree cfiTree) throws IOException {
 		if(maxAntecedentLength < 1 || maxConsequentLength < 1){
 			throw new IllegalArgumentException("The maximum length must be at least 1.");
 		}
@@ -109,7 +109,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf, double minlift,
+	public AssocRules runAlgorithm(GenericResults patterns, String output, int databaseSize, double minconf, double minlift,
 			CFITree cfiTree) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
@@ -128,17 +128,17 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return the set of rules found if the user chose to save the result to memory
 	 * @throws IOException exception if error while writting to file
 	 */
-	private AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize)
+	private AssocRules runAlgorithm(GenericResults patterns, String output, int databaseSize)
 			throws IOException {
 		
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
 			rules =  new AssocRules("ASSOCIATION RULES");
-	    }else{ 
+	    }else{
 	    	// if the user want to save the result to a file
 	    	rules = null;
-			writer = new BufferedWriter(new FileWriter(output)); 
+			writer = new BufferedWriter(new FileWriter(output));
 		}
 
 		this.databaseSize = databaseSize;
@@ -165,7 +165,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
 					//  we know we have tids bitset itemset's.... TODO remove this down cast
-					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
+					return ArraysAlgos.comparatorItemsetSameSize.compare(((ItemsetArrayImplWithCount)o1).getItems(), ((ItemsetArrayImplWithCount)o2).getItems());
 				}
 			});
 		}
@@ -176,10 +176,10 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 		// For each frequent itemset of size >=2 that we will name "lk"
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
 			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
-				Itemset lk = (Itemset) lkAbs;
+				ItemsetArrayImplWithCount lk = (ItemsetArrayImplWithCount) lkAbs;
 
 				// create a variable H1 for recursion
-				List<int[]> H1_for_recursion = new ArrayList<int[]>();
+				List<int[]> H1_for_recursion = new ArrayList<>();
 				
 				// For each itemset "itemsetSize1" of size 1 that is member of lk
 				for(int item : lk.getItems()) {
@@ -188,7 +188,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 					if(lk.size() - 1 <= maxAntecedentLength){
 	
 						// make a copy of  lk without items from  hm_P_1
-						int[] itemset_Lk_minus_hm_P_1 = ArraysAlgos.cloneItemSetMinusOneItem(lk.getItems(), item);
+						int[] itemset_Lk_minus_hm_P_1 = lk.cloneItemSetMinusOneItem(item).itemset;
 						
 						// Now we will calculate the support and confidence
 						// of the rule: itemset_Lk_minus_hm_P_1 ==>  hm_P_1
@@ -223,7 +223,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 							}
 						}
 						
-						// If we are here, it means that the rule respect the minconf and minlift parameters.
+						// If we are here, it means that the rule respects the minconf and minlift parameters.
 						// Therefore, we output the rule.
 						saveRule(itemset_Lk_minus_hm_P_1, support, itemsetHm_P_1, supportHm_P_1, lk.getAbsoluteSupport(), conf, lift);
 
@@ -261,7 +261,7 @@ public class AlgoClosedRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @param Hm a set of itemsets that can be used with lk to generate rules
 	 * @throws IOException exception if error while writing output file
 	 */
-	public void apGenrules(int k, int m, Itemset lk, List<int[]> Hm)
+	public void apGenrules(int k, int m, ItemsetArrayImplWithCount lk, List<int[]> Hm)
 			throws IOException {
 		
 		// if the itemset "lk" that is used to generate rules is larger than the size of itemsets in "Hm"

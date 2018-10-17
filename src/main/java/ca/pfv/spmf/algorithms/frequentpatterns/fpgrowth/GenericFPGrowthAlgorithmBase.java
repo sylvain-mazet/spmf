@@ -2,8 +2,7 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
-import ca.pfv.spmf.algorithms.GenericResults;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -178,7 +177,7 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
             // sort the itemset so that it is sorted according to lexical ordering before we show it to the user
             Arrays.sort(itemsetCopy);
 
-            Itemset itemsetObj = new Itemset(itemsetCopy);
+            ItemsetArrayImplWithCount itemsetObj = new ItemsetArrayImplWithCount(itemsetCopy);
             itemsetObj.setAbsoluteSupport(support);
             patterns.addItemset(itemsetObj, itemsetLength);
         }

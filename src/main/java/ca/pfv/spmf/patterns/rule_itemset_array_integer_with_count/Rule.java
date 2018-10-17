@@ -17,15 +17,16 @@ package ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count;
 */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This class represent an association rule, where itemsets are arrays of integers.
  * 
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Rules
  * @author Philippe Fournier-Viger
  */
+@Deprecated
 public class Rule {
 	/** antecedent */
 	private int[] itemset1; 

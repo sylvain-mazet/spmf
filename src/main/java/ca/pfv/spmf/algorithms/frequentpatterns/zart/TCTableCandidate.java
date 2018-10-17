@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
 * This class represents the TC table of candidates , used by the Zart algorithm.
@@ -33,14 +33,14 @@ public class TCTableCandidate {
 
 	/** This structure stores the candidate itemsets by size
 	 Position i contains the list of candidate itemsets of size i */
-	public final List<List<Itemset>> levels = new ArrayList<List<Itemset>>();  // itemset ordered by size
+	public final List<List<ItemsetArrayImplWithCount>> levels = new ArrayList<List<ItemsetArrayImplWithCount>>();  // itemset ordered by size
 	
 	/** This map is the mapPredSupp used by Zart to store the support of a candidate
 	<br/> key: itemset   value: support */
-	Map<Itemset, Integer> mapPredSupp = new HashMap<Itemset, Integer>();
+	Map<ItemsetArrayImplWithCount, Integer> mapPredSupp = new HashMap<ItemsetArrayImplWithCount, Integer>();
 	/** this map indicate the key value for this itemset
 	<br/> key: itemset   value: key value */
-	Map<Itemset, Boolean> mapKey = new HashMap<Itemset, Boolean>();
+	Map<ItemsetArrayImplWithCount, Boolean> mapKey = new HashMap<ItemsetArrayImplWithCount, Boolean>();
 	
 	/**
 	 * This map checks if there is an itemset of size i with its key value to true
@@ -49,7 +49,7 @@ public class TCTableCandidate {
 	 */
 	boolean thereisARowKeyValueIsTrue(int i) {
 		// for each itemset of size i
-		for(Itemset c : levels.get(i)){
+		for(ItemsetArrayImplWithCount c : levels.get(i)){
 			// if key set to true, then return yes
 			if(mapKey.get(c) == true){
 				return true;

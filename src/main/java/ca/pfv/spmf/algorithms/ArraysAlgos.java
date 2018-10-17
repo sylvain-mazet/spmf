@@ -103,8 +103,8 @@ public class ArraysAlgos {
 	
 	/**
 	 * This method performs the intersection of two sorted arrays of integers and return a new sorted array.
-	 * @param a the first array
-	 * @param b the second array
+	 * @param array1 the first array
+	 * @param array2 the second array
 	 * @return the resulting sorted array
 	 */
 	public static int[] intersectTwoSortedArrays(int[] array1, int[] array2){
@@ -199,12 +199,12 @@ loop1:		for(int i =0; i < itemset2.length; i++){
 	 * while ignoring an item from the second list of integer.
 	 * This methods is used by some Apriori algorithms.
 	 * @param itemset1 the first itemset
-	 * @param itemsets2 the second itemset
+	 * @param itemset2 the second itemset
 	 * @param posRemoved  the position of an item that should be ignored from "itemset2" to perform the comparison.
 	 * @return 0 if they are the same, 1 if itemset is larger according to lexical order,
 	 *         -1 if smaller.
 	 */
-	public static int sameAs(int [] itemset1, int [] itemsets2, int posRemoved) {
+	public static int sameAs(int [] itemset1, int [] itemset2, int posRemoved) {
 			// a variable to know which item from candidate we are currently searching
 			int j=0;
 			// loop on items from "itemset"
@@ -214,12 +214,12 @@ loop1:		for(int i =0; i < itemset2.length; i++){
 					j++;
 				}
 				// if we found the item j, we will search the next one
-				if(itemset1[i] == itemsets2[j]){
+				if(itemset1[i] == itemset2[j]){
 					j++;
 				// if  the current item from i is larger than j, 
 			    // it means that "itemset" is larger according to lexical order
 				// so we return 1
-				}else if (itemset1[i] > itemsets2[j]){
+				}else if (itemset1[i] > itemset2[j]){
 					return 1;
 				}else{
 					// otherwise "itemset" is smaller so we return -1.
@@ -258,7 +258,7 @@ loop1:		for(int i =0; i < itemset2.length; i++){
 	/**
 	 * Check if a sorted itemset is contained in another
 	 * @param itemset1 the first itemset
-	 * @param length of the first itemset
+	 * @param itemset1Length of the first itemset
 	 * @param itemset2 the second itemset
 	 * @return true if yes, otherwise false
 	 */
@@ -378,7 +378,7 @@ loop1:		for(int i =0; i < itemset2.length; i++){
 		}
 	};
 
-	/** 
+	/**
 	 * Append an integer at the end of an array of integers.
 	 * @param array the array
 	 * @param integer the integer

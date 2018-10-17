@@ -10,7 +10,7 @@ import ca.pfv.spmf.algorithms.frequentpatterns.zart.TFTableFrequent;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 /**
  * Example of how to use the Zart Algorithm in source code.
  * @author Philippe Fournier-Viger, 2013
@@ -38,15 +38,15 @@ public class MainTestZart_saveToMemory extends MainTestBase {
 		for(int i=0; i< results.levels.size(); i++){
 			System.out.println("LEVEL (SIZE) : " + i);
 			for(AbstractItemset closedAbs : results.levels.get(i)){
-				Itemset closed = (Itemset) closedAbs;
+				ItemsetArrayImplWithCount closed = (ItemsetArrayImplWithCount) closedAbs;
 				System.out.println(" CLOSED : \n   " + closed.toString() + "  supp : " + closed.getAbsoluteSupport());
 				countClosed++;
 				System.out.println("   GENERATORS : ");
 				
-				List<Itemset> generators = results.mapGenerators.get(closed);
+				List<ItemsetArrayImplWithCount> generators = results.mapGenerators.get(closed);
 				// if there are some generators
 				if(generators.size()!=0) { 
-					for(Itemset generator : generators){
+					for(ItemsetArrayImplWithCount generator : generators){
 						countGenerators++;
 						System.out.println("     =" + generator.toString());
 					}
@@ -64,7 +64,7 @@ public class MainTestZart_saveToMemory extends MainTestBase {
 		int countFrequent =0;
 		for(int i=0; i< frequents.levels.size(); i++){
 			System.out.println("LEVEL (SIZE) : " + i);
-			for(Itemset itemset : frequents.levels.get(i)){
+			for(ItemsetArrayImplWithCount itemset : frequents.levels.get(i)){
 				countFrequent++;
 				System.out.println(" ITEMSET : " + itemset.toString() + "  supp : " + itemset.getAbsoluteSupport());
 			}

@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -540,7 +540,7 @@ loop1:	for(int i1value : itemset1){
 	 * 
 	 * @param s  the itemset
 	 * @param root  the root of the subtree
-	 * @param startFrom  the items to match starting from position j in s
+	 * @param prefix  the items to match starting from position j in s
 	 * @return  the support as an integer
 	 */
 	private int count(int[] s, ItemsetTreeNode root, int[] prefix) {
@@ -586,14 +586,14 @@ loop1:	for(int i1value : itemset1){
 		// This does not seems efficient but that is how the authors of the paper do it.
 		
 		// for each position in the internal array of the hash table
-		for(List<Itemset> list : hashTable.table){
+		for(List<ItemsetArrayImplWithCount> list : hashTable.table){
 			// if that position is not empty
 			if(list != null){
 				// loop over the itemsets stored at that position
-				Iterator<Itemset> it = list.iterator();
+				Iterator<ItemsetArrayImplWithCount> it = list.iterator();
 				while (it.hasNext()) {
 					// if the itemset is infrequent, remove it
-					Itemset itemset = (Itemset) it.next();
+					ItemsetArrayImplWithCount itemset = (ItemsetArrayImplWithCount) it.next();
 					if(itemset.support < minsup){
 						it.remove();
 					}

@@ -21,13 +21,13 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This is an implementation of a FPTree node as used by the FPGrowth algorithm.
  *
  * @see FPTree
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see AlgoFPGrowth
  * @author Philippe Fournier-Viger
  */
@@ -69,7 +69,7 @@ public class FPNode {
 	/**
 	 * Method for getting a string representation of this tree 
 	 * (to be used for debugging purposes).
-	 * @param an indentation
+	 * @param indent an indentation
 	 * @return a string
 	 */
 	public String toString(String indent) {

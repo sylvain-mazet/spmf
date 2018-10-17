@@ -83,7 +83,7 @@ public class Itemsets implements GenericResults {
 	 * @param itemset the itemset
 	 * @param k the number of items contained in the itemset
 	 */
-	public void addItemset(Itemset itemset, int k) {
+	public void addItemset(ItemsetWithTIDSBitset itemset, int k) {
 		while (levels.size() <= k) {
 			levels.add(new ListOfTIDSBitSetItemset());
 		}

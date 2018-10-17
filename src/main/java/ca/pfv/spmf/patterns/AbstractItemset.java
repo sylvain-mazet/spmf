@@ -22,10 +22,9 @@ import java.text.DecimalFormat;
  * This is an abstract class for an itemset (a set of items.
  *  
  * @see AbstractOrderedItemset
- * @see AbstractMutableOrderedItemset
  * @author Philippe Fournier-Viger
  */
-public abstract class AbstractItemset {
+public abstract class AbstractItemset implements Iterable<Integer> {
 
 	public AbstractItemset() {
 		super();
@@ -36,7 +35,13 @@ public abstract class AbstractItemset {
 	 * @return the size of this itemset
 	 */
 	public abstract int size();
-	
+
+	/**
+	 * Get the items as vector
+	 * @return the items
+	 */
+	public abstract int[] getItems();
+
 	/**
 	 * Get this itemset as a string
 	 * @return a string representation of this itemset

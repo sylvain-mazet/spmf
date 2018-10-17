@@ -30,7 +30,7 @@ import java.util.List;
 public class Itemsets {
 	/** We store the itemsets in a list named "levels".
 	 Position i in "levels" contains the list of itemsets of size i */
-	private final List<List<Itemset>> levels = new ArrayList<List<Itemset>>(); 
+	private final List<List<ItemsetWithTIDS>> levels = new ArrayList<>();
 	/** the total number of itemsets */
 	private int itemsetsCount = 0;
 	/** a name that we give to these itemsets (e.g. "frequent itemsets") */
@@ -42,7 +42,7 @@ public class Itemsets {
 	 */
 	public Itemsets(String name) {
 		this.name = name;
-		levels.add(new ArrayList<Itemset>()); // We create an empty level 0 by
+		levels.add(new ArrayList<>()); // We create an empty level 0 by
 												// default.
 	}
 
@@ -56,11 +56,11 @@ public class Itemsets {
 		int patternCount = 0;
 		int levelCount = 0;
 		// for each level (a level is a set of itemsets having the same number of items)
-		for (List<Itemset> level : levels) {
+		for (List<ItemsetWithTIDS> level : levels) {
 			// print how many items are contained in this level
 			System.out.println("  L" + levelCount + " ");
 			// for each itemset
-			for (Itemset itemset : level) {
+			for (ItemsetWithTIDS itemset : level) {
 				// print the itemset
 				System.out.print("  pattern " + patternCount + ":  ");
 				itemset.print();
@@ -80,9 +80,9 @@ public class Itemsets {
 	 * @param itemset the itemset
 	 * @param k the number of items contained in the itemset
 	 */
-	public void addItemset(Itemset itemset, int k) {
+	public void addItemset(ItemsetWithTIDS itemset, int k) {
 		while (levels.size() <= k) {
-			levels.add(new ArrayList<Itemset>());
+			levels.add(new ArrayList<>());
 		}
 		levels.get(k).add(itemset);
 		itemsetsCount++;
@@ -93,7 +93,7 @@ public class Itemsets {
 	 * @return A list of list of itemsets.
 	 * Position i in this list is the list of itemsets of size i.
 	 */
-	public List<List<Itemset>> getLevels() {
+	public List<List<ItemsetWithTIDS>> getLevels() {
 		return levels;
 	}
 

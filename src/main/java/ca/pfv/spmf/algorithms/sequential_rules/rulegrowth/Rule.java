@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.pfv.spmf.algorithms.sequential_rules.cmdeogun.AlgoCMDeogun;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represents a sequential rule found by the CMDeo algorithm.
  * 
  * @see AlgoCMDeogun
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class Rule {

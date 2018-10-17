@@ -23,7 +23,7 @@ import java.util.Set;
 
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 /**
@@ -33,14 +33,14 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
  * @see AlgoCharm_Bitset
  * @see TriangularMatrix
  * @see TransactionDatabase
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see Itemsets
  * @author Philippe Fournier-Viger
  */
 class HashTable {
 
 	// the internal array for the hash table
-	private List<Itemset>[] table;
+	private List<ItemsetArrayImplWithCount>[] table;
 
 	/**
 	 * Construtor.
@@ -57,7 +57,7 @@ class HashTable {
 	 *  provided hashcode() method.
 	 * @return true if the hash table contains at least one superset, otherwise false.
 	 */
-	public boolean containsSupersetOf(Itemset itemset, int hashcode) {
+	public boolean containsSupersetOf(ItemsetArrayImplWithCount itemset, int hashcode) {
 		// If the position in the array that is given by the hashcode is empty,
 		// then return false.
 		if (table[hashcode] == null) {
@@ -65,7 +65,7 @@ class HashTable {
 		}
 		// For each itemset X at that hashcode position
 		for (Object object : table[hashcode]) {
-			Itemset itemsetX = (Itemset) object;
+			ItemsetArrayImplWithCount itemsetX = (ItemsetArrayImplWithCount) object;
 			// if the support of X is the same as the given itemset and X contains
 			// the given itemset
 			if (itemsetX.getAbsoluteSupport() == itemset.getAbsoluteSupport()
@@ -84,11 +84,11 @@ class HashTable {
 	 * @param hashcode the hashcode of the itemset (need to be calculated before by using the
 	 *  provided hashcode() method.
 	 */
-	public void put(Itemset itemset, int hashcode) {
+	public void put(ItemsetArrayImplWithCount itemset, int hashcode) {
 		// if the position in the array is empty create a new array list
 		// for that position
 		if (table[hashcode] == null) {
-			table[hashcode] = new ArrayList<Itemset>();
+			table[hashcode] = new ArrayList<>();
 		}
 		// store the itemset in the arraylist of that position
 		table[hashcode].add(itemset);

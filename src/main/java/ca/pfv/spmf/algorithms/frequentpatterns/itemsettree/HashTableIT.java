@@ -2,8 +2,9 @@ package ca.pfv.spmf.algorithms.frequentpatterns.itemsettree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
  
 /**
  * This class represents a hash table for storing itemsets.
@@ -29,7 +30,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 public class HashTableIT {
 	
 	// internal array of the hash table
-	public List<Itemset>[] table;
+	public List<ItemsetArrayImplWithCount>[] table;
 	
 	/**
 	 * Constructor
@@ -52,9 +53,9 @@ public class HashTableIT {
 		// if there is no list at that position
 		if(table[hashcode] ==  null){
 			// create a new list for storing this itemset and future colisions
-			table[hashcode] = new ArrayList<Itemset>();
+			table[hashcode] = new ArrayList<>();
 			// create an itemset object
-			Itemset itemset = new Itemset();
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount();
 			itemset.itemset = items;
 			itemset.support = support;
 			//add it to the list
@@ -64,7 +65,7 @@ public class HashTableIT {
 			// We will first check if the itemset is already there.
 			
 			// For each itemset already at that position in the hash table
-			for(Itemset existingItemset : table[hashcode]){
+			for(ItemsetArrayImplWithCount existingItemset : table[hashcode]){
 				// if the itemset is the one that we want to add
 				if(same(items, existingItemset.itemset)){
 					//update its support count and then stop
@@ -74,7 +75,7 @@ public class HashTableIT {
 			}
 			// otherwise, it is not there already, so
 			// create a new itemset
-			Itemset itemset = new Itemset();
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount();
 			itemset.itemset = items;
 			itemset.support = support;
 			// and add it to the collision list for that position

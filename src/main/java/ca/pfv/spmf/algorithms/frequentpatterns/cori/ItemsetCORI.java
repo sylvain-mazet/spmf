@@ -1,5 +1,7 @@
 package ca.pfv.spmf.algorithms.frequentpatterns.cori;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+
+import java.util.Vector;
 
 /* This file is copyright (c) 2008-2015 Philippe Fournier-Viger
 * 
@@ -25,9 +27,9 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
  * @author Philippe Fournier-Viger 2015
  * @see AlgoCORI
  */
-public class ItemsetCORI extends Itemset{
+public class ItemsetCORI extends ItemsetArrayImplWithCount {
 	/**  the bond of this itemset */
-	public double bond = 0; 
+	public double bond = 0;
 
 
 	/**
@@ -47,8 +49,8 @@ public class ItemsetCORI extends Itemset{
 	}
 
 	/**
-	 * Set the support of this itemset
-	 * @param support the support
+	 * Set the bond of this itemset
+	 * @param bond the support
 	 */
 	public void setBond(Integer bond) {
 		this.bond = bond;

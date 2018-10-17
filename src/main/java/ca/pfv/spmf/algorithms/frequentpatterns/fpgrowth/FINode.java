@@ -41,6 +41,25 @@ public class FINode {
     public List<FINode> getChildren() {
         return children;
     }
+
+    /**
+     * for tests
+     */
+    public FINode() {}
+    public FINode(int itemID, int counter, int level) {
+        this.itemID = itemID;
+        this.counter = counter;
+        this.level = level;
+    }
+    public void setParent(FINode parent) {
+        this.parent = parent;
+        if (parent != null) {
+            if (!parent.children.contains(this)) {
+                parent.children.add(this);
+            }
+        }
+    }
+
     /**
      * Return the immediate child of this node having a given ID.
      * If there is no such child, return null;
@@ -59,7 +78,7 @@ public class FINode {
     }
 
     /**
-     * Method for getting a string representation of this tree
+     * Method for getting a string representation of this node and descendants
      * (to be used for debugging purposes).
      * @param indent indentation
      * @return a string
@@ -71,8 +90,12 @@ public class FINode {
         output.append(" level="+ level);
         output.append(")\n");
         String newIndent = indent + "   ";
-        for (FINode child : children) {
-            output.append(newIndent+ child.toString(newIndent));
+        if (newIndent.length() > 12) {
+            output.append(newIndent+"etc.....");
+        } else {
+            for (FINode child : children) {
+                output.append(newIndent + child.toString(newIndent));
+            }
         }
         return output.toString();
     }

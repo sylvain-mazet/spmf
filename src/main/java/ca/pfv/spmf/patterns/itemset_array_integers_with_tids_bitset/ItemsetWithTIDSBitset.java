@@ -16,9 +16,11 @@ package ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset;
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import java.util.BitSet;
-
 import ca.pfv.spmf.patterns.AbstractOrderedItemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+
+import java.util.BitSet;
+import java.util.Vector;
 
 /**
  * This class represents an itemset (a set of items) where the itemset is an array of integers 
@@ -30,12 +32,8 @@ import ca.pfv.spmf.patterns.AbstractOrderedItemset;
 * @see AbstractOrderedItemset
  * @author Philippe Fournier-Viger
  */
-public class Itemset extends AbstractOrderedItemset{
-	
-	/** The list of items contained in this itemset, ordered by 
-	 lexical order */
-	public int[] itemset; // the array of items
-	
+public class ItemsetWithTIDSBitset extends ItemsetArrayImplWithCount {
+
 	/** The list of transactions/sequences containing this itemset **/
 	private BitSet transactionsIds;
 	public int cardinality =0;  // the cardinality of the above bitset
@@ -43,7 +41,7 @@ public class Itemset extends AbstractOrderedItemset{
 	/**
 	 * Constructor of an empty itemset
 	 */
-	public Itemset(){
+	public ItemsetWithTIDSBitset(){
 		transactionsIds = new BitSet();
 		itemset = new int[0];
 	}
@@ -51,10 +49,10 @@ public class Itemset extends AbstractOrderedItemset{
 	/**
 	 * Constructor of an empty itemset
 	 * @param itemset the itemset
-	 * @param the tidset of the itemset
-	 * @param the tidset cardinality (support)
+	 * @param bitset the tidset of the itemset
+	 * @param support the tidset cardinality (support)
 	 */
-	public Itemset(int[] itemset, BitSet bitset, int support){
+	public ItemsetWithTIDSBitset(int[] itemset, BitSet bitset, int support){
 		this.transactionsIds = bitset;
 		this.itemset = itemset;
 		this.cardinality = support;
@@ -64,7 +62,7 @@ public class Itemset extends AbstractOrderedItemset{
 	 * Constructor 
 	 * @param item an item that should be added to the new itemset
 	 */
-	public Itemset(int item){
+	public ItemsetWithTIDSBitset(int item){
 		itemset = new int[]{item};
 	}
 	
@@ -72,7 +70,7 @@ public class Itemset extends AbstractOrderedItemset{
 	 * Constructor 
 	 * @param items an array of items that should be added to the new itemset
 	 */
-	public Itemset(int [] items){
+	public ItemsetWithTIDSBitset(int[] items){
 		this.itemset = items;
 	}
 
@@ -85,23 +83,6 @@ public class Itemset extends AbstractOrderedItemset{
 	}
 
 	/**
-	 * Get the list of items in this itemset
-	 * @return the list of items
-	 */
-	public int[] getItems(){
-		return itemset;
-	}
-	
-	/**
-	 * Get the item at a given position of this itemset
-	 * @param index the position of the item to be returned
-	 * @return the item
-	 */
-	public Integer get(int index){
-		return itemset[index];
-	}
-
-	/**
 	 * Set the list of transaction/sequence ids containing this itemset.
 	 * @param listTransactionIds the list of transaction/sequence ids.
 	 * @param cardinality the cardinality of the list.
@@ -109,13 +90,6 @@ public class Itemset extends AbstractOrderedItemset{
 	public void setTIDs(BitSet listTransactionIds, int cardinality) {
 		this.transactionsIds = listTransactionIds;
 		this.cardinality = cardinality;
-	}
-
-	/**
-	 * Get the size of this itemset.
-	 */
-	public int size(){
-		return itemset.length;
 	}
 
 	/**

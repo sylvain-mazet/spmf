@@ -27,8 +27,7 @@ import java.util.List;
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.AbstractOrderedItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 /**
@@ -49,12 +48,12 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 public class AlgoAgrawalFaster94{
 	
 	// the frequent itemsets that will be used to generate the rules
-	protected Itemsets patterns;
+	protected GenericResults patterns;
 	 
 	// variable used to store the result if the user choose to save
 	// the result in memory rather than to an output file
 	protected AssocRules rules;
-	
+
 	// object to write the output file if the user wish to write to a file
 	protected BufferedWriter writer = null;
 	
@@ -135,7 +134,7 @@ public class AlgoAgrawalFaster94{
 	 */
 	private AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize)
 			throws IOException {
-		
+
 		if(maxAntecedentLength < 1 || maxConsequentLength < 1){
 			throw new IllegalArgumentException("The maximum length must be at least 1.");
 		}
@@ -176,7 +175,7 @@ public class AlgoAgrawalFaster94{
 				public int compare(AbstractItemset o1, AbstractItemset o2) {
 					// The following code assume that itemsets are the same size
 					//  we know we have tids bitset itemset's.... TODO remove this down cast
-					return ArraysAlgos.comparatorItemsetSameSize.compare(((Itemset)o1).getItems(), ((Itemset)o2).getItems());
+					return ArraysAlgos.comparatorItemsetSameSize.compare(o1.getItems(), o2.getItems());
 				}
 			});
 		}
@@ -188,7 +187,7 @@ public class AlgoAgrawalFaster94{
 		int maxSize = maxAntecedentLength;
 		for (int k = 2; k < patterns.getLevels().size(); k++) {
 			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
-				Itemset lk = (Itemset) lkAbs;
+				ItemsetArrayImplWithCount lk = (ItemsetArrayImplWithCount) lkAbs;
 				
 				// create a variable H1 for recursion
 				List<int[]> H1_for_recursion = new ArrayList<int[]>();
@@ -271,7 +270,7 @@ public class AlgoAgrawalFaster94{
 	 * @param Hm a set of itemsets that can be used with lk to generate rules
 	 * @throws IOException exception if error while writing output file
 	 */
-	private void apGenrules(int k, int m, Itemset lk, List<int[]> Hm)
+	private void apGenrules(int k, int m, ItemsetArrayImplWithCount lk, List<int[]> Hm)
 			throws IOException {
 //		if(m + 1  > maxConsequentLength){
 //			return;
@@ -360,7 +359,7 @@ public class AlgoAgrawalFaster94{
         while( first <= last )
         {
         	int middle = ( first + last ) >>1 ; // >>1 means to divide by 2
-        	int[] itemsetMiddle = ((Itemset) patternsSameSize.get(middle)).getItems();
+        	int[] itemsetMiddle =  patternsSameSize.get(middle).getItems();
 
         	int comparison = ArraysAlgos.comparatorItemsetSameSize.compare(itemset, itemsetMiddle);
             if(comparison  > 0 ){
@@ -517,7 +516,7 @@ public class AlgoAgrawalFaster94{
 			rules.addRule(new AssocRule(itemset1, itemset2, supportItemset1, absoluteSupport, conf, lift));
 		}
 	}
-	
+
 	/** 
 	 * Set the maximum antecedent length
 	 * @param maxAntecedentLength the maximum length

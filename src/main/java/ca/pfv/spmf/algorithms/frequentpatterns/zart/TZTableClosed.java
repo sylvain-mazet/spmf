@@ -17,7 +17,7 @@ package ca.pfv.spmf.algorithms.frequentpatterns.zart;
 */
 
 import ca.pfv.spmf.algorithms.GenericResults;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
 
 import java.util.ArrayList;
@@ -42,13 +42,13 @@ public class TZTableClosed implements GenericResults {
 	/** each entry of the following map is :  <br/>
 	 key : a closed itemset       <br/>
 	 values : the corresponding generator(s)  */
-	public Map<Itemset, List<Itemset>> mapGenerators = new HashMap<Itemset, List<Itemset>>();
+	public Map<ItemsetArrayImplWithCount, List<ItemsetArrayImplWithCount>> mapGenerators = new HashMap<ItemsetArrayImplWithCount, List<ItemsetArrayImplWithCount>>();
 
 	/**
 	 * Add a closed itemsets to this structure.
 	 * @param itemset  the itemset
 	 */
-	void addClosedItemset(Itemset itemset){
+	void addClosedItemset(ItemsetArrayImplWithCount itemset){
 		// if there is no array list until the size of this itemset
 		// then create them.
 		while(levels.size() <= itemset.size()){

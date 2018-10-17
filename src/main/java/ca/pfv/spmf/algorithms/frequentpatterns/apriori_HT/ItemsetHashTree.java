@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This class represents an itemset hash tree as used by the AprioriHT algorithm
@@ -65,7 +65,7 @@ public class ItemsetHashTree {
 	 * Inserts an itemset in the hash-tree
 	 * @param itemset the itemset to be inserted
 	 */
-	public void insertCandidateItemset(Itemset itemset){
+	public void insertCandidateItemset(ItemsetArrayImplWithCount itemset){
 		candidateCount++; // increase the counter for the number of itemsets in the tree
 		insertCandidateItemset(root, itemset, 0); // insert the itemset
 	}
@@ -77,15 +77,15 @@ public class ItemsetHashTree {
 	 * @param itemset the itemset to be inserted
 	 * @param level the current level in the tree (root = level 1 ...)
 	 */
-	private void insertCandidateItemset(Node node, Itemset itemset, int level){	
+	private void insertCandidateItemset(Node node, ItemsetArrayImplWithCount itemset, int level){
 		// use the modulo to know which child we should explore
 		int branchIndex = itemset.itemset[level] % branch_count;
 		// if we have reached the level of leaf nodes
 		if(node instanceof LeafNode){
 			// insert the itemset in the appropriate list of the leaf node
-			List<Itemset> list = ((LeafNode)node).candidates[branchIndex];
+			List<ItemsetArrayImplWithCount> list = ((LeafNode)node).candidates[branchIndex];
 			if(list == null){
-				list = new ArrayList<Itemset>();
+				list = new ArrayList<>();
 				((LeafNode)node).candidates[branchIndex] = list;
 			}
 			list.add(itemset);
@@ -124,7 +124,7 @@ public class ItemsetHashTree {
 	 */
 	class LeafNode extends Node{
 		// contains a list of list of candidates
-		final List<Itemset> [] candidates = new ArrayList[branch_count];
+		final List<ItemsetArrayImplWithCount> [] candidates = new ArrayList[branch_count];
 		// a pointer to the leaf node that was created just before this one.
 		// It is used to navigate quickly between leaves.
 		LeafNode nextLeafNode = null;
@@ -178,11 +178,11 @@ public class ItemsetHashTree {
 					int itemJ = transaction[j];
 					// we check which branch
 					int branchIndexNextNode = itemJ% branch_count;
-					List<Itemset> listCandidates = theNode.candidates[branchIndexNextNode];
+					List<ItemsetArrayImplWithCount> listCandidates = theNode.candidates[branchIndexNextNode];
 					// if the branch is not null
 					if(listCandidates != null){
 						// we check if the resulting itemset is in this branch.
-						for(Itemset candidate: listCandidates){
+						for(ItemsetArrayImplWithCount candidate: listCandidates){
 							// if so, we increase its support count
 							if(sameAsPrefix(candidate.itemset, prefix, itemI, itemJ)){
 								candidate.support++;
@@ -220,7 +220,7 @@ loop:	for(int i=0; i< itemset.length; i++){
 					return false;
 				}
 				// we check the appropriate branch of the leaf node
-				List<Itemset> list = ((LeafNode)node).candidates[branchIndex];
+				List<ItemsetArrayImplWithCount> list = ((LeafNode)node).candidates[branchIndex];
 				// if it is null, then the itemset is not there
 				if(list == null){
 					return false;
@@ -274,7 +274,7 @@ loop:	for(int i=0; i< itemset.length; i++){
 				return false;
 			}
 		}
-		return itemset1[itemset1.length -2] == itemI 
+		return itemset1[itemset1.length -2] == itemI
 				&& itemset1[itemset1.length -1] == itemJ;
 	}
 	

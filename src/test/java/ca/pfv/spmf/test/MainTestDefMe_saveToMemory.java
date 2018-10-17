@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.defme.AlgoDefMe;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 
 
@@ -43,7 +42,7 @@ public class MainTestDefMe_saveToMemory extends MainTestBase {
 		algo.printStats();
 		for(GenericResults.ListOfItemset genSizeK : generators.getLevels()) {
 			for(AbstractItemset itemsetAbs : genSizeK) {
-				Itemset itemset = (Itemset) itemsetAbs;
+				ItemsetWithTIDSBitset itemset = (ItemsetWithTIDSBitset) itemsetAbs;
 				System.out.println(Arrays.toString(itemset.getItems()) + " #SUP: " + itemset.getAbsoluteSupport());
 			}
 		}

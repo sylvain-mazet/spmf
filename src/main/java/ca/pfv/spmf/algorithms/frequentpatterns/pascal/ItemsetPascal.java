@@ -1,5 +1,7 @@
 package ca.pfv.spmf.algorithms.frequentpatterns.pascal;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+
+import java.util.Vector;
 
 /**
  * This class represents an itemset as used by the PASCAL algorithm.
@@ -24,7 +26,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
  * @see AlgoPASCAL
  * @author Philippe Fournier-Viger
 */
-public class ItemsetPascal extends Itemset{
+public class ItemsetPascal extends ItemsetArrayImplWithCount {
 	/** field indicating if this itemset is a generator **/
 	public boolean isGenerator = true;
 	
@@ -40,6 +42,14 @@ public class ItemsetPascal extends Itemset{
 	 */
 	public ItemsetPascal(int[] newItemset) {
 		super(newItemset);
+	}
+
+	/**
+	 * Constructor
+	 * @param item an item
+	 */
+	public ItemsetPascal(Integer item) {
+		super(item);
 	}
 
 }

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
-import ca.pfv.spmf.algorithms.frequentpatterns.eclat.AlgoEclat;
-import ca.pfv.spmf.algorithms.frequentpatterns.eclat.AlgoEclat_Bitset;
 /* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -31,8 +29,6 @@ import ca.pfv.spmf.algorithms.frequentpatterns.eclat.AlgoEclat_Bitset;
  * @see AbstractTriangularMatrix
  * @see TriangularMatrix
  * @see AlgoCharm_Bitset
- * @see AlgoEclat_Bitset
- * @see AlgoEclat
  * @author Philippe Fournier-Viger
  */
 public class SparseTriangularMatrix implements AbstractTriangularMatrix {
@@ -44,7 +40,6 @@ public class SparseTriangularMatrix implements AbstractTriangularMatrix {
 
 	/**
 	 * Constructor of a new triangular matrix.
-	 * @param elementCount the desired number of lines in the matrix.
 	 */
 	public SparseTriangularMatrix(){
 
@@ -53,7 +48,7 @@ public class SparseTriangularMatrix implements AbstractTriangularMatrix {
 	/**
 	 * This constructor is for compatibility with the other TriangularMatrix implementation.
 	 * The parameter "itemCount" is not used.
-	 * @param itemCount
+	 * @param itemCount the desired number of lines in the matrix.
 	 */
 	public SparseTriangularMatrix(int itemCount){
 

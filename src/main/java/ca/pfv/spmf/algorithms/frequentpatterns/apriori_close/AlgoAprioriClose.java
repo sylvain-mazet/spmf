@@ -29,9 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
@@ -211,9 +212,9 @@ public class AlgoAprioriClose {
 		// The loop will stop when no candidates can be generated.
 		
 		// This will store frequent itemsets from level K.
-		List<Itemset> level = null;
+		List<ItemsetArrayImplWithCount> level = null;
 		//  This will store itemsets from the level K-1 for K>2
-		List<Itemset> previousLevel = null;
+		List<ItemsetArrayImplWithCount> previousLevel = null;
 		
 		k = 2;
 		do{
@@ -221,7 +222,7 @@ public class AlgoAprioriClose {
 			MemoryLogger.getInstance().checkMemory();
 			
 			// Generate candidates of size K
-			List<Itemset> candidatesK;
+			List<ItemsetArrayImplWithCount> candidatesK;
 			
 			// if we are at level k=2, we use an optimization to generate candidates
 			if(k ==2){
@@ -239,7 +240,7 @@ public class AlgoAprioriClose {
 			// For each transaction:
 			for(int[] transaction: database){
 				// for each candidate:
-	 loopCand:	for(Itemset candidate : candidatesK){
+	 loopCand:	for(ItemsetArrayImplWithCount candidate : candidatesK){
 		 			// a variable that will be use to check if 
 		 			// all items of candidate are in this transaction
 					int pos = 0;
@@ -270,8 +271,8 @@ public class AlgoAprioriClose {
 			previousLevel = level;
 			// We build the level k+1 with all the candidates that have
 			// a support higher than the minsup threshold.
-			level = new ArrayList<Itemset>();
-			for (Itemset candidate : candidatesK) {
+			level = new ArrayList<>();
+			for (ItemsetArrayImplWithCount candidate : candidatesK) {
 				// if the support is > minsup
 				if (candidate.getAbsoluteSupport() >= minsupRelative) {
 					// add the candidate
@@ -314,15 +315,15 @@ public class AlgoAprioriClose {
 	 * @param levelK itemsets of size k
 	 * @throws IOException exception if error writing output file
 	 */
-	private void checkIfItemsetsK_1AreClosed(Collection<Itemset> levelKm1,
-			List<Itemset> levelK) throws IOException {
+	private void checkIfItemsetsK_1AreClosed(Collection<ItemsetArrayImplWithCount> levelKm1,
+			List<ItemsetArrayImplWithCount> levelK) throws IOException {
 		// for each itemset of size k-1
-		for (Itemset itemset : levelKm1) {
+		for (ItemsetArrayImplWithCount itemset : levelKm1) {
 			boolean isClosed = true;
 			// for each itemset of level K, if it has the same 
 			// support and contains the current itemset from k-1
 			// then this latter itemset is not closed.
-			for (Itemset itemsetK : levelK) {
+			for (ItemsetArrayImplWithCount itemsetK : levelK) {
 				if (itemsetK.getAbsoluteSupport() == itemset
 						.getAbsoluteSupport() && itemsetK.containsAll(itemset)) {
 					isClosed = false;
@@ -346,7 +347,7 @@ public class AlgoAprioriClose {
 	 * @throws IOException exception if error writing output file
 	 */
 	private void checkIfItemsetsK_1AreClosed(List<Integer> levelKm1,
-			List<Itemset> levelK, Map<Integer, Integer> mapItemCount) throws IOException {
+                                             List<ItemsetArrayImplWithCount> levelK, Map<Integer, Integer> mapItemCount) throws IOException {
 		// for each itemset of size k-1
 		for (Integer itemset : levelKm1) {
 			boolean isClosed = true;
@@ -354,7 +355,7 @@ public class AlgoAprioriClose {
 			// for each itemset of level K, if it has the same 
 			// support and contains the current itemset from k-1
 			// then this latter itemset is not closed.	
-			for (Itemset itemsetK : levelK) {
+			for (ItemsetArrayImplWithCount itemsetK : levelK) {
 				if (itemsetK.getAbsoluteSupport() == support && itemsetK.contains(itemset)) {
 					isClosed = false;
 					break;
@@ -383,8 +384,8 @@ public class AlgoAprioriClose {
 	 * @param frequent1  the list of frequent itemsets of size 1.
 	 * @return a List of Itemset that are the candidates of size 2.
 	 */
-	private List<Itemset> generateCandidate2(List<Integer> frequent1) {
-		List<Itemset> candidates = new ArrayList<Itemset>();
+	private List<ItemsetArrayImplWithCount> generateCandidate2(List<Integer> frequent1) {
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<ItemsetArrayImplWithCount>();
 		
 		// For each itemset I1 and I2 of level k-1
 		for (int i = 0; i < frequent1.size(); i++) {
@@ -393,7 +394,7 @@ public class AlgoAprioriClose {
 				Integer item2 = frequent1.get(j);
 
 				// Create a new candidate by combining itemset1 and itemset2
-				candidates.add(new Itemset(new int []{item1, item2}));
+				candidates.add(new ItemsetArrayImplWithCount(new int []{item1, item2}));
 			}
 		}
 		return candidates;
@@ -404,9 +405,9 @@ public class AlgoAprioriClose {
 	 * @param levelK_1  frequent itemsets of size k-1
 	 * @return itemsets of size k
 	 */
-	protected List<Itemset> generateCandidateSizeK(List<Itemset> levelK_1) {
+	protected List<ItemsetArrayImplWithCount> generateCandidateSizeK(List<ItemsetArrayImplWithCount> levelK_1) {
 		// create a variable to store candidates
-		List<Itemset> candidates = new ArrayList<Itemset>();
+		List<ItemsetArrayImplWithCount> candidates = new ArrayList<>();
 
 		// For each itemset I1 and I2 of level k-1
 		loop1: for (int i = 0; i < levelK_1.size(); i++) {
@@ -447,7 +448,7 @@ public class AlgoAprioriClose {
 				// included in
 				// level k-1 (they are frequent).
 				if (allSubsetsOfSizeK_1AreFrequent(newItemset, levelK_1)) {
-					candidates.add(new Itemset(newItemset));
+					candidates.add(new ItemsetArrayImplWithCount(newItemset));
 				}
 			}
 		}
@@ -460,7 +461,7 @@ public class AlgoAprioriClose {
 	 * @param levelK_1  the frequent itemsets of size k-1
 	 * @return true if all the subsets are frequet
 	 */
-	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] candidate, List<Itemset> levelK_1) {
+	protected boolean allSubsetsOfSizeK_1AreFrequent(int[] candidate, List<ItemsetArrayImplWithCount> levelK_1) {
 		// generate all subsets by always each item from the candidate, one by one
 		for(int posRemoved=0; posRemoved< candidate.length; posRemoved++){
 
@@ -497,7 +498,7 @@ public class AlgoAprioriClose {
 	}
 
 	
-void saveItemset(Itemset itemset) throws IOException {
+void saveItemset(ItemsetArrayImplWithCount itemset) throws IOException {
 		itemsetCount++;
 		
 		// if the result should be saved to a file
@@ -520,7 +521,7 @@ void saveItemset(Itemset itemset) throws IOException {
 			writer.newLine();
 		}// otherwise the result is kept into memory
 		else{
-			Itemset itemset = new Itemset(item);
+			ItemsetArrayImplWithCount itemset = new ItemsetArrayImplWithCount(item);
 			itemset.setAbsoluteSupport(support);
 			patterns.addItemset(itemset, 1);
 		}

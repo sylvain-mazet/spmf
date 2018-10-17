@@ -17,7 +17,7 @@ package ca.pfv.spmf.algorithms.sequential_rules.cmrules;
 */
 
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represent a rule as found by the CMRules algorithm (an association rules as in Phase 1 of 
@@ -30,14 +30,14 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
  *  
  *  @see AlgoCMRules
  *  @see Rules
- *  @see Itemset
+ *  @see ItemsetWithTIDS
  *  @author Philippe Fournier-Viger
  */
 public class Rule {
 	/** antecedent itemset */
-	private Itemset itemset1;  
+	private ItemsetWithTIDS itemset1;
 	/** consequent  itemset*/
-	private Itemset itemset2; 
+	private ItemsetWithTIDS itemset2;
 	/** association support */
 	private int transactionCount; 
 	/** sequential support  */
@@ -52,7 +52,7 @@ public class Rule {
 	 * @param transactionCount association support
 	 * @param confidence confidence
 	 */
-	public Rule(Itemset itemset1, Itemset itemset2, int transactionCount, double confidence){
+	public Rule(ItemsetWithTIDS itemset1, ItemsetWithTIDS itemset2, int transactionCount, double confidence){
 		this.itemset1 = itemset1;
 		this.itemset2 = itemset2;
 		this.transactionCount =  transactionCount;
@@ -75,7 +75,7 @@ public class Rule {
 	 * Get the rule antecedent
 	 * @return an Itemset
 	 */
-	public Itemset getItemset1() {
+	public ItemsetWithTIDS getItemset1() {
 		return itemset1;
 	}
 
@@ -83,7 +83,7 @@ public class Rule {
 	 * Get the rule consequent
 	 * @return an Itemset
 	 */
-	public Itemset getItemset2() {
+	public ItemsetWithTIDS getItemset2() {
 		return itemset2;
 	}
 	

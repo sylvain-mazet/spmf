@@ -19,13 +19,13 @@ package ca.pfv.spmf.algorithms.sequential_rules.rulegrowth;
 import java.util.Arrays;
 import java.util.Set;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represents a rule member of a left equivalence class.
  * 
  * @see AlgoERMiner
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class LeftRule {

@@ -20,13 +20,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
 
 /**
  * This class represents a rule member of a right equivalence class.
  * 
  * @see AlgoERMiner
- * @see Itemset
+ * @see ItemsetWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class RightRule {

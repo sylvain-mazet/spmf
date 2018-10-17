@@ -21,12 +21,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This class represents a list of association rules, where itemsets are array of integers.
 * 
-*  @see Itemset
+*  @see ItemsetArrayImplWithCount
 *  @see Rule
  * @author Philippe Fournier-Viger
  */

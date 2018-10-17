@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This class represents the TF table of frequent itemsets, used by the Zart algorithm.
@@ -34,19 +34,19 @@ public class TFTableFrequent {
 	/** This store the frequent itemsets by size
 	 At position i, there are the list of frequent itemsets
 	  of size i */
-	public final List<List<Itemset>> levels = new ArrayList<List<Itemset>>();  // itemset class� par taille
+	public final List<List<ItemsetArrayImplWithCount>> levels = new ArrayList<List<ItemsetArrayImplWithCount>>();  // itemset class� par taille
 	
 	/** This map is the mapPredSupp used by Zart to store the support of a frequent itemset
 	 <br/>
 	 key: itemset   value: support */
-	Map<Itemset, Integer> mapPredSupp = new HashMap<Itemset, Integer>();
+	Map<ItemsetArrayImplWithCount, Integer> mapPredSupp = new HashMap<ItemsetArrayImplWithCount, Integer>();
 	/**this map indicate the key value for this itemset<br/>
 	  key: itemset   value: key value */
-	Map<Itemset, Boolean> mapKey = new HashMap<Itemset, Boolean>();
+	Map<ItemsetArrayImplWithCount, Boolean> mapKey = new HashMap<ItemsetArrayImplWithCount, Boolean>();
 	
 	/** indicate if the frequent itemsets are closed <br/>
 	  key: itemset     value: is closed or not (true/false) **/
-	Map<Itemset, Boolean> mapClosed = new HashMap<Itemset, Boolean>();
+	Map<ItemsetArrayImplWithCount, Boolean> mapClosed = new HashMap<ItemsetArrayImplWithCount, Boolean>();
 	
 	/** indicate if the empty set is closed or not */
 	public boolean emptySetIsClosed = false;
@@ -56,11 +56,11 @@ public class TFTableFrequent {
 	 * Add a frequent itemsets to this structure.
 	 * @param itemset  the itemset
 	 */
-	void addFrequentItemset(Itemset itemset){
+	void addFrequentItemset(ItemsetArrayImplWithCount itemset){
 		// if there is no array list until the size of this itemset
 		// then create them.
 		while(levels.size() <= itemset.size()){
-			levels.add(new ArrayList<Itemset>());
+			levels.add(new ArrayList<ItemsetArrayImplWithCount>());
 		}
 		// add the itemset in the proper arraylist according to the size of the itemset
 		levels.get(itemset.size()).add(itemset);
@@ -71,11 +71,11 @@ public class TFTableFrequent {
 	 * @param i  the size i.
 	 * @return  a list of itemsets
 	 */
-	public List<Itemset> getLevelForZart(int i){
+	public List<ItemsetArrayImplWithCount> getLevelForZart(int i){
 		// if this level does not exist
 		if(i+1 == levels.size()){
 			// create it
-			List<Itemset> newList = new ArrayList<Itemset>();
+			List<ItemsetArrayImplWithCount> newList = new ArrayList<ItemsetArrayImplWithCount>();
 			levels.add(newList);
 			return newList;
 		}

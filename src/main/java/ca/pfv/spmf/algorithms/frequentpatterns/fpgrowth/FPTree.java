@@ -25,14 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 
 /**
  * This is an implementation of a FPTree as used by the FPGrowth algorithm.
  *
  * @see FPNode
- * @see Itemset
+ * @see ItemsetArrayImplWithCount
  * @see AlgoFPGrowth
  * @author Philippe Fournier-Viger
  */

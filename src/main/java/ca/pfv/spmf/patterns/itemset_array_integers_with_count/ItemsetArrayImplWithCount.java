@@ -1,9 +1,11 @@
 package ca.pfv.spmf.patterns.itemset_array_integers_with_count;
-import java.util.Arrays;
-import java.util.List;
-
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.patterns.AbstractOrderedItemset;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
 * 
@@ -27,17 +29,21 @@ import ca.pfv.spmf.patterns.AbstractOrderedItemset;
 * 
  * @author Philippe Fournier-Viger
  */
-public class Itemset extends AbstractOrderedItemset{
+public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
+
+	protected final Integer INITIAL_CAPACITY = 10;
+
 	/** the array of items **/
-	public int[] itemset; 
+	public int[] itemset;
 
 	/**  the support of this itemset */
 	public int support = 0; 
 	
 	/**
-	 * Get the items as array
+	 * Get the items as vector
 	 * @return the items
 	 */
+	@Override
 	public int[] getItems() {
 		return itemset;
 	}
@@ -45,15 +51,27 @@ public class Itemset extends AbstractOrderedItemset{
 	/**
 	 * Constructor
 	 */
-	public Itemset(){
-		itemset = new int[]{};
+	public ItemsetArrayImplWithCount(){
+		itemset = new int[INITIAL_CAPACITY];
 	}
-	
+
+	/**
+	 * Constructor
+	 * @param setOfInts a set of Integer
+	 * */
+	public ItemsetArrayImplWithCount(Set<Integer> setOfInts){
+		itemset = new int[setOfInts.size()];
+		int pos = 0;
+		for (Integer i : setOfInts) {
+			itemset[pos++] = i;
+		}
+	}
+
 	/**
 	 * Constructor 
 	 * @param item an item that should be added to the new itemset
 	 */
-	public Itemset(int item){
+	public ItemsetArrayImplWithCount(int item){
 		itemset = new int[]{item};
 	}
 
@@ -61,7 +79,7 @@ public class Itemset extends AbstractOrderedItemset{
 	 * Constructor 
 	 * @param items an array of items that should be added to the new itemset
 	 */
-	public Itemset(int [] items){
+	public ItemsetArrayImplWithCount(int[] items){
 		this.itemset = items;
 	}
 	
@@ -70,7 +88,7 @@ public class Itemset extends AbstractOrderedItemset{
 	 * @param itemset a list of Integer representing items in the itemset
 	 * @param support the support of the itemset
 	 */
-	public Itemset(List<Integer> itemset, int support){
+	public ItemsetArrayImplWithCount(List<Integer> itemset, int support){
 		this.itemset = new int[itemset.size()];
 	    int i = 0;
 	    for (Integer item : itemset) { 
@@ -82,6 +100,7 @@ public class Itemset extends AbstractOrderedItemset{
 	/**
 	 * Get the support of this itemset
 	 */
+	@Override
 	public int getAbsoluteSupport(){
 		return support;
 	}
@@ -89,6 +108,7 @@ public class Itemset extends AbstractOrderedItemset{
 	/**
 	 * Get the size of this itemset 
 	 */
+	@Override
 	public int size() {
 		return itemset.length;
 	}
@@ -115,24 +135,14 @@ public class Itemset extends AbstractOrderedItemset{
 		this.support++;
 	}
 
-
 	/**
 	 * Make a copy of this itemset but exclude a given item
 	 * @param itemToRemove the given item
 	 * @return the copy
 	 */
-	public Itemset cloneItemSetMinusOneItem(Integer itemToRemove) {
-		// create the new itemset
-		int[] newItemset = new int[itemset.length -1];
-		int i=0;
-		// for each item in this itemset
-		for(int j =0; j < itemset.length; j++){
-			// copy the item except if it is the item that should be excluded
-			if(itemset[j] != itemToRemove){
-				newItemset[i++] = itemset[j];
-			}
-		}
-		return new Itemset(newItemset); // return the copy
+	public ItemsetArrayImplWithCount cloneItemSetMinusOneItem(Integer itemToRemove) {
+		int[] newItemset = ArraysAlgos.cloneItemSetMinusOneItem(this.itemset,itemToRemove);
+		return new ItemsetArrayImplWithCount(newItemset); // return the copy
 	}
 	
 
@@ -141,18 +151,9 @@ public class Itemset extends AbstractOrderedItemset{
 	 * @param itemsetToNotKeep the set of items to be excluded
 	 * @return the copy
 	 */
-	public Itemset cloneItemSetMinusAnItemset(Itemset itemsetToNotKeep) {
-		// create a new itemset
-		int[] newItemset = new int[itemset.length - itemsetToNotKeep.size()];
-		int i=0;
-		// for each item of this itemset
-		for(int j =0; j < itemset.length; j++){
-			// copy the item except if it is not an item that should be excluded
-			if(itemsetToNotKeep.contains(itemset[j]) == false){
-				newItemset[i++] = itemset[j];
-			}
-		}
-		return new Itemset(newItemset); // return the copy
+	public ItemsetArrayImplWithCount cloneItemSetMinusAnItemset(ItemsetArrayImplWithCount itemsetToNotKeep) {
+		int[] newItemset = ArraysAlgos.cloneItemSetMinusAnItemset(this.itemset, itemsetToNotKeep.itemset);
+		return new ItemsetArrayImplWithCount(newItemset); // return the copy
 	}
 	
 	/**
@@ -161,14 +162,18 @@ public class Itemset extends AbstractOrderedItemset{
 	 * @param itemset2 the given itemset
 	 * @return the new itemset
 	 */
-	public Itemset intersection(Itemset itemset2) {
-		int [] intersection = ArraysAlgos.intersectTwoSortedArrays(this.getItems(), itemset2.getItems());
-		return new Itemset(intersection);
+	public ItemsetArrayImplWithCount intersection(ItemsetArrayImplWithCount itemset2) {
+		int[] intersection = ArraysAlgos.intersectTwoSortedArrays(this.getItems(), itemset2.getItems());
+		return new ItemsetArrayImplWithCount(intersection);
 	}
 	
 	@Override
 	public int hashCode() {
-		
 		return Arrays.hashCode(itemset);
+	}
+
+	@Override //TODO the iterator
+	public Iterator<Integer> iterator() {
+		return null;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 
 /**
  * This class contains methods that are shared by the Itemset-Tree
@@ -127,7 +127,6 @@ abstract class AbstractItemsetTree {
 	 * Method to check if two itemsets are equals
 	 * @param itemset1 the first itemset
 	 * @param itemset2 the second itemset
-	 * @param prefix 
 	 * @return true if they are the same or false otherwise
 	 */
 	protected boolean same(int[] itemset1, int[] itemset2) {
@@ -166,14 +165,14 @@ abstract class AbstractItemsetTree {
 		// This does not seems efficient but that is how the authors of the paper do it.
 		
 		// for each position in the internal array of the hash table
-		for(List<Itemset> list : hashTable.table){
+		for(List<ItemsetArrayImplWithCount> list : hashTable.table){
 			// if that position is not empty
 			if(list != null){
 				// loop over the itemsets stored at that position
-				Iterator<Itemset> it = list.iterator();
+				Iterator<ItemsetArrayImplWithCount> it = list.iterator();
 				while (it.hasNext()) {
 					// if the itemset is infrequent, remove it
-					Itemset itemset = (Itemset) it.next();
+					ItemsetArrayImplWithCount itemset = (ItemsetArrayImplWithCount) it.next();
 					if(itemset.support < minsup){
 						it.remove();
 					}
@@ -220,11 +219,11 @@ abstract class AbstractItemsetTree {
 		// get all frequent itemsets
 		 HashTableIT frequentItemsets = getFrequentItemsetSubsuming(s, minsup);
 		 // for each position in the hash table
-		 for(List<Itemset> list : frequentItemsets.table){
+		 for(List<ItemsetArrayImplWithCount> list : frequentItemsets.table){
 			 // if the position is not empty
 			if(list != null){
 				// iterate over all itemsets in the same bucket in the hash table
-				for(Itemset c : list){
+				for(ItemsetArrayImplWithCount c : list){
 					 // if we have found an itemset having the same size as S,
 					// we continue because we want to find an itemset C to generate
 					// rules by doing  C - S and that would result in the empty set.
