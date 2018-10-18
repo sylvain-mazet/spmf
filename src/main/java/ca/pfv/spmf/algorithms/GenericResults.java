@@ -11,6 +11,7 @@ public interface GenericResults {
 
     enum ItemsetType {
         ARRAY_INTEGERS_WITH_COUNT,
+        ARRAY_INTEGERS_FOR_DELTA,
         ARRAY_INTEGERS_WITH_TIDS_BITSET;
     }
 

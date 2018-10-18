@@ -3,8 +3,8 @@ import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.patterns.AbstractOrderedItemset;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
@@ -59,7 +59,7 @@ public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
 	 * Constructor
 	 * @param setOfInts a set of Integer
 	 * */
-	public ItemsetArrayImplWithCount(Set<Integer> setOfInts){
+	public ItemsetArrayImplWithCount(Collection<Integer> setOfInts){
 		itemset = new int[setOfInts.size()];
 		int pos = 0;
 		for (Integer i : setOfInts) {
@@ -88,7 +88,7 @@ public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
 	 * @param itemset a list of Integer representing items in the itemset
 	 * @param support the support of the itemset
 	 */
-	public ItemsetArrayImplWithCount(List<Integer> itemset, int support){
+	public ItemsetArrayImplWithCount(Collection<Integer> itemset, int support){
 		this.itemset = new int[itemset.size()];
 	    int i = 0;
 	    for (Integer item : itemset) { 

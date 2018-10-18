@@ -1,17 +1,29 @@
 package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 
+import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetForDelta;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by smazet on 09/10/18.
  */
 public class FITree {
+
+    static final Logger logger = LoggerFactory.getLogger(FITree.class);
+
     // List of pairs (item, frequency) of the header table
     Map<Integer, FINode> mapItemNodes = new HashMap<>();
 
@@ -349,34 +361,70 @@ public class FITree {
      * are the edges of ourselves.
      * The nodes are not the same since they contain statistics of the edge.
      */
-    public FIBTree differentiate() {
-        FIBTree deltaTree = new FIBTree();
-        deltaTree.setRoot(new FIBNode(0, new ItemsetArrayImplWithCount(new int []{})));
+    public GenericResults differentiate() {
+        //FIBTree deltaTree = new FIBTree();
+        //deltaTree.setRoot(new FIBNode(0, new ItemsetArrayImplWithCount(new int []{})));
+
+        Itemsets itemsets = new Itemsets("Differentiated tree");
 
         int idStart = 1;
-        recurseDifferentiate(idStart,(FIBNode)deltaTree.getRoot(), root);
+        recurseDifferentiate(idStart,itemsets, root);
 
-        return deltaTree;
+        return itemsets;
     }
 
-    private int recurseDifferentiate(int id, FIBNode deltaRoot, FINode root) {
+    private int recurseDifferentiate(int id, Itemsets itemsets, FINode root) {
         Iterator<FINode> childrenIterator = root.getChildren().iterator();
 
         while (childrenIterator.hasNext()) {
             FICNode child = (FICNode)childrenIterator.next();
 
-            FIBNode newDeltaNode = new FIBNode(id++, child.getItemset() );
+            // I want nodes only in this child
+            Set<Integer> childSet = new HashSet<>();
+            int level = child.level;
+            for (int item : child.getItemset().getItems()) {
+                childSet.add(item);
+            }
+            for (int item : ((FICNode) root).getItemset().getItems()) {
+                if (childSet.remove(item)) {
+                    level--;
+                }
+            }
 
-            deltaRoot.getChildren().add(newDeltaNode);
+            ItemsetForDelta newItemset = new ItemsetForDelta( childSet );
+            newItemset.setAbsoluteSupport(child.getItemset().getAbsoluteSupport());
 
-            newDeltaNode.setDeltaSupportIn((double) (root.counter - child.counter) / root.counter);
-            newDeltaNode.setDeltaSupportOut((double) (root.counter - child.counter) / child.counter);
-            newDeltaNode.setDeltaLengthIn((double) (child.level - root.level) / root.level);
-            newDeltaNode.setDeltaLengthOut((double) (child.level - root.level) / child.level);
-            newDeltaNode.setLift(child.level - root.level);
-            newDeltaNode.setCoverage(root.counter - child.counter);
+            // we check if this itemset has already been seen
+            GenericResults.ListOfItemset itemsetsAtLevel = null;
+            if (itemsets.getLevels().size() > level) {
+                itemsetsAtLevel = itemsets.getLevels().get(level);
+                int hashCode = Arrays.hashCode(newItemset.getItems());
+                Iterator<AbstractItemset> itemsetAtLevel = itemsetsAtLevel.iterator();
+                boolean alreadyThere = false;
+                while (itemsetAtLevel.hasNext()) {
+                    AbstractItemset itemsetSameLevel = itemsetAtLevel.next();
+                    if (hashCode == Arrays.hashCode(itemsetSameLevel.getItems())) {
+                        alreadyThere = true;
+                        logger.debug("Found same itemsets "+itemsetAtLevel.toString()+" VS "+newItemset.toString());
+                    }
+                }
+                // if not, add it
+                if (!alreadyThere) {
+                    itemsets.addItemset(newItemset, level);
+                }
+            } else {
+                // no itemset at this level yet
+                itemsets.addItemset(newItemset, level);
+            }
 
-            id = recurseDifferentiate(id, newDeltaNode,child);
+            newItemset.setDeltaSupportIn((double) (root.counter - child.counter) / root.counter);
+            newItemset.setDeltaSupportOut((double) (root.counter - child.counter) / child.counter);
+            newItemset.setDeltaLengthIn((double) (child.level - root.level) / root.level);
+            newItemset.setDeltaLengthOut((double) (child.level - root.level) / child.level);
+            newItemset.setLift(child.level - root.level);
+            newItemset.setCoverage(root.counter - child.counter);
+
+            id = recurseDifferentiate(id, itemsets,child);
 
         }
 

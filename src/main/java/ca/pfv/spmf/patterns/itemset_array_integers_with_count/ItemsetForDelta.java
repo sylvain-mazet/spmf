@@ -1,6 +1,6 @@
 package ca.pfv.spmf.patterns.itemset_array_integers_with_count;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by smazet on 17/10/18.
@@ -11,6 +11,8 @@ public class ItemsetForDelta extends ItemsetArrayImplWithCount {
     private double deltaSupportOut;
     private double deltaLengthIn;
     private double deltaLengthOut;
+    private double lift;
+    private int coverage;
 
     /**
      * Constructor
@@ -33,8 +35,16 @@ public class ItemsetForDelta extends ItemsetArrayImplWithCount {
      * @param itemset a list of Integer representing items in the itemset
      * @param support the support of the itemset
      */
-    public ItemsetForDelta(List<Integer> itemset, int support){
+    public ItemsetForDelta(Collection<Integer> itemset, int support){
         super(itemset,support);
+    }
+
+    /**
+     * Constructor
+     * @param itemset a list of Integer representing items in the itemset
+     */
+    public ItemsetForDelta(Collection<Integer> itemset){
+        super(itemset);
     }
 
     public double getDeltaSupportIn() {
@@ -67,5 +77,21 @@ public class ItemsetForDelta extends ItemsetArrayImplWithCount {
 
     public void setDeltaLengthOut(double deltaLengthOut) {
         this.deltaLengthOut = deltaLengthOut;
+    }
+
+    public void setLift(double lift) {
+        this.lift = lift;
+    }
+
+    public double getLift() {
+        return lift;
+    }
+
+    public void setCoverage(int coverage) {
+        this.coverage = coverage;
+    }
+
+    public int getCoverage() {
+        return coverage;
     }
 }
