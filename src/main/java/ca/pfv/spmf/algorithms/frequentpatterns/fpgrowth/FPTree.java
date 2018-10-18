@@ -159,7 +159,7 @@ public class FPTree {
 	void createHeaderList(final Map<Integer, Integer> mapSupport) {
 		// create an array to store the header list with
 		// all the items stored in the map received as parameter
-		headerList =  new ArrayList<Integer>(mapItemNodes.keySet());
+		headerList =  new ArrayList<>(mapItemNodes.keySet());
 		
 		// sort the header table by decreasing order of support
 		Collections.sort(headerList, new Comparator<Integer>(){

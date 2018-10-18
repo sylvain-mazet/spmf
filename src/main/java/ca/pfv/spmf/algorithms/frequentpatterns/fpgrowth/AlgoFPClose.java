@@ -174,7 +174,7 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 					if (i > 0 && countBuffer[i - 1] != 0 && countBuffer[i - 1] != countBuffer[i]) {
 						int pathSupport = countBuffer[i - 1];  // NEW
 
-						// if he current itemset passes the closure checking
+						// if the current itemset passes the closure checking
 						// we save this as a closed itemset
 						int[] headWithP = new int[i];
 						System.arraycopy(itemsetBuffer, 0, headWithP, 0, i);
@@ -211,7 +211,7 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 				// === (A) Construct beta's conditional pattern base ===
 				// It is a subdatabase which consists of the set of prefix paths
 				// in the FP-tree co-occuring with the prefix pattern.
-				List<List<FPNode>> prefixPaths = new ArrayList<List<FPNode>>();
+				List<List<FPNode>> prefixPaths = new ArrayList<>();
 				FPNode path = tree.mapItemNodes.get(item);
 
 				// Map to count the support of items in the conditional prefix tree
