@@ -40,6 +40,8 @@ public abstract class GenericAlgorithmBase implements GenericAlgorithm {
     // for statistics, access granted to child classes
     protected long startTimestamp; // start time of the latest execution
     protected long endTime; // end time of the latest execution
+    protected long firstPassMillis;
+    protected long secondPassMillis;
 
     protected BufferedWriter writer = null; // object to write the output file
 
@@ -150,7 +152,9 @@ public abstract class GenericAlgorithmBase implements GenericAlgorithm {
         System.out.println(" Transactions count from database : " + getTransactionCount());
         System.out.print(" Max memory usage: " + MemoryLogger.getInstance().getMaxMemory() + " mb \n");
         System.out.println(" Frequent itemsets count : " + itemsetCount);
-        System.out.println(" Total time ~ " + temps + " ms");
+        System.out.println(" First  DB scan processing time ~ " + firstPassMillis + " ms");
+        System.out.println(" Second DB scan processing time ~ " + secondPassMillis + " ms");
+        System.out.println(" Access free processing time    ~ " + temps + " ms");
         System.out.println("===================================================");
     }
 

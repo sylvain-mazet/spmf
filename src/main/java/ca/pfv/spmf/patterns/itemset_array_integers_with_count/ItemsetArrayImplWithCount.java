@@ -56,7 +56,7 @@ public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
 	}
 
 	/**
-	 * Constructor
+	 * Constructor, copy values
 	 * @param setOfInts a set of Integer
 	 * */
 	public ItemsetArrayImplWithCount(Collection<Integer> setOfInts){
@@ -65,6 +65,7 @@ public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
 		for (Integer i : setOfInts) {
 			itemset[pos++] = i;
 		}
+		Arrays.sort(itemset);
 	}
 
 	/**

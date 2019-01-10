@@ -51,6 +51,10 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
      */
     @Override
     public Itemsets runAlgorithm(DbScanner dbScanner, double minsupp) throws IOException {
+
+        // record start time
+        startTimestamp = System.currentTimeMillis();
+
         // (1) PREPROCESSING: Initial database scan to determine the frequency of each item
         // The frequency is stored in a map:
         //    key: item   value: support
@@ -60,6 +64,10 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
         // relative minimum support
         this.minSupportRelative = (int) Math.ceil(minsupp * getTransactionCount());
 
+        firstPassMillis = System.currentTimeMillis() - startTimestamp;
+
+        // record start time
+        startTimestamp = System.currentTimeMillis();
 
         // (2) Scan the database again to build the initial FP-Tree
         // Before inserting a transaction in the FPTree, we sort the items
@@ -89,6 +97,8 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
             tree.addTransaction(transaction);
 
         }
+
+        secondPassMillis = System.currentTimeMillis() - startTimestamp;
 
         // record start time
         startTimestamp = System.currentTimeMillis();
