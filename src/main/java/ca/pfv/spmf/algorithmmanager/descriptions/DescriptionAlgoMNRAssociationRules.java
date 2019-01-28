@@ -5,6 +5,7 @@ import java.io.IOException;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.associationrules.MNRRules.AlgoMNRRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.AlgoZart;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
@@ -70,13 +71,13 @@ public class DescriptionAlgoMNRAssociationRules extends DescriptionOfAlgorithm {
 		
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
-		TZTableClosed results = zart.runAlgorithm(database, minsup);
+		FrequentPatternsResults results = zart.runAlgorithm(database, minsup);
 		zart.printStats();
 		
 		System.out.println("STEP 2 : CALCULATING MNR ASSOCIATION RULES");
 		// Run the algorithm to generate MNR rules
 		AlgoMNRRules algoMNR = new AlgoMNRRules();
-		algoMNR.runAlgorithm(outputFile, minconf, results, database.size());
+		algoMNR.runAlgorithm(outputFile, minconf, (TZTableClosed)results.getItemsets(), database.size());
 		algoMNR.printStatistics();
 	}
 

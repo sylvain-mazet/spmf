@@ -30,11 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
 
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -55,7 +54,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * <br/><br/>
  * 
  * @see ItemsetWithTIDS
- * @see Itemsets
+ * @see ItemsetsWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class AlgoAprioriTIDrare {
@@ -82,7 +81,7 @@ public class AlgoAprioriTIDrare {
 	BufferedWriter writer = null;
 	
 	/** variable to store the result if the user choose to save to memory instead of a file */
-	protected Itemsets patterns = null;
+	protected ItemsetsWithTIDS patterns = null;
 
 	/** the number of frequent itemsets found */
 	private int itemsetCount = 0;
@@ -113,12 +112,12 @@ public class AlgoAprioriTIDrare {
 	 * @return the method returns frequent itemsets
 	 * @throws IOException  exception if error reading/writing the file
 	 */
-	public Itemsets runAlgorithm(TransactionDatabase database, double minsup)
+	public ItemsetsWithTIDS runAlgorithm(TransactionDatabase database, double minsup)
 			throws NumberFormatException, IOException {
 		// remember the transaction database received as parameter
 		this.database = database;
 		// call the real "runAlgorithm() method
-		Itemsets result = runAlgorithm(null, null, minsup);
+		ItemsetsWithTIDS result = runAlgorithm(null, null, minsup);
 		
 		// forget the database
 		this.database = null;
@@ -135,7 +134,7 @@ public class AlgoAprioriTIDrare {
 	 * @return if no output file path is provided, the method return frequent itemsets, otherwise null
 	 * @throws IOException  exception if error reading/writing the file
 	 */
-	public Itemsets runAlgorithm(String input, String output, double minsup)
+	public ItemsetsWithTIDS runAlgorithm(String input, String output, double minsup)
 			throws NumberFormatException, IOException {
 		// record start time
 		startTimestamp = System.currentTimeMillis();
@@ -146,7 +145,7 @@ public class AlgoAprioriTIDrare {
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			patterns =  new Itemsets("MINIMAL RARE ITEMSETS");
+			patterns =  new ItemsetsWithTIDS("MINIMAL RARE ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 			patterns = null;
 			writer = new BufferedWriter(new FileWriter(output)); 

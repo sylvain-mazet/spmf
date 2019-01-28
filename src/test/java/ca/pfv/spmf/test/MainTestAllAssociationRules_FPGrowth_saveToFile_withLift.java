@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.GenericFPGrowthAlgorithmBase;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /**
  * Example of how to mine all association rules with FPGROWTH
  * and use the lift, and save the result to a file, 
@@ -30,7 +33,7 @@ public class MainTestAllAssociationRules_FPGrowth_saveToFile_withLift extends Ma
 		double minsupp = 0.5;
 		AlgoFPGrowth fpgrowth = new AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength);
-		Itemsets patterns = (Itemsets)fpgrowth.runAlgorithm(input, null, minsupp);
+		FrequentPatternsResults patterns = (FrequentPatternsResults)fpgrowth.runAlgorithm(input, null, minsupp);
 //		patterns.printItemsets(database.size());
 		int databaseSize = fpgrowth.getDatabaseSize();
 		fpgrowth.printStats();

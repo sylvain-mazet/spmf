@@ -5,6 +5,7 @@ import java.io.IOException;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori.AlgoApriori;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -59,7 +60,7 @@ public class DescriptionAlgoAprioriAssociationRules extends DescriptionOfAlgorit
 		double minconf = getParamAsDouble(parameters[1]);
 
 		AlgoApriori apriori = new AlgoApriori();
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = apriori
+		FrequentPatternsResults results = apriori
 				.runAlgorithm(minsup, inputFile, null);
 		apriori.printStats();
 		int databaseSize = apriori.getDatabaseSize();
@@ -67,7 +68,7 @@ public class DescriptionAlgoAprioriAssociationRules extends DescriptionOfAlgorit
 		// STEP 2: Generating all rules from the set of frequent itemsets
 		// (based on Agrawal & Srikant, 94)
 		ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94 algoAgrawal = new ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94();
-		algoAgrawal.runAlgorithm(patterns, outputFile, databaseSize,
+		algoAgrawal.runAlgorithm(results, outputFile, databaseSize,
 				minconf);
 		algoAgrawal.printStats();
 	}

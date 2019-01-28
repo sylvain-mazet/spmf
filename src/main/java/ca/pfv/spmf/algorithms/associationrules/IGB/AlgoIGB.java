@@ -24,9 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rule;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rules;
@@ -108,7 +108,7 @@ public class AlgoIGB {
 		
 		// line 3 of the pseudo code in the IGB paper:
 		// For each closed frequent itemset t.
-		for(GenericResults.ListOfItemset level : closedPatternsAndGenerators.levels){
+		for(Itemsets.ListOfItemset level : closedPatternsAndGenerators.levels){
 			// for each itemset
 			for(AbstractItemset itemsetAbs : level){
 				ItemsetArrayImplWithCount itemset = (ItemsetArrayImplWithCount) itemsetAbs;

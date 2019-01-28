@@ -1,10 +1,12 @@
 package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 
 import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetForDelta;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -316,6 +318,7 @@ public class FITree {
             ItemsetArrayImplWithCount itemSet = buildItemset(root);
             FICNode newNode = new FICNode( id++, itemSet);
             newNode.setParent(reducedRoot);
+            reducedRoot.children.add(newNode);
             return id;
         }
 
@@ -328,6 +331,7 @@ public class FITree {
                 ItemsetArrayImplWithCount itemSet = buildItemset(root);
                 FICNode newNode = new FICNode(id++, itemSet);
                 newNode.setParent(reducedRoot);
+                reducedRoot.children.add(newNode);
                 id = recurseReduce(id, newNode, child);
             }
         }
@@ -365,15 +369,17 @@ public class FITree {
         //FIBTree deltaTree = new FIBTree();
         //deltaTree.setRoot(new FIBNode(0, new ItemsetArrayImplWithCount(new int []{})));
 
-        Itemsets itemsets = new Itemsets("Differentiated tree");
+        ItemsetsArrayIntegerWithCount itemsets = new ItemsetsArrayIntegerWithCount("Differentiated tree");
 
         int idStart = 1;
         recurseDifferentiate(idStart,itemsets, root);
 
-        return itemsets;
+        FITree response = new FITree();
+        response.setRoot(root);
+        return new FrequentPatternsResults(itemsets,response);
     }
 
-    private int recurseDifferentiate(int id, Itemsets itemsets, FINode root) {
+    private int recurseDifferentiate(int id, ItemsetsArrayIntegerWithCount itemsets, FINode root) {
         Iterator<FINode> childrenIterator = root.getChildren().iterator();
 
         while (childrenIterator.hasNext()) {
@@ -395,7 +401,7 @@ public class FITree {
             newItemset.setAbsoluteSupport(child.getItemset().getAbsoluteSupport());
 
             // we check if this itemset has already been seen
-            GenericResults.ListOfItemset itemsetsAtLevel = null;
+            Itemsets.ListOfItemset itemsetsAtLevel = null;
             if (itemsets.getLevels().size() > level) {
                 itemsetsAtLevel = itemsets.getLevels().get(level);
                 int hashCode = Arrays.hashCode(newItemset.getItems());

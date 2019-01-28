@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rule;
 import ca.pfv.spmf.patterns.rule_itemset_array_integer_with_count.Rules;
@@ -235,7 +235,7 @@ public class AlgoMNRRules {
 	 */
 	private void calculateSupport(ItemsetArrayImplWithCount itemsetToTest) {  // THIS WAS CHANGED
 		// check if closed
-		for(GenericResults.ListOfItemset list : closedPatternsAndGenerators.levels){
+		for(Itemsets.ListOfItemset list : closedPatternsAndGenerators.levels){
 			if(list.size() == 0  || list.get(0).size() < itemsetToTest.size()){
 				continue; // it is not useful to consider itemsets that are smaller  
 				          // than itemsetToTest.size

@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
+ * @todo move this MISTree in the FITree hierarchy
+ *
  * This is an implementation of a MISTree (which is modified from a fptree) used
  * by the CFPGrowth algorithm.
  * <br/><br/>

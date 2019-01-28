@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori.AlgoApriori;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use APRIORI
@@ -30,9 +31,9 @@ public class MainTestApriori_saveToMemory extends MainTestBase {
 		// Uncomment the following line to set the maximum pattern length (number of items per itemset, e.g. 3 )
 //		apriori.setMaximumPatternLength(3);
 		
-		Itemsets result = algorithm.runAlgorithm(minsup, input, output);
+		GenericResults result = algorithm.runAlgorithm(minsup, input, output);
 		algorithm.printStats();
-		result.printItemsets(algorithm.getDatabaseSize());
+		result.getItemsets().printItemsets(algorithm.getDatabaseSize());
 	}
 	
 	public String fileToPath(String filename) throws UnsupportedEncodingException{

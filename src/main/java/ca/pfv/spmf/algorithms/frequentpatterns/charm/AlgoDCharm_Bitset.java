@@ -19,16 +19,14 @@ package ca.pfv.spmf.algorithms.frequentpatterns.charm;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 import ca.pfv.spmf.tools.MemoryLogger;
  
 /**
@@ -61,7 +59,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see TriangularMatrix
  * @see TransactionDatabase
  * @see ItemsetWithTIDSBitset
- * @see Itemsets
+ * @see ItemsetsWithTIDSBitset
  * @author Philippe Fournier-Viger
  */
 public class AlgoDCharm_Bitset extends AlgoCharm_Bitset{

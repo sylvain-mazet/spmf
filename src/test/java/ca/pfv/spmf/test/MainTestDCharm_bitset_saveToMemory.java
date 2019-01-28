@@ -6,7 +6,7 @@ import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoDCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 
 /**
@@ -29,7 +29,7 @@ public class MainTestDCharm_bitset_saveToMemory extends MainTestBase {
 		
 		// Applying the dCharm algorithm
 		AlgoDCharm_Bitset algo = new AlgoDCharm_Bitset();
-		Itemsets patterns = algo.runAlgorithm(null, database, 0.4, true, 10000);
+		ItemsetsWithTIDSBitset patterns = algo.runAlgorithm(null, database, 0.4, true, 10000);
 		// NOTE 0: We use "null" as output file path, because in this
 		// example, we want to save the result to memory instead of
 		// saving to a file

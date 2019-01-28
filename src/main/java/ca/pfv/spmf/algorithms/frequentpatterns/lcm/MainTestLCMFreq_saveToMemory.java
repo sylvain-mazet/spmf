@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /* This file is copyright (c) 2012-2014 Alan Souza
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -36,7 +36,7 @@ public class MainTestLCMFreq_saveToMemory {
 		// Applying the algorithm
 		AlgoLCMFreq algo = new AlgoLCMFreq();
 		// if true in next line it will find only closed itemsets, otherwise, all frequent itemsets
-		Itemsets itemsets = algo.runAlgorithm(minsup, dataset, null);
+		ItemsetsArrayIntegerWithCount itemsets = algo.runAlgorithm(minsup, dataset, null);
 		algo.printStats();
 
 		itemsets.printItemsets(dataset.getTransactions().size());

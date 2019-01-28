@@ -24,7 +24,7 @@ import java.util.Set;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * This class represents an HashTable for storing itemsets found by the Charm
@@ -34,7 +34,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
  * @see TriangularMatrix
  * @see TransactionDatabase
  * @see ItemsetArrayImplWithCount
- * @see Itemsets
+ * @see ItemsetsArrayIntegerWithCount
  * @author Philippe Fournier-Viger
  */
 class HashTable {

@@ -26,7 +26,7 @@ import java.util.Set;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 
 /**
  * This is an implementation of the AprioriTID algorithm that is
@@ -45,7 +45,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
 public class AlgoAprioriTID_forCMRules {
 
 	// frequent itemsets found by the algorithm
-	protected Itemsets frequentItemsets = new Itemsets("FREQUENT ITEMSETS");
+	protected ItemsetsWithTIDS frequentItemsets = new ItemsetsWithTIDS("FREQUENT ITEMSETS");
 	// transaction database
 	protected TransactionDatabase database;
 
@@ -79,8 +79,8 @@ public class AlgoAprioriTID_forCMRules {
 	 * @param mapItemCount  a map of items (key) and their tidset (value).
 	 * @return the frequent itemsets
 	 */
-	public Itemsets runAlgorithm(int minsuppRelative, List<Integer> listFrequentsSize1, 
-			Map<Integer, Set<Integer>> mapItemCount) {
+	public ItemsetsWithTIDS runAlgorithm(int minsuppRelative, List<Integer> listFrequentsSize1,
+                                         Map<Integer, Set<Integer>> mapItemCount) {
 		
 		// save the minimum suppor threshold
 		this.minSuppRelative = minsuppRelative;
@@ -202,7 +202,7 @@ loop2:		for(int j=i+1; j< levelK_1.size(); j++){
 	 * Get the frequent itemsets.
 	 * @return an object Itemsets containing the frequent itemsets.
 	 */
-	public Itemsets getItemsets() {
+	public ItemsetsWithTIDS getItemsets() {
 		return frequentItemsets;
 	}
 

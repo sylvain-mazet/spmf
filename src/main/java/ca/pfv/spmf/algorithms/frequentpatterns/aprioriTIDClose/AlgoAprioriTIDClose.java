@@ -29,11 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
 
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -56,7 +55,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * it into memory if no output path is provided to the runAlgorithm() method.
  * 
  * @see ItemsetWithTIDS
- * @see Itemsets
+ * @see ItemsetsWithTIDS
  * @author Philippe Fournier-Viger
  */
 public class AlgoAprioriTIDClose {
@@ -65,7 +64,7 @@ public class AlgoAprioriTIDClose {
 	BufferedWriter writer = null;
 	
 	/** variable to store the result if the user choose to save to memory instead of a file */
-	protected Itemsets patterns = null;
+	protected ItemsetsWithTIDS patterns = null;
 
 	/** the number of transactions */
 	private int databaseSize = 0;
@@ -109,7 +108,7 @@ public class AlgoAprioriTIDClose {
 	 * @return the set of itemsets found if the user chose to save the result to memory
 	 * @throws IOException  exception if error writing the output file
 	 */
-	public Itemsets runAlgorithm(TransactionDatabase database, double minsupp, String outputFile) throws IOException {
+	public ItemsetsWithTIDS runAlgorithm(TransactionDatabase database, double minsupp, String outputFile) throws IOException {
 		// record start time
 		startTimestamp = System.currentTimeMillis();
 		
@@ -119,7 +118,7 @@ public class AlgoAprioriTIDClose {
 		// if the user want to keep the result into memory
 		if(outputFile == null){
 			writer = null;
-			patterns =  new Itemsets("FREQUENT CLOSED ITEMSETS");
+			patterns =  new ItemsetsWithTIDS("FREQUENT CLOSED ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 			patterns = null;
 			writer = new BufferedWriter(new FileWriter(outputFile)); 
@@ -387,7 +386,7 @@ public class AlgoAprioriTIDClose {
 	 * Get the frequent closed itemsets found by the latest execution.
 	 * @return Itemsets
 	 */
-	public Itemsets getFrequentClosed() {
+	public ItemsetsWithTIDS getFrequentClosed() {
 		return patterns;
 	}
 

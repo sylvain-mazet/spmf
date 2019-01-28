@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTID_rare.AlgoAprioriTIDrare;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 
 /**
  * Example of how to use the APRIORI RARE algorithm (TID version), from the source code.
@@ -29,7 +29,7 @@ public class MainTestAprioriRareTID_saveToMemory extends MainTestBase {
 		// Applying the APRIORI-Inverse algorithm to find sporadic itemsets
 		AlgoAprioriTIDrare algo = new AlgoAprioriTIDrare();
 		// apply the algorithm
-		Itemsets patterns = algo.runAlgorithm(inputFilePath, outputFilePath, minsup);
+		ItemsetsWithTIDS patterns = algo.runAlgorithm(inputFilePath, outputFilePath, minsup);
 		int databaseSize = algo.getDatabaseSize();
 		patterns.printItemsets(databaseSize); // print the result
 		algo.printStats();

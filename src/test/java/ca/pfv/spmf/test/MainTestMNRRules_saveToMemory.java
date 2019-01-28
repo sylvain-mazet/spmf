@@ -38,7 +38,7 @@ public class MainTestMNRRules_saveToMemory{
 		
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
-		TZTableClosed results = zart.runAlgorithm(database, minsup);
+		TZTableClosed results = (TZTableClosed)zart.runAlgorithm(database, minsup).getItemsets();
 		//zart.printStatistics();
 		
 		// PRINT RESULTS FROM THE ZART ALGORITHM

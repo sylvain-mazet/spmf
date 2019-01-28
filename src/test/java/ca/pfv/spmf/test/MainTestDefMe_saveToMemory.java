@@ -5,12 +5,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Arrays;
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.defme.AlgoDefMe;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 
 /**
@@ -38,9 +38,9 @@ public class MainTestDefMe_saveToMemory extends MainTestBase {
 		// Uncomment the following line to set the maximum pattern length (number of items per itemset)
 //		algo.setMaximumPatternLength(2);
 		
-		Itemsets generators = algo.runAlgorithm(null, database, minsup);
+		ItemsetsWithTIDSBitset generators = algo.runAlgorithm(null, database, minsup);
 		algo.printStats();
-		for(GenericResults.ListOfItemset genSizeK : generators.getLevels()) {
+		for(Itemsets.ListOfItemset genSizeK : generators.getLevels()) {
 			for(AbstractItemset itemsetAbs : genSizeK) {
 				ItemsetWithTIDSBitset itemset = (ItemsetWithTIDSBitset) itemsetAbs;
 				System.out.println(Arrays.toString(itemset.getItems()) + " #SUP: " + itemset.getAbsoluteSupport());

@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPClose;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 
 /**
@@ -26,7 +26,7 @@ public class MainTestFPClose_saveToMemory extends MainTestBase {
 		AlgoFPClose algo = new AlgoFPClose();
 		// Run the algorithm
 		// Note that here we use "null" as output file path because we want to keep the results into memory instead of saving to a file
-		Itemsets patterns = (Itemsets)algo.runAlgorithm(input, null, minsup);
+		ItemsetsArrayIntegerWithCount patterns = (ItemsetsArrayIntegerWithCount)algo.runAlgorithm(input, null, minsup);
 		
 		// Show the CFI-Tree for debugging!
 //		System.out.println(algo.cfiTree);

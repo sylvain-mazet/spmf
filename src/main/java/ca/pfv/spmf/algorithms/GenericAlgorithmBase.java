@@ -1,7 +1,6 @@
 package ca.pfv.spmf.algorithms;
 
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 import java.io.BufferedReader;
@@ -26,16 +25,12 @@ public abstract class GenericAlgorithmBase implements GenericAlgorithm {
     private String output;
 
     // If set to true, the algorithm will show  information for debugging in the console
-    // TODO REMOVE this, use a real logging system
+    //  @todo REMOVE this, use a real logging system
     protected final boolean DEBUG = false;
 
     // internal state
     private int transactionCount; // transaction count in the database
     protected int itemsetCount; // number of freq. itemsets found TODO make private
-    // The  patterns that are found
-    // (if the user want to keep them into memory)
-    protected Itemsets patterns = null;
-
 
     // for statistics, access granted to child classes
     protected long startTimestamp; // start time of the latest execution

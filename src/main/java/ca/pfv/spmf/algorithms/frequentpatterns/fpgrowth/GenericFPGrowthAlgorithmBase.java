@@ -2,8 +2,9 @@ package ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth;
 
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 import java.io.BufferedWriter;
@@ -23,6 +24,10 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
 
     // Map to store the support of single items in the original database
     private Map<Integer, Integer> originalMapSupport = null;
+
+    // The  patterns that are found
+    // (if the user want to keep them into memory)
+    protected ItemsetsArrayIntegerWithCount patterns = null;
 
     protected GenericFPGrowthAlgorithmBase(String output) {
         super(output);
@@ -50,7 +55,7 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
      * @throws IOException exception if error reading or writing files
      */
     @Override
-    public Itemsets runAlgorithm(DbScanner dbScanner, double minsupp) throws IOException {
+    public FrequentPatternsResults runAlgorithm(DbScanner dbScanner, double minsupp) throws IOException {
 
         // record start time
         startTimestamp = System.currentTimeMillis();
@@ -112,7 +117,7 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
         // if the user want to keep the result into memory
         if(getOutput() == null){
             writer = null;
-            patterns =  new Itemsets("FREQUENT ITEMSETS");
+            patterns =  new ItemsetsArrayIntegerWithCount("FREQUENT ITEMSETS");
         }else{ // if the user want to save the result to a file
             patterns = null;
             writer = new BufferedWriter(new FileWriter(getOutput()));
@@ -132,7 +137,7 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
         MemoryLogger.getInstance().checkMemory();
 
         // return the result (if saved to memory)
-        return patterns;
+        return new FrequentPatternsResults(patterns, getFiTree());
     }
 
     /**

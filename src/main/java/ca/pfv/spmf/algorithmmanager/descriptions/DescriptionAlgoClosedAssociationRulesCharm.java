@@ -8,6 +8,7 @@ import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.associationrules.closedrules.AlgoClosedRules;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -75,7 +76,7 @@ public class DescriptionAlgoClosedAssociationRulesCharm extends DescriptionOfAlg
 		// STEP 1: Applying the Charm algorithm to find frequent closed
 		// itemsets
 		AlgoCharm_Bitset algo = new AlgoCharm_Bitset();
-		ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets patterns = algo
+		ItemsetsWithTIDSBitset patterns = algo
 				.runAlgorithm(null, database, minsup, true, 10000);
 		algo.printStats();
 

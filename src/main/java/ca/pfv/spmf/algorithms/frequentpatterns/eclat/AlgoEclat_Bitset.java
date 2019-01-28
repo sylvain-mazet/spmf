@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
  
 /**
@@ -54,7 +54,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see TriangularMatrix
  * @see TransactionDatabase
  * @see ItemsetArrayImplWithCount
- * @see Itemsets
+ * @see ItemsetsArrayIntegerWithCount
  * @author Philippe Fournier-Viger
  */
 public class AlgoEclat_Bitset {
@@ -72,7 +72,7 @@ public class AlgoEclat_Bitset {
 	/** 
 	 The  patterns that are found 
 	 (if the user want to keep them into memory) */
-	protected Itemsets frequentItemsets;
+	protected ItemsetsArrayIntegerWithCount frequentItemsets;
 	/** object to write the output file */
 	BufferedWriter writer = null; 
 	/** the number of patterns found */
@@ -112,8 +112,8 @@ public class AlgoEclat_Bitset {
 	 * @return the result
 	 * @throws IOException exception if error while writing the file.
 	 */
-	public Itemsets runAlgorithm(String output, TransactionDatabase database, double minsupp,
-			boolean useTriangularMatrixOptimization) throws IOException {
+	public ItemsetsArrayIntegerWithCount runAlgorithm(String output, TransactionDatabase database, double minsupp,
+                                                      boolean useTriangularMatrixOptimization) throws IOException {
 
 		// Reset the tool to assess the maximum memory usage (for statistics)
 		MemoryLogger.getInstance().reset();
@@ -124,7 +124,7 @@ public class AlgoEclat_Bitset {
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			frequentItemsets =  new Itemsets("FREQUENT ITEMSETS");
+			frequentItemsets =  new ItemsetsArrayIntegerWithCount("FREQUENT ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 	    	frequentItemsets = null;
 			writer = new BufferedWriter(new FileWriter(output)); 
@@ -630,7 +630,7 @@ public class AlgoEclat_Bitset {
 	 * Get the set of frequent itemsets.
 	 * @return the frequent itemsets (Itemsets).
 	 */
-	public Itemsets getItemsets() {
+	public ItemsetsArrayIntegerWithCount getItemsets() {
 		return frequentItemsets;
 	}
 

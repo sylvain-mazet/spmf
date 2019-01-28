@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /* This file is copyright (c) 2012-2014 Alan Souza
@@ -50,7 +49,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  */
 public class AlgoLCMFreq {
 
-    private Itemsets frequentItemsets;
+    private ItemsetsArrayIntegerWithCount frequentItemsets;
     
 	// object to write the output file
 	BufferedWriter writer = null;
@@ -101,7 +100,7 @@ public class AlgoLCMFreq {
      * @param outputPath  the output file path to save the result or null if to be kept in memory
      * @throws IOException if exception while reading/writing to file
      */
-    public Itemsets runAlgorithm(double minimumSupport, Dataset dataset, String outputPath) throws IOException {
+    public ItemsetsArrayIntegerWithCount runAlgorithm(double minimumSupport, Dataset dataset, String outputPath) throws IOException {
 		// record the start time
 		startTimestamp = System.currentTimeMillis();
 
@@ -113,7 +112,7 @@ public class AlgoLCMFreq {
 		}else {
 			// if the user choose to save to memory
 			writer = null;
-	        this.frequentItemsets = new Itemsets("Itemsets");
+	        this.frequentItemsets = new ItemsetsArrayIntegerWithCount("Itemsets");
 		}
 		
 		// initialize the buffer for storing the current itemset

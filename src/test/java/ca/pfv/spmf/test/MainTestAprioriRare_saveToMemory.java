@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_rare.AlgoAprioriRare;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use the APRIORI RARE algorithm, from the source code.
@@ -27,7 +27,7 @@ public class MainTestAprioriRare_saveToMemory extends MainTestBase {
 		// Applying the APRIORI-Inverse algorithm to find sporadic itemsets
 		AlgoAprioriRare apriori2 = new AlgoAprioriRare();
 		// apply the algorithm
-		Itemsets patterns = apriori2.runAlgorithm(minsup, inputFilePath, outputFilePath);
+		ItemsetsArrayIntegerWithCount patterns = apriori2.runAlgorithm(minsup, inputFilePath, outputFilePath);
 		int databaseSize = apriori2.getDatabaseSize();
 		patterns.printItemsets(databaseSize); // print the result
 		apriori2.printStats();

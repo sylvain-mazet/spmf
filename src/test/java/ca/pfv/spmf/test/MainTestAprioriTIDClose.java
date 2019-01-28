@@ -6,7 +6,7 @@ import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTIDClose.AlgoAprioriTIDClose;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 
 
 /**
@@ -36,7 +36,7 @@ public class MainTestAprioriTIDClose extends MainTestBase {
 
 		// We pass null as output file path, because we want to keep
 		// the result into memory instead.
-		Itemsets frequents = algo.runAlgorithm(database, 0.4, null);
+		ItemsetsWithTIDS frequents = algo.runAlgorithm(database, 0.4, null);
 		
 		long endTime = System.currentTimeMillis();
 		

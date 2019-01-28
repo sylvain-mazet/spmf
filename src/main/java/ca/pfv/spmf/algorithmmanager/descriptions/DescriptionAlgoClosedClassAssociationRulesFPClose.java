@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.associationrules.closedrules.AlgoClosedClassRules_UsingFPClose;
-import ca.pfv.spmf.algorithms.associationrules.closedrules.AlgoClosedRules_UsingFPClose;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPClose;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
@@ -25,7 +24,7 @@ import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 * You should have received a copy of the GNU General Public License along with
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * This class describes parameters of the algorithm for generating closed association rules 
@@ -89,7 +88,7 @@ public class DescriptionAlgoClosedClassAssociationRulesFPClose extends Descripti
 		// STEP 1: Applying the Charm algorithm to find frequent closed
 		// itemsets
 		AlgoFPClose algo = new AlgoFPClose();
-					Itemsets patterns = (Itemsets)algo.runAlgorithm(inputFile, null, minsup);
+					ItemsetsArrayIntegerWithCount patterns = (ItemsetsArrayIntegerWithCount)algo.runAlgorithm(inputFile, null, minsup);
 		algo.printStats();
 
 		// STEP 2: Generate all rules from the set of frequent itemsets

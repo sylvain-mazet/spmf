@@ -9,7 +9,7 @@
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * SPMF is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -19,15 +19,13 @@
 
 
  import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
- import java.util.Vector;
 
  /**
  * This is an implementation of the FPClose algorithm (Grahne et al., 2004).
@@ -47,7 +45,7 @@ import java.util.Map;
  *
  * @see FPTree
  * @see ItemsetArrayImplWithCount
- * @see Itemsets
+ * @see ItemsetsArrayIntegerWithCount
  * @author Philippe Fournier-Viger, 2015
  */
 public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {

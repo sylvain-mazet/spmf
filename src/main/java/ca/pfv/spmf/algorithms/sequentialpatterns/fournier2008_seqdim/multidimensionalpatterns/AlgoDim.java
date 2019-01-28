@@ -29,9 +29,11 @@ import ca.pfv.spmf.algorithms.frequentpatterns.aprioriTIDClose.AlgoAprioriTIDClo
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 
 /**
@@ -133,7 +135,7 @@ public class AlgoDim{
 			
 			// run the charm algorithm to get closed patterns
 			AlgoCharm_Bitset charm = new AlgoCharm_Bitset();
-			Itemsets frequentPatterns = charm.runAlgorithm(null, contextCharm, minsupp, true, 10000);
+			ItemsetsWithTIDSBitset frequentPatterns = charm.runAlgorithm(null, contextCharm, minsupp, true, 10000);
 			
 			int maxSupport = 0;
 			// Convert patterns found by Charm into MDPatterns
@@ -175,14 +177,14 @@ public class AlgoDim{
 			}
 			// run the APRIORI-TID-CLOSE algorithm to get closed patterns
 			AlgoAprioriTIDClose apriori = new AlgoAprioriTIDClose();
-			ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets closedItemsets = apriori.runAlgorithm(database,minsupp, null);
+			ItemsetsWithTIDS closedItemsets = apriori.runAlgorithm(database,minsupp, null);
 
 			// Convert patterns found by AprioriClose into MDPatterns
 			
 			// for each level
-			for(List<ItemsetWithTIDS> itemsets : closedItemsets.getLevels()){
+			for(Itemsets.ListOfItemset itemsets : closedItemsets.getLevels()){
 				// for each pattern of that level
-				for(ItemsetWithTIDS itemset : itemsets){
+				for(AbstractItemset itemset : itemsets){
 					// convert to a md-pattern
 					MDPattern pattern = convertItemsetToPattern(itemset);
 					// add to the set of patterns found
@@ -200,15 +202,15 @@ public class AlgoDim{
 			
 			// Apply the APRIORI-TID algorithm
 			AlgoAprioriTID apriori = new AlgoAprioriTID();
-			ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets closedItemsets = apriori.runAlgorithm(database,minsupp);
+			ItemsetsWithTIDS closedItemsets = apriori.runAlgorithm(database,minsupp);
 			apriori.setEmptySetIsRequired(true);
 			
 			// Convert patterns found by AprioriClose into MDPatterns
 			
 			// for each level
-			for(List<ItemsetWithTIDS> itemsets : closedItemsets.getLevels()){
+			for(Itemsets.ListOfItemset itemsets : closedItemsets.getLevels()){
 				// for each pattern of that level
-				for(ItemsetWithTIDS itemset : itemsets){
+				for(AbstractItemset itemset : itemsets){
 					// convert to a md-pattern
 					MDPattern pattern = convertItemsetToPattern(itemset);
 					// add to the set of patterns found
@@ -298,7 +300,7 @@ public class AlgoDim{
 	 * @param itemset an itemset
 	 * @return an MD-pattern
 	 */
-	private MDPattern convertItemsetToPattern(ItemsetWithTIDS itemset) {
+	private MDPattern convertItemsetToPattern(AbstractItemset itemset) {
 		// create the md-pattern
 		MDPattern mdpattern = new MDPattern(0);
 		// for each dimension i
@@ -306,9 +308,9 @@ public class AlgoDim{
 			// for each item j
 			for(int j=0; j<itemset.size(); j++){
 				// get the dimension corresponding to the item ID
-				int dimension = getDimensionForItemId(itemset.get(j));
+				int dimension = getDimensionForItemId(itemset.getItems()[j]);
 				// get the dimension value corresponding to the item ID
-				int value = getValueForItemId(itemset.get(j));
+				int value = getValueForItemId(itemset.getItems()[j]);
 				// if it is the dimension i
 				if(dimension == i){
 					// add the dimension value to the MD pattern
@@ -323,7 +325,7 @@ public class AlgoDim{
 		}
  
 		//We also need to set the tidset of the mdpattern
-		mdpattern.setPatternsIDList(itemset.getTransactionsIds());
+		mdpattern.setPatternsIDList(((ItemsetWithTIDS)itemset).getTransactionsIds());
 		
 		// we return the mdpattern.
 		return mdpattern;

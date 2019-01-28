@@ -26,9 +26,10 @@ import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 
 /**
  * This is an implementation of the "faster algorithm" for generating association rules,
@@ -48,7 +49,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 public class AlgoAgrawalFaster94{
 	
 	// the frequent itemsets that will be used to generate the rules
-	protected GenericResults patterns;
+	protected Itemsets patterns;
 	 
 	// variable used to store the result if the user choose to save
 	// the result in memory rather than to an output file
@@ -86,26 +87,26 @@ public class AlgoAgrawalFaster94{
 
 	/**
 	 * Run the algorithm
-	 * @param patterns  a set of frequent itemsets
+	 * @param fpGrowthResults  a set of frequent itemsets
 	 * @param output an output file path for writing the result or null if the user want this method to return the result
 	 * @param databaseSize  the number of transactions in the database
 	 * @param minconf  the minconf threshold
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf) throws IOException {
+	public AssocRules runAlgorithm(GenericResults fpGrowthResults, String output, int databaseSize, double minconf) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
 		this.minlift = 0;
 		usingLift = false;
 		
 		// start the algorithm
-		return runAlgorithm(patterns, output, databaseSize);
+		return runAlgorithm((FrequentPatternsResults) fpGrowthResults, output, databaseSize);
 	}
 
 	/**
 	 * Run the algorithm
-	 * @param patterns  a set of frequent itemsets
+	 * @param fpGrowthResults  a set of frequent itemsets
 	 * @param output an output file path for writing the result or null if the user want this method to return the result
 	 * @param databaseSize  the number of transactions in the database
 	 * @param minconf  the minconf threshold
@@ -113,26 +114,26 @@ public class AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf,
-			double minlift) throws IOException {
+	public AssocRules runAlgorithm(FrequentPatternsResults fpGrowthResults, String output, int databaseSize, double minconf,
+								   double minlift) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
 		this.minlift = minlift;
 		usingLift = true;
 		
 		// start the algorithm
-		return runAlgorithm(patterns, output, databaseSize);
+		return runAlgorithm(fpGrowthResults, output, databaseSize);
 	}
 
 	/**
 	 * Run the algorithm for generating association rules from a set of itemsets.
-	 * @param patterns the set of itemsets
+	 * @param fpGrowthResults the set of itemsets
 	 * @param output the output file path. If null the result is saved in memory and returned by the method.
 	 * @param databaseSize  the number of transactions in the original database
 	 * @return the set of rules found if the user chose to save the result to memory
 	 * @throws IOException exception if error while writting to file
 	 */
-	private AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize)
+	private AssocRules runAlgorithm(FrequentPatternsResults fpGrowthResults, String output, int databaseSize)
 			throws IOException {
 
 		if(maxAntecedentLength < 1 || maxConsequentLength < 1){
@@ -156,7 +157,7 @@ public class AlgoAgrawalFaster94{
 		// initialize variable to count the number of rules found
 		ruleCount = 0;
 		// save itemsets in a member variable
-		this.patterns = patterns;
+		this.patterns = fpGrowthResults.getItemsets();
 		
 		// SORTING
 		// First, we sort all itemsets having the same size by lexical order
@@ -168,7 +169,7 @@ public class AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
+		for(Itemsets.ListOfItemset itemsetsSameSize : fpGrowthResults.getLevels()){
 			// Sort by lexicographical order using a Comparator
 			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override
@@ -185,8 +186,8 @@ public class AlgoAgrawalFaster94{
 		
 		// For each frequent itemset of size >=2 that we will name "lk"
 		int maxSize = maxAntecedentLength;
-		for (int k = 2; k < patterns.getLevels().size(); k++) {
-			for (AbstractItemset lkAbs : patterns.getLevels().get(k)) {
+		for (int k = 2; k < fpGrowthResults.getLevels().size(); k++) {
+			for (AbstractItemset lkAbs : fpGrowthResults.getLevels().get(k)) {
 				ItemsetArrayImplWithCount lk = (ItemsetArrayImplWithCount) lkAbs;
 				
 				// create a variable H1 for recursion
@@ -350,7 +351,7 @@ public class AlgoAgrawalFaster94{
 	 */
 	private int calculateSupport(int[] itemset) {
 		// We first get the list of patterns having the same size as "itemset"
-		GenericResults.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
+		Itemsets.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
 //		
 		// We perform a binary search to find the position of itemset in this list
         int first = 0;

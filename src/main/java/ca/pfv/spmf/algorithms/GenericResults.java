@@ -1,6 +1,7 @@
 package ca.pfv.spmf.algorithms;
 
-import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.FITree;
+import ca.pfv.spmf.patterns.Itemsets;
 
 import java.util.List;
 
@@ -9,15 +10,9 @@ import java.util.List;
  */
 public interface GenericResults {
 
-    enum ItemsetType {
-        ARRAY_INTEGERS_WITH_COUNT,
-        ARRAY_INTEGERS_FOR_DELTA,
-        ARRAY_INTEGERS_WITH_TIDS_BITSET;
-    }
+    Itemsets getItemsets();
 
-    interface ListOfItemset extends List<AbstractItemset> {
-        ItemsetType getTypeOfItemset();
-    }
+    List<Itemsets.ListOfItemset> getLevels();
 
-    List<ListOfItemset> getLevels();
+    FITree getFITree();
 }

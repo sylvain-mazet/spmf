@@ -1,4 +1,4 @@
-package ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset;
+package ca.pfv.spmf.patterns.itemset_array_integers_with_tids;
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
 * 
@@ -17,8 +17,8 @@ package ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset;
 */
 
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,22 +30,22 @@ import java.util.List;
 * 
  * @author Philippe Fournier-Viger
  */
-public class Itemsets implements GenericResults {
+public class ItemsetsWithTIDS implements Itemsets {
 	/** We store the itemsets in a list named "levels".
 	 Position i in "levels" contains the list of itemsets of size i */
-	private final List<ListOfItemset> levels = new ArrayList<>();
+	private final List<ListOfItemsetWithTIDS> levels = new ArrayList<>();
 	/** the total number of itemsets */
 	private int itemsetsCount = 0;
 	/** a name that we give to these itemsets (e.g. "frequent itemsets") */
-	private String name;
+	private final String name;
 
 	/**
 	 * Constructor
 	 * @param name the name of these itemsets
 	 */
-	public Itemsets(String name) {
+	public ItemsetsWithTIDS(String name) {
 		this.name = name;
-		levels.add(new ListOfTIDSBitSetItemset()); // We create an empty level 0 by
+		levels.add(new ListOfItemsetWithTIDS()); // We create an empty level 0 by
 												// default.
 	}
 
@@ -54,12 +54,13 @@ public class Itemsets implements GenericResults {
 	 * @param nbObject The number of transaction/sequence in the database where
 	 * there itemsets were found.
 	 */
+	@Override
 	public void printItemsets(int nbObject) {
 		System.out.println(" ------- " + name + " -------");
 		int patternCount = 0;
 		int levelCount = 0;
 		// for each level (a level is a set of itemsets having the same number of items)
-		for (ListOfItemset level : levels) {
+		for (ListOfItemsetWithTIDS level : levels) {
 			// print how many items are contained in this level
 			System.out.println("  L" + levelCount + " ");
 			// for each itemset
@@ -83,9 +84,9 @@ public class Itemsets implements GenericResults {
 	 * @param itemset the itemset
 	 * @param k the number of items contained in the itemset
 	 */
-	public void addItemset(ItemsetWithTIDSBitset itemset, int k) {
+	public void addItemset(ItemsetWithTIDS itemset, int k) {
 		while (levels.size() <= k) {
-			levels.add(new ListOfTIDSBitSetItemset());
+			levels.add(new ListOfItemsetWithTIDS());
 		}
 		levels.get(k).add(itemset);
 		itemsetsCount++;
@@ -96,8 +97,13 @@ public class Itemsets implements GenericResults {
 	 * @return A list of list of itemsets.
 	 * Position i in this list is the list of itemsets of size i.
 	 */
+	@Override
 	public List<ListOfItemset> getLevels() {
-		return levels;
+		/*
+		 * @todo fix the getLevels() for this itemset type...
+		 */
+		throw new UnsupportedOperationException("Not implemented");
+		//return levels;
 	}
 
 	/**
@@ -106,20 +112,5 @@ public class Itemsets implements GenericResults {
 	 */
 	public int getItemsetsCount() {
 		return itemsetsCount;
-	}
-
-	/**
-	 * Set the name of this group of itemsets
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Decrease the count of itemsets stored in this structure by 1.
-	 */
-	public void decreaseItemsetCount() {
-		this.itemsetsCount--;
 	}
 }

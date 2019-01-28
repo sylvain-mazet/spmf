@@ -1,14 +1,14 @@
 package ca.pfv.spmf.test;
 
+import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
+import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-
-import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
-import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
-import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 /**
  * Example of how to mine all association rules with FPGROWTH,
  * from the source code.
@@ -31,9 +31,9 @@ public class MainTestAllAssociationRules_FPGrowth_saveToMemory extends MainTestB
 		double minsup = 0.5;
 		AlgoFPGrowth fpgrowth = new AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength);
-		Itemsets patterns = (Itemsets)fpgrowth.runAlgorithm(input, null, minsup);
+		GenericResults patterns = fpgrowth.runAlgorithm(input, null, minsup);
 		int databaseSize = fpgrowth.getDatabaseSize();
-		patterns.printItemsets(databaseSize);
+		patterns.getItemsets().printItemsets(databaseSize);
 		
 		// STEP 2: Generating all rules from the set of frequent itemsets (based on Agrawal & Srikant, 94)
 		double  minconf = 0.60;

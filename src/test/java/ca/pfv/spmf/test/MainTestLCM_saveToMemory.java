@@ -6,7 +6,7 @@ import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.lcm.AlgoLCM;
 import ca.pfv.spmf.algorithms.frequentpatterns.lcm.Dataset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /* This file is copyright (c) 2012-2014 Alan Souza
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -38,7 +38,7 @@ public class MainTestLCM_saveToMemory extends MainTestBase {
 		// Applying the algorithm
 		AlgoLCM algo = new AlgoLCM();
 		// if true in next line it will find only closed itemsets, otherwise, all frequent itemsets
-		Itemsets itemsets = algo.runAlgorithm(minsup, dataset, null);
+		ItemsetsArrayIntegerWithCount itemsets = algo.runAlgorithm(minsup, dataset, null);
 		algo.printStats();
 		
 		itemsets.printItemsets(dataset.getTransactions().size());

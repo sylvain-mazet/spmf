@@ -22,6 +22,7 @@ import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
 import ca.pfv.spmf.algorithms.frequentpatterns.cfpgrowth.AlgoCFPGrowth;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 
 /**
  * This class describes parameters of the algorithm for generating association rules 
@@ -69,16 +70,14 @@ public class DescriptionAlgoCFFPGrowthAssociationRulesLift extends DescriptionOf
 		}
 
 		AlgoCFPGrowth cfpgrowth = new AlgoCFPGrowth();
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = cfpgrowth
-				.runAlgorithm(inputFile, null, misFileFullPath);
+		FrequentPatternsResults results = cfpgrowth.runAlgorithm(inputFile, null, misFileFullPath);
 		cfpgrowth.printStats();
 		int databaseSize = cfpgrowth.getDatabaseSize();
 
 		// STEP 2: Generating all rules from the set of frequent itemsets
 		// (based on Agrawal & Srikant, 94)
 		ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94 algoAgrawal = new ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94();
-		algoAgrawal.runAlgorithm(patterns, outputFile, databaseSize,
-				minconf, minlift);
+		algoAgrawal.runAlgorithm(results, outputFile, databaseSize,minconf, minlift);
 		algoAgrawal.printStats();
 	}
 

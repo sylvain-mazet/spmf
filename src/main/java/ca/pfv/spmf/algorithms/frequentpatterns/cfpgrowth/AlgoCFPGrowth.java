@@ -30,10 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -74,7 +74,7 @@ public class AlgoCFPGrowth {
 	
 	// The  patterns that are found 
 	// (if the user want to keep them into memory)
-	protected Itemsets patterns = null;
+	protected ItemsetsArrayIntegerWithCount patterns = null;
 
 	// the comparator that is used to compare the item ordering
 	final Comparator<Integer> itemComparator;
@@ -115,7 +115,7 @@ public class AlgoCFPGrowth {
 	 * @return the result if no output file path is provided.
 	 * @throws IOException if error reading/writing files
 	 */
-	public Itemsets runAlgorithm(String input, String output, String MISIn)
+	public FrequentPatternsResults runAlgorithm(String input, String output, String MISIn)
 			throws FileNotFoundException, IOException {
 		// record start time
 		startTimestamp = System.currentTimeMillis();
@@ -128,7 +128,7 @@ public class AlgoCFPGrowth {
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			patterns =  new Itemsets("FREQUENT ITEMSETS");
+			patterns =  new ItemsetsArrayIntegerWithCount("FREQUENT ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 			patterns = null;
 			writer = new BufferedWriter(new FileWriter(output)); 
@@ -242,8 +242,11 @@ public class AlgoCFPGrowth {
 		}
 		// record end time
 		endTime = System.currentTimeMillis();
-		
-		return patterns;
+
+		/**
+		 * @todo once the MISTree is moved in the FITree hierarchy, return it here
+		 */
+		return new FrequentPatternsResults(patterns,null);
 	}
 
 	/**

@@ -90,7 +90,7 @@ public class FINode {
         output.append(" level="+ level);
         output.append(")\n");
         String newIndent = indent + "   ";
-        if (newIndent.length() > 12) {
+        if (newIndent.length() > 160) {
             output.append(newIndent+"etc.....");
         } else {
             for (FINode child : children) {

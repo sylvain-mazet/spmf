@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -70,8 +70,7 @@ public class DescriptionAlgoFPGrowthAssociationRules extends DescriptionOfAlgori
 
 		ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth fpgrowth = new ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength); 
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = (Itemsets)fpgrowth
-				.runAlgorithm(inputFile, null, minsup);
+		FrequentPatternsResults results = (FrequentPatternsResults)fpgrowth.runAlgorithm(inputFile, null, minsup);
 		fpgrowth.printStats();
 		int databaseSize = fpgrowth.getDatabaseSize();
 
@@ -80,8 +79,7 @@ public class DescriptionAlgoFPGrowthAssociationRules extends DescriptionOfAlgori
 		ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94 algoAgrawal = new ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94();
 		algoAgrawal.setMaxAntecedentLength(maxAntecedentLength);
 		algoAgrawal.setMaxConsequentLength(maxConsequentLength);
-		algoAgrawal.runAlgorithm(patterns, outputFile, databaseSize,
-				minconf);
+		algoAgrawal.runAlgorithm(results, outputFile, databaseSize,minconf);
 		algoAgrawal.printStats();
 	}
 

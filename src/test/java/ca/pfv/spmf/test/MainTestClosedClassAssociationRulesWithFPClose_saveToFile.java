@@ -7,7 +7,7 @@ import java.net.URL;
 import ca.pfv.spmf.algorithms.associationrules.closedrules.AlgoClosedClassRules_UsingFPClose;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPClose;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to mine closed association rules from the source code.
@@ -45,7 +45,7 @@ public class MainTestClosedClassAssociationRulesWithFPClose_saveToFile extends M
 		AlgoFPClose algo = new AlgoFPClose();
 		// Run the algorithm
 		// Note that here we use "null" as output file path because we want to keep the results into memory instead of saving to a file
-		Itemsets patterns = (Itemsets)algo.runAlgorithm(input, null, minsupp);
+		ItemsetsArrayIntegerWithCount patterns = (ItemsetsArrayIntegerWithCount)algo.runAlgorithm(input, null, minsupp);
 		
 		// Show the CFI-Tree for debugging!
 //		System.out.println(algo.cfiTree);

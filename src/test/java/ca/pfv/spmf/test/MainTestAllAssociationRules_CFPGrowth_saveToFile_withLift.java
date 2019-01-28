@@ -5,8 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.cfpgrowth.AlgoCFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /**
  * Example of how to mine all association rules with CFPGROWTH
  * and use the lift, and save the result to a file, 
@@ -23,7 +24,7 @@ public class MainTestAllAssociationRules_CFPGrowth_saveToFile_withLift extends M
 		
 		// STEP 1: Applying the CFP-GROWTH algorithm to find frequent itemsets
 		AlgoCFPGrowth cfpgrowth = new AlgoCFPGrowth();
-		Itemsets patterns = cfpgrowth.runAlgorithm(input, null, MISfile);
+		FrequentPatternsResults patterns = cfpgrowth.runAlgorithm(input, null, MISfile);
 //		patterns.printItemsets(database.size());
 		int databaseSize = cfpgrowth.getDatabaseSize();
 		cfpgrowth.printStats();

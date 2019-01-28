@@ -26,14 +26,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRule;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.CFITree;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * This is an implementation of the "faster algorithm" for generating association rules,
@@ -89,7 +89,7 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf, CFITree cfiTree,  int[] itemToBeUsedAsConsequent) throws IOException {
+	public AssocRules runAlgorithm(ItemsetsArrayIntegerWithCount patterns, String output, int databaseSize, double minconf, CFITree cfiTree, int[] itemToBeUsedAsConsequent) throws IOException {
 		if(maxAntecedentLength < 1 ){
 			throw new IllegalArgumentException("The maximum length must be at least 1.");
 		}
@@ -117,8 +117,8 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf, double minlift,
-			CFITree cfiTree) throws IOException {
+	public AssocRules runAlgorithm(ItemsetsArrayIntegerWithCount patterns, String output, int databaseSize, double minconf, double minlift,
+								   CFITree cfiTree) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
 		this.cfiTree = cfiTree;
@@ -136,7 +136,7 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 	 * @return the set of rules found if the user chose to save the result to memory
 	 * @throws IOException exception if error while writting to file
 	 */
-	private AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize)
+	private AssocRules runAlgorithm(ItemsetsArrayIntegerWithCount patterns, String output, int databaseSize)
 			throws IOException {
 		
 		// if the user want to keep the result into memory
@@ -166,7 +166,7 @@ public class AlgoClosedClassRules_UsingFPClose extends AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
+		for(Itemsets.ListOfItemset itemsetsSameSize : patterns.getLevels()){
 			// Sort by lexicographical order using a Comparator
 			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override

@@ -27,14 +27,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
 import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 import ca.pfv.spmf.tools.MemoryLogger;
  
 /**
@@ -56,7 +56,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * 
  * @see TransactionDatabase
  * @see ItemsetWithTIDSBitset
- * @see Itemsets
+ * @see ItemsetsWithTIDSBitset
  * @author Philippe Fournier-Viger
  */
 public class AlgoDefMe extends GenericAlgorithmBase {
@@ -67,7 +67,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 	/**
 	 The  patterns that are found 
 	 (if the user want to keep them into memory) */
-	protected Itemsets generators;
+	protected ItemsetsWithTIDSBitset generators;
 	
 	/** A map containing the tidset (i.e. cover) of each item represented as a bitset */
 	private Map<Integer, BitSetSupport> mapItemTIDS; 
@@ -87,7 +87,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 
 
 	@Override
-	public GenericResults runAlgorithm(DbScanner dbScanner, double minsup) throws IOException {
+	public FrequentPatternsResults runAlgorithm(DbScanner dbScanner, double minsup) throws IOException {
 		// Reset the tool to assess the maximum memory usage (for statistics)
 		MemoryLogger.getInstance().reset();
 
@@ -97,7 +97,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 		// if the user want to keep the result into memory
 		if(getOutput() == null){
 			writer = null;
-			generators =  new Itemsets("FREQUENT ITEMSETS");
+			generators =  new ItemsetsWithTIDSBitset("FREQUENT ITEMSETS");
 		}else{ // if the user want to save the result to a file
 			generators = null;
 			writer = new BufferedWriter(new FileWriter(getOutput()));
@@ -192,7 +192,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 		endTime = System.currentTimeMillis();
 
 		// Return all frequent itemsets found!
-		return generators;
+		return new FrequentPatternsResults(generators,null);
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 	 * @return the set of generators if the user chose to save the result to memory. Otherwise, null.
 	 * @throws IOException exception if error while writing the file.
 	 */
-	public Itemsets runAlgorithm(String output, TransactionDatabase database, double minsup) throws IOException {
+	public ItemsetsWithTIDSBitset runAlgorithm(String output, TransactionDatabase database, double minsup) throws IOException {
 
 		// Reset the tool to assess the maximum memory usage (for statistics)
 		MemoryLogger.getInstance().reset();
@@ -214,7 +214,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			generators =  new Itemsets("FREQUENT ITEMSETS");
+			generators =  new ItemsetsWithTIDSBitset("FREQUENT ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 	    	generators = null;
 			writer = new BufferedWriter(new FileWriter(output)); 
@@ -435,7 +435,7 @@ public class AlgoDefMe extends GenericAlgorithmBase {
 	 * Get the set of frequent itemsets.
 	 * @return the frequent itemsets (Itemsets).
 	 */
-	public Itemsets getItemsets() {
+	public ItemsetsWithTIDSBitset getItemsets() {
 		return generators;
 	}
 	

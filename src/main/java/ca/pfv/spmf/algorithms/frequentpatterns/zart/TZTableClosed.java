@@ -16,9 +16,9 @@ package ca.pfv.spmf.algorithms.frequentpatterns.zart;
 * SPMF. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfItemsetArrayIntegerWithCount;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,12 +32,12 @@ import java.util.Map;
  * @see AlgoZart
  * @author Philippe Fournier-Viger
  */
-public class TZTableClosed implements GenericResults {
+public class TZTableClosed implements Itemsets {
 	
 	/** This store the closed itemsets by size
 	 At position i, there are the list of closed itemsets 
 	 of size i */
-	public final List<ListOfItemset> levels = new ArrayList<>();  // itemset class� par taille
+	public final List<Itemsets.ListOfItemset> levels = new ArrayList<>();  // itemset class� par taille
 	
 	/** each entry of the following map is :  <br/>
 	 key : a closed itemset       <br/>
@@ -52,31 +52,40 @@ public class TZTableClosed implements GenericResults {
 		// if there is no array list until the size of this itemset
 		// then create them.
 		while(levels.size() <= itemset.size()){
-			levels.add(new ListOfArrayItemset());
+			levels.add(new ListOfItemsetArrayIntegerWithCount());
 		}
 		// add the itemset in the proper arraylist according to the size of the itemset
 		levels.get(itemset.size()).add(itemset);
 	}
 
-	@Override
-	public List<ListOfItemset> getLevels() {
-		return levels;
-	}
-	
 	/**
 	 * Get the closed itemsets of a given size i.
 	 * @param i  the size i.
 	 * @return  a list of itemsets
 	 */
-	public ListOfItemset getLevelForZart(int i){
+	public Itemsets.ListOfItemset getLevelForZart(int i){
 		// if this level does not exist
 		if(i+1 == levels.size()){
 			// create it
-			ListOfItemset newList = new ListOfArrayItemset();
+			Itemsets.ListOfItemset newList = new ListOfItemsetArrayIntegerWithCount();
 			levels.add(newList);
 			return newList;
 		}
 		// return the list of itemsets  (empty or not)
 		return levels.get(i+1);
+	}
+
+	@Override
+	public void printItemsets(int nbObject) {
+		System.out.print("Not implemented print itemset for TZTableClosed!!!!");
+	}
+
+	/**
+	 * @todo fix the hierarchy of results, this should stay in the top level "Itemsets" class
+	 * @return
+	 */
+	@Override
+	public List<ListOfItemset> getLevels() {
+		return null;
 	}
 }

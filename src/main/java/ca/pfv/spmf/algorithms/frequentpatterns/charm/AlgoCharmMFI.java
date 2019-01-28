@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.Iterator;
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 /**
  * This is an implementation of the CHARM-MFI algorithm (thesis of L. Szathmary, 2006) 
@@ -48,7 +48,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
  * @see TriangularMatrix
  * @see TransactionDatabase
  * @see ItemsetWithTIDSBitset
- * @see Itemsets
+ * @see ItemsetsWithTIDSBitset
  * @see HashTable
  * @see AlgoCharm_Bitset
  * @author Philippe Fournier-Viger
@@ -63,7 +63,7 @@ public class AlgoCharmMFI {
 	/** 
 	 The  patterns that are found 
 	 (if the user want to keep them into memory) */
-	protected Itemsets maximalItemsets;
+	protected ItemsetsWithTIDSBitset maximalItemsets;
 	
 	/** object to write the output file */
 	BufferedWriter writer = null; 
@@ -84,7 +84,7 @@ public class AlgoCharmMFI {
 	 * @return the set of maximal itemsets (if the user chose to keep the result in memory.
 	 * @throws IOException An exception if an error occurs while writting the output to a file.
 	 */
-	public Itemsets runAlgorithm(String output, Itemsets frequentClosed) throws IOException {
+	public ItemsetsWithTIDSBitset runAlgorithm(String output, ItemsetsWithTIDSBitset frequentClosed) throws IOException {
 		
 		// if the user want to keep the result into memory
 		if(output == null){
@@ -113,11 +113,11 @@ public class AlgoCharmMFI {
 		// For closed itemsets of size i=1 to the largest size
 		for (int i = 1; i < maxItemsetLength - 1; i++) {
 			// Get the itemsets of size i
-			GenericResults.ListOfItemset ti = frequentClosed.getLevels().get(i);
+			Itemsets.ListOfItemset ti = frequentClosed.getLevels().get(i);
 			// For closed itemsets of size j = i+1 to the largest size
 			for (int j = i+1; j < maxItemsetLength; j++) {
 				// get itemsets of size j
-				GenericResults.ListOfItemset tip1 = frequentClosed.getLevels().get(j);
+				Itemsets.ListOfItemset tip1 = frequentClosed.getLevels().get(j);
 				
 				// Check which itemsets are maximals by comparing itemsets
 				// of size i and i+1
@@ -128,7 +128,7 @@ public class AlgoCharmMFI {
 		// If the user chose to save the output to a file
 		if(writer != null){
 			// For itemsets of size i = 1 to the maximum itemset length
-			for(GenericResults.ListOfItemset level : maximalItemsets.getLevels()){
+			for(Itemsets.ListOfItemset level : maximalItemsets.getLevels()){
 				// For each itemset of length i
 				for(int i=0; i < level.size(); i++){
 					AbstractItemset itemset = level.get(i);
@@ -159,7 +159,7 @@ public class AlgoCharmMFI {
 	 * @param tip1 itemsets of size j
 	 * @param maximalItemsets the current set of maximal itemsets
 	 */
-	private void findMaximal(GenericResults.ListOfItemset ti, GenericResults.ListOfItemset tip1, Itemsets maximalItemsets) {
+	private void findMaximal(Itemsets.ListOfItemset ti, Itemsets.ListOfItemset tip1, ItemsetsWithTIDSBitset maximalItemsets) {
 		// for each itemset of j
 		for (AbstractItemset itemsetJ : tip1) {
 			// iterates over the itemsets of size i
@@ -209,7 +209,7 @@ public class AlgoCharmMFI {
 	 * Get the set of maximal itemsets found by Charm-MFI
 	 * @return the set of maximal itemsets
 	 */
-	public Itemsets getItemsets() {
+	public ItemsetsWithTIDSBitset getItemsets() {
 		return maximalItemsets;
 	}
 }

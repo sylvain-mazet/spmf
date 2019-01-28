@@ -7,8 +7,9 @@ import java.net.URL;
 
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /**
  * Example of how to mine all association rules with FPGROWTH with the lift,
  * from the source code.
@@ -31,9 +32,9 @@ public class MainTestAllAssociationRules_FPGrowth_saveToMemory_with_lift extends
 		double minsupp = 0.5;
 		AlgoFPGrowth fpgrowth = new AlgoFPGrowth();
 		fpgrowth.setMaximumPatternLength(maxAntecedentLength + maxConsequentLength);
-		Itemsets patterns = (Itemsets)fpgrowth.runAlgorithm(input, null, minsupp);
+		FrequentPatternsResults patterns = (FrequentPatternsResults) fpgrowth.runAlgorithm(input, null, minsupp);
 		int databaseSize = fpgrowth.getDatabaseSize();
-		patterns.printItemsets(databaseSize);
+		patterns.getItemsets().printItemsets(databaseSize);
 		
 		// STEP 2: Generating all rules from the set of frequent itemsets (based on Agrawal & Srikant, 94)
 		double  minlift = 0;

@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_close.AlgoAprioriClose;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use APRIORIClose (a.k.a Close)
@@ -26,7 +26,7 @@ public class MainTestAprioriClose_saveToMemory extends MainTestBase {
 		
 		// Applying the Apriori algorithm
 		AlgoAprioriClose apriori = new AlgoAprioriClose();
-		Itemsets result = apriori.runAlgorithm(minsup, input, output);
+		ItemsetsArrayIntegerWithCount result = apriori.runAlgorithm(minsup, input, output);
 		apriori.printStats();
 		result.printItemsets(apriori.getDatabaseSize());
 	}

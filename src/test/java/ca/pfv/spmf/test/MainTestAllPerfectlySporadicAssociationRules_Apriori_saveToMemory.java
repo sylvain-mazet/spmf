@@ -6,8 +6,9 @@ import java.net.URL;
 
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_inverse.AlgoAprioriInverse;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 
 /**
@@ -29,9 +30,9 @@ public class MainTestAllPerfectlySporadicAssociationRules_Apriori_saveToMemory e
 		double maxsup = 0.6;
 		
 		AlgoAprioriInverse apriori = new AlgoAprioriInverse();
-		Itemsets patterns = apriori.runAlgorithm(minsup, maxsup, input, null);
+		FrequentPatternsResults patterns = apriori.runAlgorithm(minsup, maxsup, input, null);
 		int databaseSize = apriori.getDatabaseSize();
-		patterns.printItemsets(databaseSize);
+		patterns.getItemsets().printItemsets(databaseSize);
 		
 		// STEP 2: Generating all rules from the set of sporadic itemsets (based on Agrawal & Srikant, 94)
 		double  minconf = 0.60;

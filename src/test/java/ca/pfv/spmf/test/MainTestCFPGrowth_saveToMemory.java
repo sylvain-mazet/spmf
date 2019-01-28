@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.cfpgrowth.AlgoCFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use the CFPGrowth++ algorithm, from the source code and save the result to 
@@ -25,10 +26,10 @@ public class MainTestCFPGrowth_saveToMemory extends MainTestBase {
 
 		// Applying the CFPGROWTH algorithmMainTestFPGrowth.java
 		AlgoCFPGrowth algo = new AlgoCFPGrowth();
-		Itemsets result = algo.runAlgorithm(database, output, MISfile);
+		GenericResults result = algo.runAlgorithm(database, output, MISfile);
 		algo.printStats();
 		
-		result.printItemsets(algo.getDatabaseSize());
+		result.getItemsets().printItemsets(algo.getDatabaseSize());
 	}
 
 	public String fileToPath(String filename)

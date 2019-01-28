@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.AlgoFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 
 /**
@@ -30,7 +30,7 @@ public class MainTestFPGrowth_saveToMemory extends MainTestBase {
 		
 		// Run the algorithm
 		// Note that here we use "null" as output file path because we want to keep the results into memory instead of saving to a file
-		Itemsets patterns = (Itemsets)algo.runAlgorithm(input, null, minsup);
+		ItemsetsArrayIntegerWithCount patterns = (ItemsetsArrayIntegerWithCount)algo.runAlgorithm(input, null, minsup);
 		// show the execution time and other statistics
 		algo.printStats();
 		// print the patterns to System.out

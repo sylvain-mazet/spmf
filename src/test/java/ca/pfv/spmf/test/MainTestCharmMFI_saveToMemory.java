@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharmMFI;
 import ca.pfv.spmf.algorithms.frequentpatterns.charm.AlgoCharm_Bitset;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 /**
  * Example of how to use the CHARM-MFI algorith, from the source code.
@@ -49,8 +49,8 @@ public class MainTestCharmMFI_saveToMemory extends MainTestBase {
 		
 		// Code to browse the itemsets in memory
 		System.out.println(" ===== MAXIMAL ITEMSETS FOUND ====");
-		Itemsets itemsets = algo2.getItemsets();
-		for(GenericResults.ListOfItemset level : itemsets.getLevels()) {
+		ItemsetsWithTIDSBitset itemsets = algo2.getItemsets();
+		for(Itemsets.ListOfItemset level : itemsets.getLevels()) {
 			 for(AbstractItemset itemsetAbs : level) {
 			 	ItemsetWithTIDSBitset itemset = (ItemsetWithTIDSBitset) itemsetAbs;
 				 for(Integer item : itemset.itemset) {

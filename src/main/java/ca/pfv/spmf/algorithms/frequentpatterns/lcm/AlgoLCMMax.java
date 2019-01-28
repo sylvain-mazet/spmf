@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /* This file is copyright (c) 2012-2014 Alan Souza
@@ -50,7 +50,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  */
 public class AlgoLCMMax {
 
-    private Itemsets itemsets;
+    private ItemsetsArrayIntegerWithCount itemsets;
     
 	// object to write the output file
 	BufferedWriter writer = null;
@@ -81,7 +81,7 @@ public class AlgoLCMMax {
      * @return the itemsets or null if the user choose to save to file
      * @throws IOException if exception while reading/writing to file
      */
-    public Itemsets runAlgorithm(double minimumSupport, Dataset dataset, String outputPath) throws IOException {
+    public ItemsetsArrayIntegerWithCount runAlgorithm(double minimumSupport, Dataset dataset, String outputPath) throws IOException {
 		// record the start time
 		startTimestamp = System.currentTimeMillis();
 
@@ -92,7 +92,7 @@ public class AlgoLCMMax {
 		}else {
 			// if the user choose to save to memory
 			writer = null;
-	        this.itemsets = new Itemsets("Itemsets");
+	        this.itemsets = new ItemsetsArrayIntegerWithCount("Itemsets");
 		}
 		
 		// reset the number of itemset found

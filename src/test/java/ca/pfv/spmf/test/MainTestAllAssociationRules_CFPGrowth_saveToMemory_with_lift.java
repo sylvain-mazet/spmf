@@ -2,13 +2,13 @@ package ca.pfv.spmf.test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 
+import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.cfpgrowth.AlgoCFPGrowth;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 /**
  * Example of how to mine all association rules with CFPGROWTH with the lift,
  * from the source code.
@@ -23,7 +23,7 @@ public class MainTestAllAssociationRules_CFPGrowth_saveToMemory_with_lift extend
 		
 		// STEP 1: Applying the CFP-GROWTH algorithm to find frequent itemsets
 		AlgoCFPGrowth cfpgrowth = new AlgoCFPGrowth();
-		Itemsets patterns = cfpgrowth.runAlgorithm(input, null, MISfile);
+		FrequentPatternsResults patterns = cfpgrowth.runAlgorithm(input, null, MISfile);
 //		patterns.printItemsets(database.size());
 		int databaseSize = cfpgrowth.getDatabaseSize();
 		cfpgrowth.printStats();

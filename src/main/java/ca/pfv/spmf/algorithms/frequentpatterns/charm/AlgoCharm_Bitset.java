@@ -28,14 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
 import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 import ca.pfv.spmf.tools.MemoryLogger;
  
 /**
@@ -58,7 +57,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see TriangularMatrix
  * @see TransactionDatabase
  * @see ItemsetWithTIDSBitset
- * @see Itemsets
+ * @see ItemsetsWithTIDSBitset
  * @author Philippe Fournier-Viger
  */
 public class AlgoCharm_Bitset {
@@ -76,7 +75,7 @@ public class AlgoCharm_Bitset {
 	/** 
 	 The  patterns that are found 
 	 (if the user want to keep them into memory) */
-	protected Itemsets closedItemsets;
+	protected ItemsetsWithTIDSBitset closedItemsets;
 	
 	/** object to write the output file */
 	BufferedWriter writer = null; 
@@ -120,8 +119,8 @@ public class AlgoCharm_Bitset {
 	 * @return the set of closed itemsets found if the result is kept into memory or null otherwise.
 	 * @throws IOException exception if error while writing the file.
 	 */
-	public Itemsets runAlgorithm(String output, TransactionDatabase database, double minsup,
-			boolean useTriangularMatrixOptimization, int hashTableSize) throws IOException {
+	public ItemsetsWithTIDSBitset runAlgorithm(String output, TransactionDatabase database, double minsup,
+                                               boolean useTriangularMatrixOptimization, int hashTableSize) throws IOException {
 
 		// Reset the tool to assess the maximum memory usage (for statistics)
 		MemoryLogger.getInstance().reset();
@@ -129,7 +128,7 @@ public class AlgoCharm_Bitset {
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			closedItemsets =  new Itemsets("FREQUENT CLOSED ITEMSETS");
+			closedItemsets =  new ItemsetsWithTIDSBitset("FREQUENT CLOSED ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 	    	closedItemsets = null;
 			writer = new BufferedWriter(new FileWriter(output)); 
@@ -609,7 +608,7 @@ loopJ:		for(int j=i+1; j < frequentItems.size(); j++) {
 	 * Get the set of frequent itemsets.
 	 * @return the frequent itemsets (Itemsets).
 	 */
-	public Itemsets getClosedItemsets() {
+	public ItemsetsWithTIDSBitset getClosedItemsets() {
 		return closedItemsets;
 	}
 	

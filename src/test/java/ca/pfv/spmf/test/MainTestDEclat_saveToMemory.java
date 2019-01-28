@@ -7,7 +7,7 @@ import java.net.URL;
 import ca.pfv.spmf.algorithms.frequentpatterns.eclat.AlgoDEclat;
 import ca.pfv.spmf.algorithms.frequentpatterns.eclat.AlgoEclat;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use dECLAT algorithm from the source code.
@@ -34,7 +34,7 @@ public class MainTestDEclat_saveToMemory extends MainTestBase {
 //		algo.setMaximumPatternLength(3);
 		
 		
-		Itemsets patterns = algo.runAlgorithm(null, database, 0.4, true);
+		ItemsetsArrayIntegerWithCount patterns = algo.runAlgorithm(null, database, 0.4, true);
 		// NOTE 0: We use "null" as output file path, because in this
 		// example, we want to save the result to memory instead of
 		// saving to a file

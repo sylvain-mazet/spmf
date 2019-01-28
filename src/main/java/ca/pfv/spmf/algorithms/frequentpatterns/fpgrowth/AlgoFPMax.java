@@ -19,7 +19,7 @@
 
 
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
  /**
  * This is an implementation of the FPMax algorithm (Grahne et al., 2004).
@@ -44,7 +43,7 @@ import java.util.Vector;
  *
  * @see FPTree
  * @see ItemsetArrayImplWithCount
- * @see Itemsets
+ * @see ItemsetsArrayIntegerWithCount
  * @author Philippe Fournier-Viger, 2015
  */
 public class AlgoFPMax extends GenericFPGrowthAlgorithmBase {

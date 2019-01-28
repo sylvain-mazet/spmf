@@ -5,7 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_inverse.AlgoAprioriInverse;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 
 /**
  * Example of how to use the APRIORI-INVERSE algorithm from the source
@@ -30,7 +31,7 @@ public class MainTestAprioriInverse_saveToMemory extends MainTestBase {
 		// Applying the APRIORI-Inverse algorithm to find sporadic itemsets
 		AlgoAprioriInverse apriori2 = new AlgoAprioriInverse();
 		// apply the algorithm
-		Itemsets patterns = apriori2.runAlgorithm(minsup, maxsup, inputFilePath, outputFilePath);
+		ItemsetsArrayIntegerWithCount patterns = (ItemsetsArrayIntegerWithCount) apriori2.runAlgorithm(minsup, maxsup, inputFilePath, outputFilePath).getItemsets();
 		int databaseSize = apriori2.getDatabaseSize();
 		patterns.printItemsets(databaseSize); // print the result
 	}

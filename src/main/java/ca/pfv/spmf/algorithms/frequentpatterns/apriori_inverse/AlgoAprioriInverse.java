@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -57,7 +57,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * by the user to the runAlgorithm() method.
  * 
  * @see ItemsetArrayImplWithCount
- * @see Itemsets
+ * @see ItemsetsArrayIntegerWithCount
  * @author Philippe Fournier-Viger
  */
 public class AlgoAprioriInverse {
@@ -83,7 +83,7 @@ public class AlgoAprioriInverse {
 	
 	// The  patterns that are found 
 	// (if the user want to keep them into memory)
-	protected Itemsets patterns = null;
+	protected ItemsetsArrayIntegerWithCount patterns = null;
 
 	// object to write the output file (if the user wants to write to a file)
 	BufferedWriter writer = null; 
@@ -105,12 +105,12 @@ public class AlgoAprioriInverse {
 	 *               method will return the result.
 	 * @throws IOException exception if error while writing or reading the input/output file
 	 */
-	public Itemsets runAlgorithm(double minsup, double maxsup, String input, String output) throws IOException {
+	public FrequentPatternsResults runAlgorithm(double minsup, double maxsup, String input, String output) throws IOException {
 		
 		// if the user want to keep the result into memory
 		if(output == null){
 			writer = null;
-			patterns =  new Itemsets("SPORADIC ITEMSETS");
+			patterns =  new ItemsetsArrayIntegerWithCount("SPORADIC ITEMSETS");
 	    }else{ // if the user want to save the result to a file
 			patterns = null;
 			writer = new BufferedWriter(new FileWriter(output)); 
@@ -210,7 +210,7 @@ public class AlgoAprioriInverse {
 			if(writer != null){
 				writer.close();
 			}
-			return patterns; 
+			return new FrequentPatternsResults(patterns,null);
 		}
 		
 		// add the frequent items of size 1 to the total number of candidates
@@ -298,7 +298,7 @@ public class AlgoAprioriInverse {
 			writer.close();
 		}
 		
-		return patterns;
+		return new FrequentPatternsResults(patterns,null);
 	}
 
 	/**

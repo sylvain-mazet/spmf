@@ -25,13 +25,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import ca.pfv.spmf.algorithms.ArraysAlgos;
-import ca.pfv.spmf.algorithms.GenericResults;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AlgoAgrawalFaster94;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRule;
 import ca.pfv.spmf.algorithms.associationrules.agrawal94_association_rules.AssocRules;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetWithTIDSBitset;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.ItemsetsWithTIDSBitset;
 
 /**
  * This is an implementation of the "faster algorithm" for generating association rules,
@@ -59,7 +59,7 @@ import ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset.Itemsets;
 public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	
 	// the frequent itemsets that will be used to generate the rules
-	private Itemsets patterns;
+	private ItemsetsWithTIDSBitset patterns;
 
 	/**
 	 * Default constructor
@@ -77,7 +77,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf) throws IOException {
+	public AssocRules runAlgorithm(ItemsetsWithTIDSBitset patterns, String output, int databaseSize, double minconf) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
 		this.minlift = 0;
@@ -97,8 +97,8 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 * @return  the set of association rules if the user wished to save them into memory
 	 * @throws IOException exception if error writing to the output file
 	 */
-	public AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize, double minconf,
-			double minlift) throws IOException {
+	public AssocRules runAlgorithm(ItemsetsWithTIDSBitset patterns, String output, int databaseSize, double minconf,
+                                   double minlift) throws IOException {
 		// save the parameters
 		this.minconf = minconf;
 		this.minlift = minlift;
@@ -116,7 +116,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 * @return the set of rules found if the user chose to save the result to memory
 	 * @throws IOException exception if error while writting to file
 	 */
-	private AssocRules runAlgorithm(Itemsets patterns, String output, int databaseSize)
+	private AssocRules runAlgorithm(ItemsetsWithTIDSBitset patterns, String output, int databaseSize)
 			throws IOException {
 		
 		// if the user want to keep the result into memory
@@ -148,7 +148,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 		//    lexical order to avoid comparisons (in the method "generateCandidates()").
 		
 		// For itemsets of the same size
-		for(GenericResults.ListOfItemset itemsetsSameSize : patterns.getLevels()){
+		for(Itemsets.ListOfItemset itemsetsSameSize : patterns.getLevels()){
 			// Sort by lexicographical order using a Comparator
 			Collections.sort(itemsetsSameSize, new Comparator<AbstractItemset>() {
 				@Override
@@ -323,7 +323,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
 	 */
 	private int calculateSupport(int[] itemset) {
 		// We first get the list of patterns having the same size as "itemset"
-		GenericResults.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
+		Itemsets.ListOfItemset patternsSameSize = patterns.getLevels().get(itemset.length);
 //		
 		// We perform a binary search to find the position of itemset in this list
         int first = 0;
@@ -355,7 +355,7 @@ public class AlgoClosedRules extends AlgoAgrawalFaster94{
         int size = itemset.length;
  loop:  while(true) {
  			size++;
-        	GenericResults.ListOfItemset patternsList = patterns.getLevels().get(size);
+        	Itemsets.ListOfItemset patternsList = patterns.getLevels().get(size);
         	// For each pattern of a given size
         	for(AbstractItemset patternAbs : patternsList) {
         		ItemsetWithTIDSBitset pattern = (ItemsetWithTIDSBitset)patternAbs;

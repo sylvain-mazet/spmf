@@ -5,6 +5,7 @@ import java.io.IOException;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.frequentpatterns.apriori_inverse.AlgoAprioriInverse;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 /* This file is copyright (c) 2008-2016 Philippe Fournier-Viger
 * 
 * This file is part of the SPMF DATA MINING SOFTWARE
@@ -60,8 +61,7 @@ public class DescriptionAlgoSporadicAssociationRules extends DescriptionOfAlgori
 		double minconf = getParamAsDouble(parameters[2]);
 
 		AlgoAprioriInverse apriori = new AlgoAprioriInverse();
-		ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets patterns = apriori
-				.runAlgorithm(minsup, maxsup, inputFile, null);
+		FrequentPatternsResults patterns = apriori.runAlgorithm(minsup, maxsup, inputFile, null);
 		apriori.printStats();
 		int databaseSize = apriori.getDatabaseSize();
 

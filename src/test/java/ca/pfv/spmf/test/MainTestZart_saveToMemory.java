@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.AlgoZart;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TFTableFrequent;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
@@ -27,7 +28,8 @@ public class MainTestZart_saveToMemory extends MainTestBase {
 		// Apply the Zart algorithm
 		double minsup = 0.4;
 		AlgoZart zart = new AlgoZart();
-		TZTableClosed results = zart.runAlgorithm(context, minsup);
+		FrequentPatternsResults patterns = zart.runAlgorithm(context, minsup);
+		TZTableClosed results = (TZTableClosed)patterns.getItemsets();
 		TFTableFrequent frequents = zart.getTableFrequent();
 		zart.printStats();
 		

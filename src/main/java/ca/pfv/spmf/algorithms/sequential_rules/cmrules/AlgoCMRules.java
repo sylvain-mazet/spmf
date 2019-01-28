@@ -31,8 +31,9 @@ import ca.pfv.spmf.datastructures.triangularmatrix.TriangularMatrix;
 import ca.pfv.spmf.input.sequence_database_list_integers.Sequence;
 import ca.pfv.spmf.input.sequence_database_list_integers.SequenceDatabase;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
+import ca.pfv.spmf.patterns.AbstractItemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetWithTIDS;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.Itemsets;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_tids.ItemsetsWithTIDS;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -54,7 +55,7 @@ import ca.pfv.spmf.tools.MemoryLogger;
  * @see Rule
  * @see Rules
  * @see ItemsetWithTIDS
- * @see Itemsets
+ * @see ItemsetsWithTIDS
  * @see TransactionDatabase
  * @see SequenceDatabase
  * @see Sequence
@@ -100,7 +101,7 @@ public class AlgoCMRules {
 	List<Integer> listFrequentsSize1 = new ArrayList<Integer>();
 	
 	// the set of frequent itemsets found by Apriori TID
-	private Itemsets patterns;
+	private ItemsetsWithTIDS patterns;
 	
 //	 a triangular matrix for efficiently counting the support of pairs of items
 	private TriangularMatrix matrix;
@@ -452,16 +453,16 @@ public class AlgoCMRules {
 	 * @param patterns  a set of frequent itemsets
 	 * @throws IOException exception if error writing to the output file
 	 */
-	void generateRules(Itemsets patterns) throws IOException {
+	void generateRules(ItemsetsWithTIDS patterns) throws IOException {
 		
 		//For each frequent itemset of size >=2
 		for(int k=2; k< patterns.getLevels().size(); k++){
-			for(ItemsetWithTIDS lk : patterns.getLevels().get(k)){
+			for(AbstractItemset lk : patterns.getLevels().get(k)){
 				// create H1
 				Set<ItemsetWithTIDS> H1 = new HashSet<ItemsetWithTIDS>();
-				for(ItemsetWithTIDS itemsetSize1 : patterns.getLevels().get(1)){
+				for(AbstractItemset itemsetSize1 : patterns.getLevels().get(1)){
 					if(lk.contains(itemsetSize1.getItems()[0])){
-						H1.add(itemsetSize1);
+						H1.add((ItemsetWithTIDS)itemsetSize1);
 					}
 				}
 //				lk.print(); // DEBUG
@@ -475,7 +476,7 @@ public class AlgoCMRules {
 					
 					// make a copy of  itemset_Lk_minus_hm_P_1 but remove 
 					// items from  hm_P_1
-					ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = (ItemsetWithTIDS)lk.cloneItemSetMinusAnItemset(hm_P_1);
+					ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = ((ItemsetWithTIDS)lk).cloneItemSetMinusAnItemset(hm_P_1);
 
 					// This is the definition of confidence:
 					// double conf = supp(lk) / supp (lk - hm+1)
@@ -564,7 +565,7 @@ public class AlgoCMRules {
 	 * @param lk  a itemset that is used to generate rules
 	 * @throws IOException exception if error while writing output file
 	 */
-	private void apGenrules(int k, int m, ItemsetWithTIDS lk, Set<ItemsetWithTIDS> Hm) throws IOException {
+	private void apGenrules(int k, int m, AbstractItemset lk, Set<ItemsetWithTIDS> Hm) throws IOException {
 //		System.out.println(" " + lk.toString() + "  " + Hm.toString());
 		if(k > m+1){
 			int leftsize = lk.size() - (1 + m);
@@ -574,7 +575,7 @@ public class AlgoCMRules {
 			// for each itemset Hm+1
 			for(ItemsetWithTIDS hm_P_1 : Hm_plus_1){
 				// Generate the itemset Lk / Hm+1
-				ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = (ItemsetWithTIDS)lk.cloneItemSetMinusAnItemset(hm_P_1);
+				ItemsetWithTIDS itemset_Lk_minus_hm_P_1 = ((ItemsetWithTIDS)lk).cloneItemSetMinusAnItemset(hm_P_1);
 
 				// Calculate the support of Lk / Hm+1
 				calculateSupport(itemset_Lk_minus_hm_P_1);   
@@ -617,11 +618,11 @@ public class AlgoCMRules {
 	 */
 	private void calculateSupport(ItemsetWithTIDS itemset_Lk_minus_hm_P_1) {
 		// loop over all the patterns of the same size.
-		for(ItemsetWithTIDS itemset : patterns.getLevels().get(itemset_Lk_minus_hm_P_1.size())){
+		for(AbstractItemset itemset : patterns.getLevels().get(itemset_Lk_minus_hm_P_1.size())){
 			// If the pattern is found
-			if(itemset.isEqualTo(itemset_Lk_minus_hm_P_1)){
+			if(((ItemsetWithTIDS)itemset).isEqualTo(itemset_Lk_minus_hm_P_1)){
 				// set its support to the same value.
-				itemset_Lk_minus_hm_P_1.setTIDs(itemset.getTransactionsIds());
+				itemset_Lk_minus_hm_P_1.setTIDs(((ItemsetWithTIDS)itemset).getTransactionsIds());
 				return;
 			}
 		}

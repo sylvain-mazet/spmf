@@ -5,6 +5,7 @@ import java.io.IOException;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfAlgorithm;
 import ca.pfv.spmf.algorithmmanager.DescriptionOfParameter;
 import ca.pfv.spmf.algorithms.associationrules.IGB.AlgoIGB;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.AlgoZart;
 import ca.pfv.spmf.algorithms.frequentpatterns.zart.TZTableClosed;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
@@ -69,11 +70,11 @@ public class DescriptionAlgoIGBAssociationRules extends DescriptionOfAlgorithm {
 
 		// Applying the Zart algorithm
 		AlgoZart zart = new AlgoZart();
-		TZTableClosed results = zart.runAlgorithm(database, minsup);
+		FrequentPatternsResults results = zart.runAlgorithm(database, minsup);
 		zart.printStats();
 		// Generate IGB association rules
 		AlgoIGB algoIGB = new AlgoIGB();
-		algoIGB.runAlgorithm(results, database.getTransactions().size(),
+		algoIGB.runAlgorithm((TZTableClosed)results.getItemsets(), database.getTransactions().size(),
 				minconf, outputFile);
 		algoIGB.printStatistics();
 	}

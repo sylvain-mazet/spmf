@@ -22,15 +22,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import ca.pfv.spmf.algorithms.DbScanner;
 import ca.pfv.spmf.algorithms.GenericAlgorithmBase;
-import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.input.transaction_database_list_integers.TransactionDatabase;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
-import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfArrayItemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ListOfItemsetArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
 
 /**
@@ -77,7 +77,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @param minsupp   the minimum support threshold
 	 * @return  a set of closed itemsets and their associated generator(s)
 	 */
-	public TZTableClosed runAlgorithm(TransactionDatabase database, double minsupp) {
+	public FrequentPatternsResults runAlgorithm(TransactionDatabase database, double minsupp) {
 
 		TransactionDatabaseDbScanner dbScanner = new TransactionDatabaseDbScanner(database);
 		return runAlgorithm(dbScanner, minsupp);
@@ -93,7 +93,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @return  a set of closed itemsets and their associated generator(s)
 	 */
 	@Override
-	public TZTableClosed runAlgorithm(DbScanner dbScanner, double minsupp) {
+	public FrequentPatternsResults runAlgorithm(DbScanner dbScanner, double minsupp) {
 		// record the start time
 		startTimestamp = System.currentTimeMillis();
 		// reset the utility for recording the memory usage
@@ -299,7 +299,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 				}
 
 				// 42
-				tableClosed.levels.add(new ListOfArrayItemset());
+				tableClosed.levels.add(new ListOfItemsetArrayIntegerWithCount());
 				// for each frequent itemsets of size i-1
 				for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i-1)){
 					//  if it is marked as closed, then we add it to
@@ -317,7 +317,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 			}
 
 			//  ....  45
-			tableClosed.levels.add(new ListOfArrayItemset());
+			tableClosed.levels.add(new ListOfItemsetArrayIntegerWithCount());
 			for(ItemsetArrayImplWithCount l : tableFrequent.getLevelForZart(i-1)){
 				tableClosed.getLevelForZart(i-1).add(l);
 			}
@@ -334,7 +334,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 		endTime = System.currentTimeMillis();
 
 		// return a table containing the closed itemsets and their associatied generator(s)
-		return tableClosed;
+		return new FrequentPatternsResults(tableClosed,null);
 	}
 
 	private boolean isItemInfrequent(Integer item, Map<Integer,Integer> mapItemSupport) {
@@ -346,7 +346,7 @@ public class AlgoZart extends GenericAlgorithmBase {
 	 * @param zi a list of itemset zi of size i
 	 * @param i  the size i
 	 */
-	private void findGenerators(GenericResults.ListOfItemset zi, int i) {
+	private void findGenerators(Itemsets.ListOfItemset zi, int i) {
 		// for each itemset in the list
 		for(AbstractItemset zAbs : zi){ // 1
 			ItemsetArrayImplWithCount z = (ItemsetArrayImplWithCount) zAbs;

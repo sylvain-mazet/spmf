@@ -1,4 +1,4 @@
-package ca.pfv.spmf.patterns.itemset_array_integers_with_count;
+package ca.pfv.spmf.patterns.itemset_array_integers_with_tids_bitset;
 
 /* This file is copyright (c) 2008-2012 Philippe Fournier-Viger
 * 
@@ -18,23 +18,27 @@ package ca.pfv.spmf.patterns.itemset_array_integers_with_count;
 
 
 import ca.pfv.spmf.algorithms.GenericResults;
+import ca.pfv.spmf.algorithms.frequentpatterns.fpgrowth.FITree;
 import ca.pfv.spmf.patterns.AbstractItemset;
+import ca.pfv.spmf.patterns.Itemsets;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a set of itemsets, where an itemset is an array of integers 
- * with an associated support count. Itemsets are ordered by size. For
+ * This class represents a set of itemsets where an itemset is an array of integer with a tid list
+ * represented by a list of integers. Itemsets are ordered by size. For
  * example, level 1 means itemsets of size 1 (that contains 1 item).
 * 
  * @author Philippe Fournier-Viger
  */
-public class Itemsets implements GenericResults {
+public class ItemsetsWithTIDSBitset implements Itemsets {
+
+
 	/** We store the itemsets in a list named "levels".
 	 Position i in "levels" contains the list of itemsets of size i */
 	private final List<ListOfItemset> levels = new ArrayList<>();
-	/** the total number of itemsets **/
+	/** the total number of itemsets */
 	private int itemsetsCount = 0;
 	/** a name that we give to these itemsets (e.g. "frequent itemsets") */
 	private String name;
@@ -43,15 +47,18 @@ public class Itemsets implements GenericResults {
 	 * Constructor
 	 * @param name the name of these itemsets
 	 */
-	public Itemsets(String name) {
+	public ItemsetsWithTIDSBitset(String name) {
 		this.name = name;
-		levels.add(new ListOfArrayItemset()); // We create an empty level 0 by
+		levels.add(new ListOfTIDSBitSetItemset()); // We create an empty level 0 by
 												// default.
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#printItemsets(int)
+	/**
+	 * Print all itemsets to System.out, ordered by their size.
+	 * @param nbObject The number of transaction/sequence in the database where
+	 * there itemsets were found.
 	 */
+	@Override
 	public void printItemsets(int nbObject) {
 		System.out.println(" ------- " + name + " -------");
 		int patternCount = 0;
@@ -62,13 +69,12 @@ public class Itemsets implements GenericResults {
 			System.out.println("  L" + levelCount + " ");
 			// for each itemset
 			for (AbstractItemset itemset : level) {
-//				Arrays.sort(itemset.getItems());
 				// print the itemset
 				System.out.print("  pattern " + patternCount + ":  ");
 				itemset.print();
 				// print the support of this itemset
-				System.out.print("support :  " + itemset.getAbsoluteSupport());
-//						+ itemset.getRelativeSupportAsString(nbObject));
+				System.out.print("support :  "
+						+ itemset.getRelativeSupportAsString(nbObject));
 				patternCount++;
 				System.out.println("");
 			}
@@ -77,43 +83,48 @@ public class Itemsets implements GenericResults {
 		System.out.println(" --------------------------------");
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#addItemset(ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset, int)
+	/** 
+	 * Add an itemset to this structure
+	 * @param itemset the itemset
+	 * @param k the number of items contained in the itemset
 	 */
-	public void addItemset(ItemsetArrayImplWithCount itemset, int k) {
+	public void addItemset(AbstractItemset itemset, int k) {
 		while (levels.size() <= k) {
-			levels.add(new ListOfArrayItemset());
+			levels.add(new ListOfTIDSBitSetItemset());
 		}
 		levels.get(k).add(itemset);
 		itemsetsCount++;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#getLevels()
+	/**
+	 * Get all itemsets.
+	 * @return A list of list of itemsets.
+	 * Position i in this list is the list of itemsets of size i.
 	 */
-	@Override
 	public List<ListOfItemset> getLevels() {
 		return levels;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#getItemsetsCount()
+	/**
+	 * Get the total number of itemsets
+	 * @return the number of itemsets.
 	 */
 	public int getItemsetsCount() {
 		return itemsetsCount;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#setName(java.lang.String)
+	/**
+	 * Set the name of this group of itemsets
+	 * @param name the new name
 	 */
-	public void setName(String newName) {
-		name = newName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-	/* (non-Javadoc)
-	 * @see ca.pfv.spmf.patterns.itemset_array_integers_with_count.AbstractItemsets#decreaseItemsetCount()
+
+	/**
+	 * Decrease the count of itemsets stored in this structure by 1.
 	 */
 	public void decreaseItemsetCount() {
-		itemsetsCount--;
+		this.itemsetsCount--;
 	}
 }
