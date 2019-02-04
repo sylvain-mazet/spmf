@@ -66,10 +66,10 @@ public class ItemsetsArrayIntegerWithCount implements Itemsets {
 			for (AbstractItemset itemset : level) {
 //				Arrays.sort(itemset.getItems());
 				// print the itemset
-				System.out.print("  pattern " + patternCount + ":  ");
+				System.out.print("    pattern #" + patternCount + ":  [");
 				itemset.print();
 				// print the support of this itemset
-				System.out.print("support :  " + itemset.getAbsoluteSupport());
+				System.out.print("] support :  " + itemset.getAbsoluteSupport());
 //						+ itemset.getRelativeSupportAsString(nbObject));
 				patternCount++;
 				System.out.println("");

@@ -20,6 +20,8 @@
 
  import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ import java.util.Map;
  * @author Philippe Fournier-Viger, 2015
  */
 public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
+
+	public static final Logger logger = LoggerFactory.getLogger(AlgoFPClose.class);
 
 	// buffer for storing the current itemset that is mined when performing mining
 	// the idea is to always reuse the same buffer to reduce memory usage.
@@ -103,15 +107,15 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 	 * @throws IOException exception if error writing the output file
 	 */
 	private void fpclose(FPTree tree, int[] prefix, int prefixLength, int prefixSupport, Map<Integer, Integer> mapSupport) throws IOException {
-//		======= DEBUG ========
-		if (DEBUG) {
-			System.out.print("###### Prefix: ");
+		if (logger.isDebugEnabled()) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("###### Prefix: ");
 			for (int k = 0; k < prefixLength; k++) {
-				System.out.print(prefix[k] + "  ");
+				sb.append(prefix[k] + "  ");
 			}
-			System.out.println("\n");
-			System.out.println(tree);
-		}    //========== END DEBUG =======
+			sb.append("\n" + tree.toString());
+			logger.debug(sb.toString());
+		}
 
 		// We first check if the FPtree contains a single path
 		boolean singlePath = true;
@@ -147,7 +151,6 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 		// Case 1: the FPtree contains a single path
 		// If this path has enough support:
 		if (singlePath && countBuffer[position - 1] >= getMinSupportRelative()) {
-//			System.out.println();
 			// generate all the CFIs from this path
 			// for each CFI X generated, we will check if X is closed
 			// by looking at the CFI-tree. If yes we will insert X in
@@ -262,18 +265,13 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 				// sort item in the transaction by descending order of support
 				sortOriginalOrder(headWithP, prefixLength + 1);
 
-				//======= DEBUG ========
-				if (DEBUG) {
-					System.out.println(" CHECK2 : " + headWithP.toString() + " sup=" + betaSupport);
-				}
-				//========== END DEBUG =======
+				logger.debug(" CHECK2 : " + headWithP.toString() + " sup=" + betaSupport);
 
 				// CHECK IF HEAD U P IS A SUBSET OF A CFI ACCORDING TO THE CFI-TREE
 				if (cfiTree.passSubsetChecking(headWithP, prefixLength + 1, betaSupport)) {
 
-					if (DEBUG) {
-						System.out.println("    passed!");
-					}
+					logger.debug("    passed!");
+
 					// (B) Construct beta's conditional FP-Tree using its prefix path
 					// Create the tree.
 					FPTree treeBeta = new FPTree();
@@ -296,9 +294,7 @@ public class AlgoFPClose extends GenericFPGrowthAlgorithmBase {
 						saveItemset(cfiTree, headWithP, prefixLength + 1, betaSupport);
 					}
 				} else {
-					if (DEBUG) {
-						System.out.println("     failed!");
-					}
+					logger.debug("     failed!");
 //					// OPTIMIZATION ONLY IN FPCLOSE:  IF THE CLOSURE CHECKING iS NOT PASSED
 //					// WE STOP THIS LOOP BECAUSE THE NEXT ITEMS WILL NOT PASS IT EITHER
 //					break;

@@ -6,6 +6,8 @@ import ca.pfv.spmf.algorithms.frequentpatterns.FrequentPatternsResults;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetArrayImplWithCount;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.ItemsetsArrayIntegerWithCount;
 import ca.pfv.spmf.tools.MemoryLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -21,6 +23,8 @@ import java.util.Map;
  * Created by smazet on 10/10/18.
  */
 public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase {
+
+    public static final Logger logger = LoggerFactory.getLogger(GenericFPGrowthAlgorithmBase.class);
 
     // Map to store the support of single items in the original database
     private Map<Integer, Integer> originalMapSupport = null;
@@ -152,14 +156,14 @@ public abstract class GenericFPGrowthAlgorithmBase extends GenericAlgorithmBase 
         System.arraycopy(itemset, 0, itemsetCopy, 0, itemsetLength);
         sortOriginalOrder(itemsetCopy, itemsetLength);
 
-        if(DEBUG) {
-            //		//======= DEBUG ========
-            System.out.print(" ##### SAVING : ");
+        if(logger.isDebugEnabled())
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append(" ##### SAVING : ");
             for(int i=0; i< itemsetLength; i++) {
-                System.out.print(itemsetCopy[i] + "  ");
+                sb.append(itemsetCopy[i] + "  ");
             }
-            System.out.println("\n");
-            //		//========== END DEBUG =======
+            logger.debug("\n");
         }
 
         // add the itemset to the FI-TREE

@@ -173,8 +173,28 @@ public class ItemsetArrayImplWithCount extends AbstractOrderedItemset {
 		return Arrays.hashCode(itemset);
 	}
 
-	@Override //TODO the iterator
-	public Iterator<Integer> iterator() {
-		return null;
+	public class ItemIterator implements Iterator<Integer> {
+
+		private int current = 0;
+		private int[] itemset;
+
+		public ItemIterator(int[] itemset) {
+			this.itemset = itemset;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return current<itemset.length;
+		}
+
+		@Override
+		public Integer next() {
+			return itemset[current++];
+		}
 	}
+
+	public Iterator<Integer> iterator() {
+		return new ItemIterator(itemset);
+	}
+
 }

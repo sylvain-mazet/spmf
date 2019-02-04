@@ -318,7 +318,6 @@ public class FITree {
             ItemsetArrayImplWithCount itemSet = buildItemset(root);
             FICNode newNode = new FICNode( id++, itemSet);
             newNode.setParent(reducedRoot);
-            reducedRoot.children.add(newNode);
             return id;
         }
 
@@ -331,7 +330,6 @@ public class FITree {
                 ItemsetArrayImplWithCount itemSet = buildItemset(root);
                 FICNode newNode = new FICNode(id++, itemSet);
                 newNode.setParent(reducedRoot);
-                reducedRoot.children.add(newNode);
                 id = recurseReduce(id, newNode, child);
             }
         }
@@ -406,20 +404,25 @@ public class FITree {
                 itemsetsAtLevel = itemsets.getLevels().get(level);
                 int hashCode = Arrays.hashCode(newItemset.getItems());
                 Iterator<AbstractItemset> itemsetAtLevel = itemsetsAtLevel.iterator();
-                boolean alreadyThere = false;
+                ItemsetForDelta alreadyThere = null;
                 while (itemsetAtLevel.hasNext()) {
                     AbstractItemset itemsetSameLevel = itemsetAtLevel.next();
                     if (hashCode == Arrays.hashCode(itemsetSameLevel.getItems())) {
-                        alreadyThere = true;
-                        logger.debug("Found same itemsets "+itemsetAtLevel.toString()+" VS "+newItemset.toString());
+                        alreadyThere = (ItemsetForDelta)itemsetSameLevel;
+                        logger.debug("Found same itemset ["+alreadyThere.toString()+"] VS ["+newItemset.toString()+"]");
+                        break;
                     }
                 }
                 // if not, add it
-                if (!alreadyThere) {
+                if (null==alreadyThere) {
+                    logger.debug("Adding itemset at level "+level+": "+newItemset.toString());
                     itemsets.addItemset(newItemset, level);
+                } else {
+                    alreadyThere.setAbsoluteSupport(Math.max(alreadyThere.getAbsoluteSupport(),newItemset.getAbsoluteSupport()));
                 }
             } else {
                 // no itemset at this level yet
+                logger.debug("Adding first itemset at level "+level+": "+newItemset.toString());
                 itemsets.addItemset(newItemset, level);
             }
 
